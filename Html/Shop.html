@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewImage</title>
+    <link rel="stylesheet" href="\FrontEnd\Css\style-Main.css">
+    <script src="/FrontEnd/JS/index.js"></script>
+</head>
+<body>
+        <nav class="sticky-nav">
+        <div class="container">
+            <div class="nav-content">
+                <a href="#" class="logo" onclick="showSection('home')">
+                    <img src="/Material/Logo.png" alt="Logo PilatesPro" class="logo-img">
+                    <span class="logo-text">NewImage</span>
+                </a>
+                
+                <div class="desktop-menu">
+                    <a href="#" onclick="showSection('home')">Inicio</a>
+                    <a href="#" onclick="showSection('products')">Productos</a>
+                    <a href="#" onclick="showSection('classes')">Clases</a>
+                    <a href="#" onclick="showSection('about')">Nosotros</a>
+                    <a href="#" onclick="showSection('contact')">Contacto</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <button onclick="toggleCart()" class="cart-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span id="cart-count" class="cart-badge">0</span>
+                    </button>
+                    
+                    <button id="login-btn" onclick="window.location.href='Login.html'" class="btn btn-primary">
+                        Iniciar sesión
+                    </button>
+                    
+                    <button id="account-btn" class="btn btn-secondary hidden">
+                        Mi cuenta
+                    </button>
+                    
+                    <button id="logout-btn" class="btn btn-gray hidden" onclick="logout()">
+                        Cerrar sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div class="mobile-menu">
+    <div class="mobile-menu-links">
+        <a href="#" onclick="showSection('home')" class="mobile-menu-item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span class="mobile-menu-label">Inicio</span>
+        </a>
+        <a href="#" onclick="showSection('products')" class="mobile-menu-item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <span class="mobile-menu-label">Productos</span>
+        </a>
+        <a href="#" onclick="showSection('cart')" class="mobile-menu-item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span class="mobile-menu-label">Carrito</span>
+        </a>
+        <a href="#" onclick="showSection(userLoggedIn ? 'account' : 'login')" class="mobile-menu-item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span class="mobile-menu-label">Cuenta</span>
+        </a>
+    </div>
+</div>
+</body>
+</html>
