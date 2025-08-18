@@ -15,6 +15,9 @@ body {
     margin: 0;
 }
 
+.txt{
+    text-decoration: none;
+}
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -366,10 +369,11 @@ body {
     text-decoration: underline;
 }
 
+/* Responsive Styles */
+
 .mobile-menu {
         display: none;
     }
-/* Responsive Styles */
 @media (max-width: 1024px) {
     .hero-content {
         flex-direction: column;
@@ -379,9 +383,7 @@ body {
     .products-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-
 }
-
 @media (max-width: 768px) {
     .desktop-menu {
         display: none;
