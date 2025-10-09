@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NewImage</title>
+  <link rel="stylesheet" href="../static/Shop.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagenes/Logo.png') }}">
+</head>
+<body>
+    <nav class="sticky-nav">
+        <div class="container">
+            <div class="nav-content">
+                <a href="{{ url_for('index') }}" class="logo" >
+                    <img src="{{ url_for('static', filename='imagenes/Logo.png') }}" alt="Logo PilatesPro" class="logo-img">
+                    <span class="logo-text">NewImage</span>
+                </a>
+                
+                <div class="desktop-menu">
+                    <a href="{{ url_for('index') }}">Inicio</a>
+                    <a href="{{ url_for('shop') }}">Productos</a>
+                    <a href="{{ url_for('repuestos') }}">Repuestos</a>
+                    <a href="#" onclick="showSection('contact')">Contacto</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <button onclick="toggleCart()" class="cart-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span id="cartCount" class="cart-badge">0</span>
+                    </button>
+                    
+                    {% if "user_id" in session %}
+                        {% if user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Panel Admin</a>
+                        {% endif %}
+                        <span  id="account-btn" class="btn btn-secondary">
+                            {{ session["username"] }}</span>
+                        <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
+                            <button id="logout-btn" class="btn btn-gray">Cerrar sesión</button>
+                        </form>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">Iniciar sesión</a>
+                    {% endif %}
+                
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile menu -->
+   <div class="mobile-menu">
+        <div class="mobile-menu-links">
+            <a href="{{ url_for('index') }}" onclick="showSection('home')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="mobile-menu-label">Inicio</span>
+            </a>
+            <a href="{{ url_for('shop') }}" onclick="showSection('products')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <span class="mobile-menu-label">Productos</span>
+            </a>
+            <a href="/templates/CheckOut.html" onclick="showSection('cart')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span class="mobile-menu-label">Repuestos</span>
+            </a>
+            <a href="#" onclick="showSection(userLoggedIn ? 'account' : 'login')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="mobile-menu-label">Cuenta</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 overflow-hidden z-50 hidden" id="cartModal">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" id="cartOverlay"></div>
+            <div class="fixed inset-y-0 right-0 max-w-full flex">
+                <div class="w-screen max-w-md">
+                    <div class="h-full flex flex-col bg-white shadow-xl overflow-y-scroll">
+                        <div class="flex-1 py-6 overflow-y-auto px-4 sm:px-6">
+                            <div class="flex items-start justify-between">
+                                <h2 class="text-lg font-medium text-gray-900">Carrito de compras</h2>
+                                <button type="button" id="closeCartButton" class="-mr-2 p-2 text-gray-400 hover:text-gray-500">
+                                    <span class="sr-only">Cerrar panel</span>
+                                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="mt-8">
+                                <div class="flow-root">
+                                    <ul id="cartItems" class="-my-6 divide-y divide-gray-200">
+                                        <!-- Los items del carrito se agregarán aquí dinámicamente -->
+                                        <li class="py-6 flex justify-center">
+                                            <p class="text-gray-500">Tu carrito está vacío</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-200 py-6 px-4 sm:px-6">
+                            <div class="flex justify-between text-base font-medium text-gray-900 mb-4">
+                                <p>Subtotal</p>
+                                <p id="subtotal"><span id="cartSubtotal">$0.00</span></p>
+                            </div>
+                            <div class="flex justify-between text-sm text-gray-500 mb-4">
+                                <p>Envío</p>
+                                <p id="shippingCost">Calculado al finalizar</p>
+                            </div>
+                            <div class="flex justify-between text-lg font-bold text-gray-900 mb-6">
+                                <p>Total</p>
+                                <p id="total"><span id="cartTotal">$0.00</span></p>
+                            </div>
+                            <a href="{{ url_for('check') }}" id="checkoutButton" class="flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                                Finalizar compra
+                            </a>
+                            <p class="mt-6 flex justify-center text-sm text-gray-500">
+                                o
+                                <button type="button" id="continueShoppingButton" class="text-indigo-600 font-medium ml-1" onclick="toggleCart()">
+                                    Continuar comprando
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% block content %}
+    <div class="container mx-auto px-6 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white rounded-lg shadow-lg p-8">
+            
+            <!-- Imagen -->
+            <div class="swiper mySwiper w-full max-w-xl rounded-lg shadow-lg">
+                <div class="swiper-wrapper">
+                    {% for img in product.imagenes %}
+                    <div class="swiper-slide">
+                    <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" 
+                        alt="{{ product.nombre }}"
+                        class="w-full h-96 object-cover rounded-lg">
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Botones de navegación -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <!-- Paginación -->
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <!-- Info -->
+            <div class="flex flex-col justify-between">
+            <!-- Título y descripción -->
+            <div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ product.nombre }}</h1>
+                <p class="text-gray-700 leading-relaxed mb-6">
+                {{ product.descripcion }}
+                </p>
+
+                <p class="text-3xl font-semibold text-indigo-600 mb-6">
+                {{ product.precio|ars }}
+                </p>
+            </div>
+
+            <!-- Cantidad + botón -->
+            <div class="flex items-center gap-4">
+                <label for="qty-{{ product.id }}" class="font-medium">Cantidad:</label>
+                <input id="qty-{{ product.id }}" type="number" value="1" min="1"
+                    class="w-20 border rounded-lg text-center px-2 py-1 focus:ring-2 focus:ring-indigo-500">
+
+                <button type="button" 
+                    class="flex-1 bg-indigo-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-indigo-700 transition"
+                    data-id="{{ product.id }}"
+                    data-name="{{ product.nombre }}"
+                    data-price="{{ product.precio }}"
+                    onclick="addToCart(this)">
+                🛒 Agregar al carrito
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="lightboxModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+        <span id="closeLightbox" class="absolute top-4 right-6 text-white text-3xl cursor-pointer">&times;</span>
+        
+        <div class="swiper lightboxSwiper w-full max-w-3xl h-100">
+            <div class="swiper-wrapper">
+                {% for img in product.imagenes %}
+                <div class="swiper-slide flex items-center justify-center">
+                    <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" 
+                        class="max-h-full max-w-full rounded-lg shadow-lg" alt="{{ product.nombre }}">
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Botones de navegación -->
+            <div class="swiper-button-next text-white"></div>
+            <div class="swiper-button-prev text-white"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+        </div>
+    </div>
+    <footer class="bg-gray-900 text-gray-300 py-14 mt-12">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            
+            <!-- Logo y descripción -->
+            <div>
+                <h2 class="text-xl font-bold text-white mb-3">NewImage</h2>
+                <p class="text-sm">
+                    Equipos de Pilates y accesorios de la mejor calidad. 
+                    Innovación y confianza para tu entrenamiento.
+                </p>
+            </div>
+
+            <!-- Links rápidos -->
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-3">Enlaces rápidos</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="{{ url_for('index') }}" class="hover:text-white">Inicio</a></li>
+                    <li><a href="{{ url_for('shop') }}" class="hover:text-white">Productos</a></li>
+                    <li><a href="#about" class="hover:text-white">Nosotros</a></li>
+                    <li><a href="#contact" class="hover:text-white">Contacto</a></li>
+                </ul>
+            </div>
+
+            <!-- Contacto -->
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-3">Contacto</h3>
+                <ul class="space-y-2 text-sm">
+                    <li>📍 Cordoba, Argentina</li>
+                    <li>📞 +54 9 351 319-9729</li>
+                    <li>✉️ contacto@newimage.com</li>
+                </ul>
+            </div>
+
+            <!-- Redes sociales -->
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-3">Seguinos</h3>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white text-2xl">
+                    <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white text-2xl">
+                    <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Línea inferior -->
+        <div class="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-500">
+            © 2025 NewImage. Todos los derechos reservados.
+        </div>
+    </footer>
+<script>
+function addToCart(button) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const id = parseInt(button.dataset.id);
+    const name = button.dataset.name;
+    const price = parseFloat(button.dataset.price);
+
+    // Buscar input asociado al producto
+    let qtyInput = document.getElementById(`qty-${id}`);
+    let qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+
+    console.log('Producto ID:', id, 'Cantidad seleccionada:', qty);
+
+    let existing = cart.find(p => p.id === id);
+    if (existing) {
+        existing.quantity += qty;
+    } else {
+        cart.push({ id, name, price, quantity: qty });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCart();
+    alert(`${name} agregado al carrito (${qty} unidad/es)`);
+}
+//Mostar carrito
+function toggleCart() {
+    const cartModal = document.getElementById('cartModal');
+    if (cartModal) {
+        cartModal.classList.toggle('hidden');
+    }
+}
+
+// Actualizar carrito
+function updateCart() {
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    // Actualizar badge del carrito
+    const cartCount = document.getElementById("cartCount");
+    if (cartCount) {
+        cartCount.textContent = cart.reduce((t, item) => t + item.quantity, 0);
+    }
+
+    // Renderizar lista de productos
+    const cartItemsContainer = document.getElementById("cartItems");
+    if (cartItemsContainer) {
+        cartItemsContainer.innerHTML = "";
+
+        cart.forEach(item => {
+            const li = document.createElement("li");
+            li.className = "flex justify-between items-center border-b py-2";
+
+            li.innerHTML = `
+                <div>
+                  <span class="font-semibold">${item.name}</span>
+                  <div class="text-sm text-gray-500">
+                    $${item.price.toFixed(2)} x 
+                    <input type="number" min="1" value="${item.quantity}" 
+                        class="w-12 border rounded text-center" 
+                        onchange="updateQuantity(${item.id}, this.value)">
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold">$${(item.price * item.quantity).toFixed(2)}</span>
+                  <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700">❌</button>
+                </div>
+            `;
+            cartItemsContainer.appendChild(li);
+        });
+    }
+
+    updateTotals();
+}
+
+
+const swiper = new Swiper(".mySwiper", {
+loop: true,
+spaceBetween: 20,
+pagination: {
+el: ".swiper-pagination",
+    clickable: true,
+},
+navigation: {
+  nextEl: ".swiper-button-next",
+  prevEl: ".swiper-button-prev",
+},
+});
+
+
+
+const swiperImages = document.querySelectorAll('.swiper-slide img');
+const lightboxModal = document.getElementById('lightboxModal');
+const closeLightbox = document.getElementById('closeLightbox');
+
+// Inicializamos Swiper para el modal
+let lightboxSwiper;
+
+swiperImages.forEach((img, index) => {
+    img.addEventListener('click', () => {
+        lightboxModal.classList.remove('hidden');
+
+        // Inicializamos o actualizamos Swiper
+        if (!lightboxSwiper) {
+            lightboxSwiper = new Swiper('.lightboxSwiper', {
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                initialSlide: index  // Empezar en la imagen clickeada
+            });
+        } else {
+            lightboxSwiper.slideTo(index, 0);
+        }
+    });
+});
+
+    // Cerrar modal
+    closeLightbox.addEventListener('click', () => {
+        lightboxModal.classList.add('hidden');
+    });
+
+    lightboxModal.addEventListener('click', (e) => {
+        if (e.target === lightboxModal) {
+            lightboxModal.classList.add('hidden');
+        }
+    });
+
+
+
+
+
+
+
+</script>
+<script src="../static/Shop.js" defer></script>
+{% endblock %}

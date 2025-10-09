@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewImage</title>
+    <meta name="description" content="Tienda especializada en máquinas de pilates profesionales. Reformers, sillas, barriles y accesorios de las mejores marcas.">
+    <meta name="keywords" content="máquinas pilates, reformer pilates, equipo pilates, estudio pilates, accesorios pilates">
+    <meta name="author" content="PilatesPro">
+    <link rel="stylesheet" href="/static/style-Main.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagenes/Logo.png') }}">
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/index.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="sticky-nav">
+        <div class="container">
+            <div class="nav-content">
+                <a href="{{ url_for('index') }}" class="logo" >
+                    <img src="{{ url_for('static', filename='imagenes/Logo.png') }}" alt="Logo PilatesPro" class="logo-img">
+                    <span class="logo-text">NewImage</span>
+                </a>
+                
+                <div class="desktop-menu">
+                    <a href="{{ url_for('index') }}">Inicio</a>
+                    <a href="{{ url_for('shop') }}">Productos</a>
+                    <a href="{{ url_for('repuestos') }}">Repuestos</a>
+                    <a href="#" onclick="showSection('contact')">Contacto</a>
+                </div>
+               <div class="nav-actions">
+                    {% if user %}
+                        {% if user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Panel Admin</a>
+                        {% endif %}
+                        <button id="account-btn" class="btn btn-secondary">{{ user.username }}</button>
+                        <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
+                            <button id="logout-btn" class="btn btn-gray">Cerrar sesión</button>
+                        </form>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">Iniciar sesión</a>
+                    {% endif %}
+                </div>
+
+
+            </div>
+        </div>
+    </nav>
+
+                
+    <!-- Mobile menu -->
+   <div class="mobile-menu">
+        <div class="mobile-menu-links">
+            <a href="{{ url_for('index') }}" onclick="showSection('home')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="mobile-menu-label">Inicio</span>
+            </a>
+            <a href="{{ url_for('shop') }}" onclick="showSection('products')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <span class="mobile-menu-label">Productos</span>
+            </a>
+            <a href="/templates/CheckOut.html" onclick="showSection('cart')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span class="mobile-menu-label">Repuestos</span>
+            </a>
+            <a href="{{ url_for('repuestos') }}" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="mobile-menu-label">Cuenta</span>
+            </a>
+        </div>
+    </div>
+
+{% block content %}
+<main class="container mx-auto px-24 py-8">
+    <h1 class="text-3xl font-bold text-center mb-8">Panel de Administración</h1>
+
+    <p class="text-sm text-gray-500">Dólar blue actual: 
+    <span id="dolarValue" class="font-semibold"></span>
+    </p>
+
+    <div class="flex justify-end gap-3 mb-6">
+        <a href="{{ url_for('admin_dashboard', filtro='todos') }}"
+        class="px-4 py-2 rounded-lg font-semibold 
+                {% if filtro == 'todos' %}bg-indigo-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
+            Todos
+        </a>
+
+        <a href="{{ url_for('admin_dashboard', filtro='principal') }}"
+        class="px-4 py-2 rounded-lg font-semibold 
+                {% if filtro == 'principal' %}bg-indigo-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
+            Productos
+        </a>
+
+        <a href="{{ url_for('admin_dashboard', filtro='repuestos') }}"
+        class="px-4 py-2 rounded-lg font-semibold 
+                {% if filtro == 'repuestos' %}bg-indigo-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
+            Repuestos
+        </a>
+    </div>
+
+    <!-- Botón agregar producto -->
+    <div class="mb-3 flex justify-end">
+        <a href="{{ url_for('new_product') }}" class="btn btn-primary">➕ Agregar producto</a>
+    </div>
+
+    <!-- Tabla de productos -->
+    <div class="overflow-x-auto bg-white rounded-lg shadow">
+        <table class="min-w-full text-left">
+            <thead class="bg-gray-900 border-b text-gray-100">
+                <tr>
+                    <th class="py-3 px-4">ID</th>
+                    <th class="py-3 px-4">Nombre</th>
+                    <th class="py-3 px-4">Precio</th>
+                    <th class="py-3 px-4">Stock</th>
+                    <th class="py-3 px-4">Imagen</th>
+                    <th class="py-3 px-4">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr class="bg-gray-300 border-b hover:bg-green-200">
+                    <td class="py-3 px-4">{{ product.id }}</td>
+                    <td class="py-3 px-4">{{ product.nombre }}</td>
+                    <td class="py-3 px-4">${{ "%.2f"|format(product.precio) }}</td>
+                    <td class="py-3 px-4">{{ product.stock }}</td>
+                    <td>
+                        {% if product.imagenes %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ product.imagenes[0].filename) }}" alt="{{ product.nombre }}" width="90">
+                        {% endif %}
+                    </td>
+                    <td class="py-3 px-4 flex gap-2">
+                        <a href="{{ url_for('edit_product', product_id=product.id) }}" 
+                           class="btn btn-gray">✏️ Editar</a>
+                        <form action="{{ url_for('delete_product', product_id=product.id) }}" 
+                              method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-gray"
+                                    onclick="return confirm('¿Seguro que quieres eliminar este producto?');">
+                                🗑️ Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="../static/Shop.js" defer></script>
+    <script>
+        async function showDolarInAdmin() {
+            const res = await fetch("https://api.bluelytics.com.ar/v2/latest");
+            const data = await res.json();
+            document.getElementById("dolarValue").textContent =
+            `$${data.blue.value_avg.toFixed(2)} ARS`;
+        }
+        showDolarInAdmin();
+    </script>
+</main>
+{% endblock %}
+

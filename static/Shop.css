@@ -1,0 +1,307 @@
+/* styles.css */
+:root {
+    --primary: #4CC9A6;
+    --primary-dark: #4CC9A6;
+    --secondary: #F4D65E;
+    --dark: #1f2937;
+    --light: #f3f4f6;
+}
+
+/* Base Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9fafb;
+    color: var(--dark);
+    margin: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Navbar Styles */
+.sticky-nav {
+    position: sticky;
+    top: 0;
+    background-color: var(--dark);
+    backdrop-filter: blur(10px);
+    border-bottom: 0px solid #000000;
+    z-index: 100;
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 64px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo-img {
+    height: 32px;
+    width: 32px;
+    margin-right: 8px;
+}
+
+.logo-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color:white;
+}
+
+.desktop-menu a {
+    margin: 0 12px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color:#ffffff;
+    font-weight: 500;
+}
+
+.desktop-menu a:hover {
+    color: var(--primary);
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+}
+
+
+.cart-btn {
+    position: relative;
+    padding: 8px;
+    color: #ffffff;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background-color: var(--primary);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 9999px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-btn{
+    min-width: 120px; /* se ajusta al nombre */
+    white-space: nowrap; /* evita que se corte en dos líneas */
+    padding: 8px 15px;
+}
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--dark);
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+    background-color: #d1fae5;
+    color: var(--primary-dark);
+    border: none;
+    margin-right: 6px;
+    margin-left: 6px;
+}
+
+.btn-white{
+    border: 2px solid var(--dark);
+    background-color: var(--dark);
+    color: var(--primary);
+    font-size: large;
+
+}
+.btn-gray{
+    background-color: var(--primary);
+    color: var(--dark);
+    border: none;
+}
+.btn-outline-white {
+    border: 2px solid var(--dark);
+    background: transparent;
+    color: var(--dark);
+    font-size: large;
+}
+
+.btn-outline-white:hover {
+    background: var(--dark);
+    color: var(--primary);
+}
+
+/* Responsive Styles */
+
+.mobile-menu {
+        display: none;
+    }
+@media (max-width: 1024px) {
+    .hero-content {
+        flex-direction: column;
+    }
+    
+    .features-grid,
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 768px) {
+    .desktop-menu {
+        display: none;
+    }
+    
+    .mobile-menu {
+        display: block;
+    }
+    
+    .features-grid,
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-text{
+        margin-left: 5%;
+    }
+    .hero-actions{
+        margin-left: -23%;
+    }
+    .hero-image{
+        margin-left: 8%;        
+    }
+}
+
+.mobile-menu {
+    background-color: rgb(39, 39, 39);
+    border-bottom: 0px solid #e5e7eb;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 50;
+}
+
+/* Estilos modo oscuro */
+body.dark .mobile-menu {
+    background-color: #111827;
+    border-bottom: 1px solid #1f2937;
+}
+
+/* Contenedor de los enlaces */
+.mobile-menu-links {
+    display: flex;
+    justify-content: space-around;
+    padding: 0.5rem 0;
+}
+
+/* Cada ítem del menú */
+.mobile-menu-item {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: color 0.3s ease;
+}
+
+/* Hover en modo claro */
+.mobile-menu-item:hover {
+    color: #059669;
+}
+
+/* Modo oscuro */
+body.dark .mobile-menu-item {
+    color: #d1d5db;
+}
+
+body.dark .mobile-menu-item:hover {
+    color: #34d399;
+}
+
+/* Iconos */
+.mobile-menu-icon {
+    height: 1.25rem;
+    width: 1.25rem;
+}
+
+/* Texto debajo de los iconos */
+.mobile-menu-label {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.hidden{
+    display: none;
+}
+
+/* Estilos de la tienda */
+.main_content{
+    max-width: 70%;
+    background-color: #374151;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.cart-item:hover {
+    background-color: rgba(0,0,0,0.02);
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    transition: all 0.3s;
+}
+
+.checkout-step {
+    transition: all 0.3s;
+}
+.checkout-step.active {
+    border-left: 4px solid var(--secondary);
+    background-color: rgba(52, 152, 219, 0.1);
+}
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+.accordion-toggle:checked ~ .accordion-content {
+    max-height: 500px;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-in;
+}
+
+
+

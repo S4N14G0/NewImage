@@ -1,0 +1,35 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+<div class="swiper mySwiper w-full max-w-xl rounded-lg shadow-lg">
+  <div class="swiper-wrapper">
+    {% for img in product.imagenes %}
+    <div class="swiper-slide">
+      <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" 
+           alt="{{ product.nombre }}"
+           class="w-full h-96 object-cover rounded-lg">
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Botones de navegación -->
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  <!-- Paginación -->
+  <div class="swiper-pagination"></div>
+</div>
+
+<script>
+  const swiper = new Swiper(".mySwiper", {
+    loop: true,
+    spaceBetween: 20,
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });
+</script>

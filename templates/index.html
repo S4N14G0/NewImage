@@ -1,0 +1,308 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewImage</title>
+    <meta name="description" content="Tienda especializada en máquinas de pilates profesionales. Reformers, sillas, barriles y accesorios de las mejores marcas.">
+    <meta name="keywords" content="máquinas pilates, reformer pilates, equipo pilates, estudio pilates, accesorios pilates">
+    <meta name="author" content="PilatesPro">
+    <link rel="stylesheet" href="/static/style-Main.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagenes/Logo.png') }}">
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/index.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="sticky-nav">
+        <div class="container">
+            <div class="nav-content">
+                <a href="{{ url_for('index') }}" class="logo" >
+                    <img src="{{ url_for('static', filename='imagenes/Logo.png') }}" alt="Logo PilatesPro" class="logo-img">
+                    <span class="logo-text">NewImage</span>
+                </a>
+                
+                <div class="desktop-menu">
+                    <a href="{{ url_for('index') }}">Inicio</a>
+                    <a href="{{ url_for('shop') }}">Productos</a>
+                    <a href="{{ url_for('repuestos') }}">Repuestos</a>
+                    <a href="#" onclick="showSection('contact')">Contacto</a>
+                </div>
+               <div class="nav-actions">
+                    {% if user %}
+                        {% if user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Panel Admin</a>
+                        {% endif %}
+                        <button id="account-btn" class="btn btn-secondary">{{ user.username }}</button>
+                        <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
+                            <button id="logout-btn" class="btn btn-gray">Cerrar sesión</button>
+                        </form>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">Iniciar sesión</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+                
+    <!-- Mobile menu -->
+   <div class="mobile-menu">
+        <div class="mobile-menu-links">
+            <a href="{{ url_for('index') }}" onclick="showSection('home')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="mobile-menu-label">Inicio</span>
+            </a>
+            <a href="{{ url_for('shop') }}" onclick="showSection('products')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <span class="mobile-menu-label">Productos</span>
+            </a>
+            <a href="{{ url_for('repuestos') }}" onclick="showSection('cart')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span class="mobile-menu-label">Repuestos</span>
+            </a>
+            <a href="{{ url_for('repuestos') }}" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="mobile-menu-label">Cuenta</span>
+            </a>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section -->
+        <section id="home-section" class="section">
+            <!-- Hero Section -->
+            <div class="hero">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1>Equipamiento profesional para pilates</h1>
+                        <p>Máquinas, accesorios y asesoramiento para profesionales del pilates.</p>
+                        <div class="hero-actions">
+                            <button class="btn btn-white" >
+                                <a href="{{ url_for('shop') }}" class="btn btn-white txt">
+                                    Ver productos
+                                </a>
+
+                            </button>
+                            <button onclick="showSection('contact')" class="btn btn-outline-white">
+                                Nuestras redes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <img src="{{ url_for('static', filename='imagenes/15Años.jpg') }}" alt="Estudio de pilates profesional">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="features">
+                <div class="section-header">
+                    <h2>Por qué elegir NewImagen</h2>
+                    <p>Equipamiento de calidad profesional y asesoramiento especializado</p>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                            </svg>
+                        </div>
+                        <h3>Materiales premium</h3>
+                        <p>Utilizamos acero, madera y tapizados de primera calidad para máxima durabilidad.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7l9 6 9-6-9-6-9 6zm0 8l9 6 9-6" />
+                            </svg>
+                        </div>
+                        <h3>Hecho en Argentina</h3>
+                        <p>Equipos fabricados localmente con materiales de alta calidad y terminaciones profesionales.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 8a6 6 0 11-12 0 6 6 0 0112 0zm-6 8v6" />
+                            </svg>
+                        </div>
+                        <h3>Soporte postventa</h3>
+                        <p>Asistencia para el correcto uso y mantenimiento de tus equipos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Showcase -->
+            <div class="products-showcase">
+                <div class="section-header">
+                    <h2>Productos destacados</h2>
+                    <p>Los equipos más populares entre nuestros clientes</p>
+                </div>
+                
+                <div class="products-grid">
+                    <!-- Product cards -->
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="{{ url_for('static', filename='imagenes/trapecio reformer.png') }}" alt="Reformer Allegro 2">
+                                <span class="product-badge">NUEVO</span>
+                            </div>
+                            <div class="product-details">
+                                <h3>Medio trapecio para reformer</h3>
+                                <p class="product-price">Consultar disponibilidad</p>
+                                <p class="product-description">Es un equipo versátil derivado del Trapecio o Cadillac, que incrementa sus posibilidades sumando a un Reformer el rango de movimiento de un medio Trapecio.</p>
+                                <div class="product-actions">
+                                    <button onclick="addToCart(1)" class="btn btn-sm btn-primary">
+                                        Añadir al carrito
+                                    </button>
+                                    <button onclick="showProductDetails(1)" class="btn btn-text">
+                                        Ver detalles
+                                    </button>
+                                </div>
+                           </div>
+                       </div>
+
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="{{ url_for('static', filename='imagenes/reformer metalico.png') }}" alt="Reformer Allegro 2">
+                                <span class="product-badge">DESTACADO</span>
+                            </div>
+                            <div class="product-details">
+                                <h3>Reformer metalico</h3>
+                                <p class="product-price">Consultar disponibilidad</p>
+                                <p class="product-description">✅ 1° cambio: plataforma de madera de mayor tamaño, 18 cm. (Ver fotos) <br>
+                                    ✅ 2° cambio: modificación en la traba de barra y hasta 4 posiciones, logrando así  mayor seguridad en la barra, evitando que está misma se pueda salir de su anclaje por algún error al operarla. (Ver fotos) <br>
+                                    ✅ 3°cambio: mayor cantidad de ranuras para modificar la posición del ancla movil (ver fotos) <br>
+                                    <div class="product-actions">
+                                    <button onclick="addToCart(2)" class="btn btn-sm btn-primary">
+                                        Añadir al carrito
+                                    </button>
+                                    <button onclick="showProductDetails(2)" class="btn btn-text">
+                                        Ver detalles
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="{{ url_for('static', filename='imagenes/cinta-abdominal.png') }}" alt="Reformer Allegro 2">
+                            <span class="product-badge">Accesorios</span>
+                        </div>
+                        <div class="product-details">
+                            <h3>Cinta abdominal</h3>
+                            <p class="product-price">Consultar disponibilidad</p>
+                            <p class="product-description">👉 Precio por unidad. <br>
+                                👉 Largo total 50 cm</p>
+                            <div class="product-actions">
+                                <button onclick="addToCart(3)" class="btn btn-sm btn-primary">
+                                    Añadir al carrito
+                                </button>
+                                <button onclick="showProductDetails(3)" class="btn btn-text">
+                                    Ver detalles
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="contact">
+                <div class="contact-header">
+                    <h1>Si quieres mas informacion</h1>
+                    <h2>Contactate directamente via Whatsapp o atravez de nuestras redes</h2>
+                    <span id="telefono" class="telefono">
+                        <img src="{{ url_for('static', filename='imagenes/telefono.png') }}" alt="" class="img-tel">
+                        <h1>+54 9 351 319-9729</h1>
+                    </span>
+                    <a href="https://wa.me/5493513199729">
+                        <button class="button2">
+                            WhatsApp
+                            <svg viewBox="0 0 48 48" y="0px" x="0px" xmlns="http://www.w3.org/2000/svg" >
+                                <path d="M4.868,43.303l2.694-9.835C5.9,30.59,5.026,27.324,5.027,23.979C5.032,13.514,13.548,5,24.014,5c5.079,0.002,9.845,1.979,13.43,5.566c3.584,3.588,5.558,8.356,5.556,13.428c-0.004,10.465-8.522,18.98-18.986,18.98c-0.001,0,0,0,0,0h-0.008c-3.177-0.001-6.3-0.798-9.073-2.311L4.868,43.303z" fill="#fff"></path><path d="M4.868,43.803c-0.132,0-0.26-0.052-0.355-0.148c-0.125-0.127-0.174-0.312-0.127-0.483l2.639-9.636c-1.636-2.906-2.499-6.206-2.497-9.556C4.532,13.238,13.273,4.5,24.014,4.5c5.21,0.002,10.105,2.031,13.784,5.713c3.679,3.683,5.704,8.577,5.702,13.781c-0.004,10.741-8.746,19.48-19.486,19.48c-3.189-0.001-6.344-0.788-9.144-2.277l-9.875,2.589C4.953,43.798,4.911,43.803,4.868,43.803z" fill="#fff"></path><path d="M24.014,5c5.079,0.002,9.845,1.979,13.43,5.566c3.584,3.588,5.558,8.356,5.556,13.428c-0.004,10.465-8.522,18.98-18.986,18.98h-0.008c-3.177-0.001-6.3-0.798-9.073-2.311L4.868,43.303l2.694-9.835C5.9,30.59,5.026,27.324,5.027,23.979C5.032,13.514,13.548,5,24.014,5 M24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974 M24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974 M24.014,4C24.014,4,24.014,4,24.014,4C12.998,4,4.032,12.962,4.027,23.979c-0.001,3.367,0.849,6.685,2.461,9.622l-2.585,9.439c-0.094,0.345,0.002,0.713,0.254,0.967c0.19,0.192,0.447,0.297,0.711,0.297c0.085,0,0.17-0.011,0.254-0.033l9.687-2.54c2.828,1.468,5.998,2.243,9.197,2.244c11.024,0,19.99-8.963,19.995-19.98c0.002-5.339-2.075-10.359-5.848-14.135C34.378,6.083,29.357,4.002,24.014,4L24.014,4z" fill="#cfd8dc"></path><path d="M35.176,12.832c-2.98-2.982-6.941-4.625-11.157-4.626c-8.704,0-15.783,7.076-15.787,15.774c-0.001,2.981,0.833,5.883,2.413,8.396l0.376,0.597l-1.595,5.821l5.973-1.566l0.577,0.342c2.422,1.438,5.2,2.198,8.032,2.199h0.006c8.698,0,15.777-7.077,15.78-15.776C39.795,19.778,38.156,15.814,35.176,12.832z" fill="#40c351"></path><path clip-rule="evenodd" d="M19.268,16.045c-0.355-0.79-0.729-0.806-1.068-0.82c-0.277-0.012-0.593-0.011-0.909-0.011c-0.316,0-0.83,0.119-1.265,0.594c-0.435,0.475-1.661,1.622-1.661,3.956c0,2.334,1.7,4.59,1.937,4.906c0.237,0.316,3.282,5.259,8.104,7.161c4.007,1.58,4.823,1.266,5.693,1.187c0.87-0.079,2.807-1.147,3.202-2.255c0.395-1.108,0.395-2.057,0.277-2.255c-0.119-0.198-0.435-0.316-0.909-0.554s-2.807-1.385-3.242-1.543c-0.435-0.158-0.751-0.237-1.068,0.238c-0.316,0.474-1.225,1.543-1.502,1.859c-0.277,0.317-0.554,0.357-1.028,0.119c-0.474-0.238-2.002-0.738-3.815-2.354c-1.41-1.257-2.362-2.81-2.639-3.285c-0.277-0.474-0.03-0.731,0.208-0.968c0.213-0.213,0.474-0.554,0.712-0.831c0.237-0.277,0.316-0.475,0.474-0.791c0.158-0.317,0.079-0.594-0.04-0.831C20.612,19.329,19.69,16.983,19.268,16.045z" fill-rule="evenodd" fill="#fff"></path>
+                            </svg>
+                        </button>
+                    </a>
+                    <a href="https://instagram.com/tu_usuario" target="_blank">
+                        <button class="button2 instagram">
+                            Instagram
+                            <img src="{{ url_for('static', filename='imagenes/instagram-logo.png') }}" alt="instagram logo" class="insta_png">
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <footer class="bg-gray-900 text-gray-300 py-10 mt-4">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            
+            <!-- Logo y descripción -->
+            <div>
+            <h2 class="text-xl font-bold text-white mb-3">NewImage</h2>
+            <p class="text-sm">
+                Equipos de Pilates y accesorios de la mejor calidad. 
+                Innovación y confianza para tu entrenamiento.
+            </p>
+            </div>
+
+            <!-- Links rápidos -->
+            <div>
+            <h3 class="text-lg font-semibold text-white mb-3">Enlaces rápidos</h3>
+            <ul class="space-y-2 text-sm">
+                <li><a href="{{ url_for('index') }}" class="hover:text-white">Inicio</a></li>
+                <li><a href="{{ url_for('shop') }}" class="hover:text-white">Productos</a></li>
+                <li><a href="#about" class="hover:text-white">Nosotros</a></li>
+                <li><a href="#contact" class="hover:text-white">Contacto</a></li>
+            </ul>
+            </div>
+
+            <!-- Contacto -->
+            <div>
+            <h3 class="text-lg font-semibold text-white mb-3">Contacto</h3>
+            <ul class="space-y-2 text-sm">
+                <li>📍 Cordoba, Argentina</li>
+                <li>📞 +54 9 351 319-9729</li>
+                <li>✉️ contacto@newimage.com</li>
+            </ul>
+            </div>
+
+            <!-- Redes sociales -->
+            <div>
+            <h3 class="text-lg font-semibold text-white mb-3">Seguinos</h3>
+            <div class="flex space-x-4">
+                <a href="#" class="text-gray-400 hover:text-white text-2xl">
+                <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://wa.me/5493513199729" class="text-gray-400 hover:text-white text-2xl">
+                <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+            </div>
+
+        </div>
+
+        <!-- Línea inferior -->
+        <div class="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-500">
+            © 2025 NewImage. Todos los derechos reservados.
+        </div>
+        </footer>
+    </main>
+</body>
+</html>
+
+

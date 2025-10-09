@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewImage</title>
+    <link rel="stylesheet" href="../static/Login-SignUp.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagenes/Logo.png') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <nav class="sticky-nav">
+        <div class="container">
+            <div class="nav-content">
+                <a href="#" class="logo1">
+                    <img src="{{ url_for('static', filename='imagenes/Logo.png') }}" alt="Logo PilatesPro" class="logo-img">
+                    <span class="logo-text">NewImage</span>
+                </a>
+                <div class="desktop-menu">
+                    <a href="{{ url_for('index') }}">Inicio</a>
+                    <a href="{{ url_for('shop') }}">Productos</a>
+                    <a href="#" onclick="showSection('about')">Repuestos</a>
+                    <a href="#" onclick="showSection('contact')">Contacto</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+   <div class="mobile-menu">
+        <div class="mobile-menu-links">
+            <a href="{{ url_for('index') }}" onclick="showSection('home')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="mobile-menu-label">Inicio</span>
+            </a>
+            <a href="{{ url_for('shop') }}" onclick="showSection('products')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <span class="mobile-menu-label">Productos</span>
+            </a>
+            <a href="/templates/CheckOut.html" onclick="showSection('cart')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span class="mobile-menu-label">Carrito</span>
+            </a>
+            <a href="#" onclick="showSection(userLoggedIn ? 'account' : 'login')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="mobile-menu-label">Cuenta</span>
+            </a>
+        </div>
+    </div>
+    <div class="auth-container">
+        <!-- Sección de autenticación -->
+        <div id="authSection">
+            <div class="logo-section">
+                    <div class="logo">
+                      <img src="{{ url_for('static', filename='imagenes/Logo.png') }}" alt="Logo PilatesPro" class="logo-img" id="Logo2">
+                    </div>
+                    <h1 class="welcome-text">Bienvenido</h1>
+                    <p class="subtitle">Accede a tu cuenta o crea una nueva</p>
+            </div>
+
+            <div class="tab-container">
+                <div class="tab active" onclick="switchTab('login')">Iniciar Sesión</div>
+                <div class="tab"  onclick="switchTab('signup')">Registrarse</div>
+            </div>
+        </div>
+   
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="messages">
+      {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- Formulario de Login -->
+<div class="form-container">
+    <form class="form active" id="loginForm" action="{{ url_for('login') }}" method="POST">
+        <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="loginEmail" name="email" placeholder="tu@email.com" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <div style="position: relative;">
+                <input type="password" class="form-input" id="loginPassword" name="password" placeholder="Tu contraseña" required>
+                <span class="password-toggle" onclick="togglePassword('loginPassword')">👁</span>
+            </div>
+        </div>
+
+        <button type="submit" class="form-button">
+            <span class="button-text">Iniciar Sesión</span>
+        </button>
+    </form>
+
+    <!-- Formulario de Registro -->
+    <form class="form" id="signupForm" action="{{ url_for('signup') }}" method="POST">
+        <div class="form-group">
+            <label class="form-label">Nombre completo</label>
+            <input type="text" class="form-input" id="signupName" name="username" placeholder="Tu nombre completo" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="signupEmail" name="email" placeholder="tu@email.com" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <div style="position: relative;">
+                <input type="password" class="form-input" id="signupPassword" name="password" placeholder="Mínimo 8 caracteres" required>
+                <span class="password-toggle" onclick="togglePassword('signupPassword')">👁</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Confirmar contraseña</label>
+            <div style="position: relative;">
+                <input type="password" class="form-input" id="confirmPassword" name="confirm_password" placeholder="Repite tu contraseña" required>
+                <span class="password-toggle" onclick="togglePassword('confirmPassword')">👁</span>
+            </div>
+        </div>
+
+        <button type="submit" class="form-button">
+            <span class="button-text">Crear Cuenta</span>
+        </button>
+    </form>
+</div>
+
+        <div class="divider">
+            <span>o continúa con</span>
+        </div>
+
+        <div class="social-buttons">
+            <button class="social-btn" onclick="socialLogin('google')">
+                Google
+            </button>
+            <button class="social-btn" onclick="socialLogin('facebook')">
+                Facebook
+            </button>
+        </div>
+    </div>
+
+    <!-- Dashboard del usuario -->
+    <div class="dashboard" id="dashboard">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <div class="user-info">
+            <div class="user-name" id="userName">Usuario</div>
+            <div class="user-email" id="userEmail">usuario@email.com</div>
+        </div>
+        <p style="color: #666; margin-bottom: 30px;">¡Bienvenido a tu panel de control!</p>
+        <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+    </div>
+</div>
+    <script src="../static/SignUp-Loging.js"></script>
+
+
+</body>
+
+</html>
+
+
+
+
