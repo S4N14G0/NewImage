@@ -175,8 +175,14 @@
                 </p>
 
                 <p class="text-3xl font-semibold text-indigo-600 mb-6">
-                {{ product.precio|ars }}
+                    ${{ "%.2f"|format(product.precio * dolar) | formato_pesos }}
                 </p>
+                {% if product.observacion %}
+                    <p class="text-base text-yellow-600 font-medium mt-2">
+                        ⚠️ {{ product.observacion }}
+                    </p>
+                {% endif %}
+
             </div>
 
             <!-- Cantidad + botón -->
@@ -184,15 +190,26 @@
                 <label for="qty-{{ product.id }}" class="font-medium">Cantidad:</label>
                 <input id="qty-{{ product.id }}" type="number" value="1" min="1"
                     class="w-20 border rounded-lg text-center px-2 py-1 focus:ring-2 focus:ring-indigo-500">
-
-                <button type="button" 
-                    class="flex-1 bg-indigo-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-indigo-700 transition"
-                    data-id="{{ product.id }}"
-                    data-name="{{ product.nombre }}"
-                    data-price="{{ product.precio }}"
-                    onclick="addToCart(this)">
-                🛒 Agregar al carrito
-                </button>
+                {% if not ventas_activas %}
+                    <div class="text-center bg-red-100 text-red-700 p-4 rounded mb-4 font-semibold">
+                        🚫 Las ventas están actualmente desactivadas.
+                    </div>
+                {% else %}
+                    {% if product.stock > 0 %}
+                        <button type="button" 
+                            class="flex-1 bg-indigo-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-indigo-700 transition"
+                            data-id="{{ product.id }}"
+                            data-name="{{ product.nombre }}"
+                            data-price="{{ product.precio }}"
+                            onclick="addToCart(this)">
+                        🛒 Agregar al carrito
+                        </button>
+                    {% else %}
+                        <button class="btn bg-gray-400 text-white cursor-not-allowed" disabled>
+                            Sin stock
+                        </button>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
@@ -270,80 +287,15 @@
         </div>
     </footer>
 <script>
-function addToCart(button) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    const id = parseInt(button.dataset.id);
-    const name = button.dataset.name;
-    const price = parseFloat(button.dataset.price);
+    const dolarManual = {{ dolar | tojson }};
+    const products = {{ product | tojson | safe }};
+    renderProducts(products);
 
-    // Buscar input asociado al producto
-    let qtyInput = document.getElementById(`qty-${id}`);
-    let qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
-
-    console.log('Producto ID:', id, 'Cantidad seleccionada:', qty);
-
-    let existing = cart.find(p => p.id === id);
-    if (existing) {
-        existing.quantity += qty;
-    } else {
-        cart.push({ id, name, price, quantity: qty });
-    }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-    updateCart();
-    alert(`${name} agregado al carrito (${qty} unidad/es)`);
-}
-//Mostar carrito
-function toggleCart() {
-    const cartModal = document.getElementById('cartModal');
-    if (cartModal) {
-        cartModal.classList.toggle('hidden');
-    }
-}
-
-// Actualizar carrito
-function updateCart() {
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-    // Actualizar badge del carrito
-    const cartCount = document.getElementById("cartCount");
-    if (cartCount) {
-        cartCount.textContent = cart.reduce((t, item) => t + item.quantity, 0);
-    }
-
-    // Renderizar lista de productos
-    const cartItemsContainer = document.getElementById("cartItems");
-    if (cartItemsContainer) {
-        cartItemsContainer.innerHTML = "";
-
-        cart.forEach(item => {
-            const li = document.createElement("li");
-            li.className = "flex justify-between items-center border-b py-2";
-
-            li.innerHTML = `
-                <div>
-                  <span class="font-semibold">${item.name}</span>
-                  <div class="text-sm text-gray-500">
-                    $${item.price.toFixed(2)} x 
-                    <input type="number" min="1" value="${item.quantity}" 
-                        class="w-12 border rounded text-center" 
-                        onchange="updateQuantity(${item.id}, this.value)">
-                  </div>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span class="font-bold">$${(item.price * item.quantity).toFixed(2)}</span>
-                  <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700">❌</button>
-                </div>
-            `;
-            cartItemsContainer.appendChild(li);
-        });
-    }
-
-    updateTotals();
-}
-
-
+    // window.ventasHabilitadas = {{ ventas_activas | tojson | safe }};
+    // console.log("Ventas habilitadas:", window.ventasHabilitadas);
+</script>
+<script>
 const swiper = new Swiper(".mySwiper", {
 loop: true,
 spaceBetween: 20,
@@ -403,9 +355,7 @@ swiperImages.forEach((img, index) => {
 
 
 
-
-
-
 </script>
+
 <script src="../static/Shop.js" defer></script>
 {% endblock %}

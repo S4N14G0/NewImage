@@ -19,11 +19,15 @@ class Product(db.Model):
     en_stock = db.Column(db.Boolean, default=True)
     stock = db.Column(db.Integer, default=0)
     tipo = db.Column(db.String(50), default = "principal")
-
-    # Relación 1:N con imágenes
     imagenes = db.relationship("ProductImage", backref="product", lazy=True, cascade="all, delete-orphan")
+    activo = db.Column(db.Boolean, default=True)
+    observacion = db.Column(db.String(200), nullable=True)
 
-
+class Configuracion(db.Model):
+    id = db.Column(db.Integer, primary_key= True)
+    dolar_manual = db.Column(db.Float, nullable=False, default=1450)
+    ventas_activas = db.Column(db.Boolean, default=True)
+    
 class ProductImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(200), nullable=False)
@@ -34,6 +38,10 @@ class Order(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     total = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    cuenta_pago_id = db.Column(db.Integer, db.ForeignKey("cuenta_pago.id"))
+    estado_pago = db.Column(db.String(50), default="pendiente")
+
+    cuenta_pago = db.relationship("CuentaPago", backref="ordenes")
 
     items = db.relationship("OrderItem", backref="order", lazy=True)
 
@@ -44,3 +52,29 @@ class OrderItem(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)    
+    
+    
+class CuentaPago(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    banco = db.Column(db.String(100))
+    alias = db.Column(db.String(100))
+    cbu = db.Column(db.String(22))
+    email = db.Column(db.String(120))
+    public_key = db.Column(db.String(200))
+    access_token = db.Column(db.String(200))
+    activo = db.Column(db.Boolean, default=False)
+    
+    def __repr__(self):
+        return f"<CuentaPago {self.nombre}>"
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "email": self.email,
+            "banco": getattr(self, "banco", None),
+            "alias": getattr(self, "alias", None),
+            "cbu": getattr(self, "cbu", None),
+            "public_key": self.public_key,
+            "activo": self.activo
+        }

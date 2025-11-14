@@ -84,118 +84,71 @@
             </a>
         </div>
     </div>
- <!-- Main Content -->
+    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-0 py-12">
-        <!-- Tienda -->
-        <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Filtros -->
-            <div class="lg:w-1/4">
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="font-semibold text-lg mb-4">Filtrar por</h3>
-                    
-                    <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="category">
-                            Categoría
-                        </label>
-                        <div class="mt-2 space-y-2">
-                            <div class="flex items-center">
-                                <input id="category-all" name="category" type="radio" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" checked>
-                                <label for="category-all" class="ml-3 text-sm text-gray-700">Todas</label>
-                            </div>
-                            <div class="flex items-center">
-                                <input id="category-machines" name="category" type="radio" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
-                                <label for="category-machines" class="ml-3 text-sm text-gray-700">Máquinas</label>
-                            </div>
-                            <div class="flex items-center">
-                                <input id="category-accessories" name="category" type="radio" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
-                                <label for="category-accessories" class="ml-3 text-sm text-gray-700">Accesorios</label>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700 transition">
-                        Aplicar Filtros
-                    </button>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm mt-4">
-                    <h3 class="font-semibold text-lg mb-4">Destacados</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start">
-                            <img src="https://placehold.co/80x80" alt="Reformer de Pilates modelo Premium con detalles en madera" class="w-16 h-16 object-cover rounded">
-                            <div class="ml-3">
-                                <p class="text-sm font-medium">Reformer Premium</p>
-                                <p class="text-sm font-bold text-indigo-600">$1,890.00</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <img src="https://placehold.co/80x80" alt="Juego de bandas elásticas profesionales para Pilates" class="w-16 h-16 object-cover rounded">
-                            <div class="ml-3">
-                                <p class="text-sm font-medium">Banda Elástica Pro</p>
-                                <p class="text-sm font-bold text-indigo-600">$45.00</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <img src="https://placehold.co/80x80" alt="Asiento de repuesto para máquina de Pilates en cuero sintético negro" class="w-16 h-16 object-cover rounded">
-                            <div class="ml-3">
-                                <p class="text-sm font-medium">Asiento de Repuesto</p>
-                                <p class="text-sm font-bold text-indigo-600">$120.00</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-  <!-- Productos -->
-            <div class="lg:w-3/4">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Nuestros Productos</h2>
-                    <div class="flex items-center">
-                        <label for="sort" class="mr-2 text-sm text-gray-600">Ordenar por:</label>
-                        <select id="sort" class="border-gray-300 rounded-md shadow-sm text-sm">
-                            <option>Más reciente</option>
-                            <option>Menor precio</option>
-                            <option>Mayor precio</option>
-                            <option>Mejor valorados</option>
-                        </select>
-                    </div>
-                </div>
-                <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {% for product in products %}
-                        <div class="flex flex-col border rounded-lg shadow hover:shadow-lg transition bg-white">
-                            
-                            <!-- Imagen principal -->
-                            <div class="h-56 flex items-center justify-center bg-gray-100 rounded-t-lg overflow-hidden">
-                                {% if product.imagenes %}
-                                    <img src="{{ url_for('static', filename='uploads/' ~ product.imagenes[0].filename) }}"
-                                        alt="{{ product.nombre }}"
-                                        class="object-cover h-full w-full">
-                                {% else %}
-                                    <img src="{{ url_for('static', filename='images/no-image.png') }}"
-                                        alt="Sin imagen"
-                                        class="object-cover h-full w-full">
-                                {% endif %}
-                            </div>
 
-                            <!-- Info -->
-                            <div class="flex flex-col flex-grow p-4">
-                                <h3 class="text-lg font-semibold mb-1 truncate">{{ product.nombre }}</h3>
-                                <p class="text-gray-600 text-sm mb-2 line-clamp">
-                                    {{ product.descripcion }}
-                                </p>
-                                <p class="text-xl font-bold">
-                                    {{ product.precio|ars }}
-                                </p>
+        <!-- Título principal -->
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-gray-800">Nuestros Productos</h2>
+            <p class="text-gray-500 text-sm mt-2">
+            Equipos y accesorios de Pilates de la mejor calidad.
+            </p>
+        </div>
 
-                                <!-- Botón -->
-                                <div class="mt-auto">
-                                    <a href="{{ url_for('product_detail', product_id=product.id) }}"
-                                    class="block text-center bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">
-                                        Ver detalles
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
+        <!-- Barra superior (ordenar, vista, etc) -->
+        <div class="flex justify-between items-center mb-8">
+            <p class="text-gray-600 text-sm">
+            Mostrando <span class="font-semibold">{{ products|length }}</span> productos disponibles
+            </p>
+
+            <div class="flex items-center space-x-2">
+            <label for="sort" class="text-sm text-gray-600">Ordenar por:</label>
+            <select id="sort" class="border-gray-300 rounded-md shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <option>Más reciente</option>
+                <option>Menor precio</option>
+                <option>Mayor precio</option>
+            </select>
             </div>
+        </div>
+
+        <!-- Grid de productos -->
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {% for product in products %}
+            <div class="flex flex-col border rounded-2xl shadow-sm hover:shadow-lg transition bg-white overflow-hidden">
+
+            <!-- Imagen -->
+            <div class="relative h-56 bg-gray-100 flex items-center justify-center">
+                {% if product.imagenes %}
+                <img src="{{ url_for('static', filename='uploads/' ~ product.imagenes[0].filename) }}"
+                    alt="{{ product.nombre }}"
+                    class="object-cover h-full w-full transition-transform duration-300 hover:scale-105">
+                {% else %}
+                <img src="{{ url_for('static', filename='images/no-image.png') }}"
+                    alt="Sin imagen"
+                    class="object-cover h-full w-full">
+                {% endif %}
+            </div>
+
+            <!-- Información -->
+            <div class="flex flex-col flex-grow p-5">
+                <h3 class="text-lg font-semibold mb-1 text-gray-800 truncate">{{ product.nombre }}</h3>
+                <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+                {{ product.descripcion }}
+                </p>
+
+                <!-- Precio -->
+                <p class="text-2xl font-bold text-indigo-600 mb-4">
+                ${{ "%.2f"|format(product.precio * dolar) | formato_pesos }}
+                </p>
+
+                <!-- Botón -->
+                <a href="{{ url_for('product_detail', product_id=product.id) }}"
+                class="mt-auto inline-block text-center bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
+                Ver detalles
+                </a>
+            </div>
+            </div>
+            {% endfor %}
         </div>
     </main>
    <!-- Carrito de compras (modal) -->
@@ -307,7 +260,25 @@
             © 2025 NewImage. Todos los derechos reservados.
         </div>
         </footer>
-    <script src="../static/Shop.js" defer></script>
+    
+    <script>
+        const dolarManual = {{ dolar | tojson }};
+        const products = {{ products | tojson | safe }};
+        console.log("🛍️ Productos recibidos:", products);
+    </script>
+    <script src="{{ url_for('static', filename='Shop.js') }}" defer></script>
+    <script>
+        const descripciones = document.querySelectorAll(".descripcion_corta");
+        const limite = 150; // cantidad de caracteres
+
+        descripciones.forEach(div => {
+            const texto = div.textContent;
+            if (texto.length > limite) {
+                div.textContent = texto.substring(0, limite) + "...";
+            }
+        });
+    </script>
+
 </body>
 
 </html>

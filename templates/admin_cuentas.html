@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewImage</title>
+    <meta name="description" content="Tienda especializada en máquinas de pilates profesionales. Reformers, sillas, barriles y accesorios de las mejores marcas.">
+    <meta name="keywords" content="máquinas pilates, reformer pilates, equipo pilates, estudio pilates, accesorios pilates">
+    <meta name="author" content="PilatesPro">
+    <link rel="stylesheet" href="/static/style-Main.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagenes/Logo.png') }}">
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/index.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="sticky-nav">
+        <div class="container">
+            <div class="nav-content">
+                <a href="{{ url_for('index') }}" class="logo" >
+                    <img src="{{ url_for('static', filename='imagenes/Logo.png') }}" alt="Logo PilatesPro" class="logo-img">
+                    <span class="logo-text">NewImage</span>
+                </a>
+                
+                <div class="desktop-menu">
+                    <a href="{{ url_for('index') }}">Inicio</a>
+                    <a href="{{ url_for('shop') }}">Productos</a>
+                    <a href="{{ url_for('repuestos') }}">Repuestos</a>
+                    <a href="#" onclick="showSection('contact')">Contacto</a>
+                </div>
+               <div class="nav-actions">
+                    {% if user %}
+                        {% if user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Panel Admin</a>
+                        {% endif %}
+                        <button id="account-btn" class="btn btn-secondary">{{ user.username }}</button>
+                        <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
+                            <button id="logout-btn" class="btn btn-gray">Cerrar sesión</button>
+                        </form>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">Iniciar sesión</a>
+                    {% endif %}
+                </div>
+
+
+            </div>
+        </div>
+    </nav>
+
+                
+    <!-- Mobile menu -->
+   <div class="mobile-menu">
+        <div class="mobile-menu-links">
+            <a href="{{ url_for('index') }}" onclick="showSection('home')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="mobile-menu-label">Inicio</span>
+            </a>
+            <a href="{{ url_for('shop') }}" onclick="showSection('products')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <span class="mobile-menu-label">Productos</span>
+            </a>
+            <a href="/templates/CheckOut.html" onclick="showSection('cart')" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span class="mobile-menu-label">Repuestos</span>
+            </a>
+            <a href="{{ url_for('repuestos') }}" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="mobile-menu-label">Cuenta</span>
+            </a>
+        </div>
+    </div>
+
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-12">
+
+    <h2 class="text-2xl font-bold mb-6">Cuentas de Cobro</h2>
+
+    <!-- Si no hay cuentas -->
+    {% if cuentas|length == 0 %}
+        <p class="text-gray-500 mb-6">No hay cuentas registradas aún.</p>
+    {% endif %}
+
+    <!-- Listado de cuentas -->
+    <div class="space-y-4 mb-10">
+        {% for cuenta in cuentas %}
+        <div class="p-4 border rounded-lg shadow bg-white flex justify-between">
+
+            <div>
+                <p class="font-semibold text-lg">{{ cuenta.nombre }}</p>
+                <p class="text-sm text-gray-600">Email: {{ cuenta.email }}</p>
+                <p class="text-sm text-gray-600">Public Key: {{ cuenta.public_key }}</p>
+                <p class="text-sm text-gray-600">Access Token: {{ cuenta.access_token }}</p>
+            </div>
+
+            <button onclick="activarCuenta({{ cuenta.id }})"
+                class="px-4 py-2 rounded text-white
+                {% if cuenta.activo %}
+                    bg-green-600
+                {% else %}
+                    bg-indigo-600 hover:bg-indigo-700
+                {% endif %}">
+                {% if cuenta.activo %} Activa ✔ {% else %} Activar {% endif %}
+            </button>
+
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Formulario agregar cuenta -->
+    <div class="max-w-3xl mx-auto py-12">
+        <h2 class="text-2xl font-bold mb-6">Agregar Nueva Cuenta de Cobro</h2>
+
+        <form action="{{ url_for('agregar_cuenta') }}" method="POST" class="space-y-6">
+
+            <div>
+                <label class="block font-semibold">Nombre del titular</label>
+                <input type="text" name="nombre" class="input-field" placeholder="Ej: Juan Pérez" required>
+            </div>
+
+            <div>
+                <label class="block font-semibold">Banco</label>
+                <input type="text" name="banco" class="input-field" placeholder="Ej: Banco Galicia" required>
+            </div>
+
+            <div>
+                <label class="block font-semibold">Alias</label>
+                <input type="text" name="alias" class="input-field" placeholder="Ej: mi.cuenta.banco" required>
+            </div>
+
+            <div>
+                <label class="block font-semibold">CBU</label>
+                <input type="text" name="cbu" class="input-field" placeholder="Ej: 0123456789012345678900" required>
+            </div>
+
+            <div>
+                <label class="block font-semibold">Email asociado</label>
+                <input type="email" name="email" class="input-field" placeholder="Ej: correo@ejemplo.com" required>
+            </div>
+
+            <div>
+                <label class="block font-semibold">Public Key (Mercado Pago)</label>
+                <input type="text" name="public_key" class="input-field" placeholder="APP_USR-XXXXX" required>
+            </div>
+
+            <div>
+                <label class="block font-semibold">Access Token (Mercado Pago)</label>
+                <input type="text" name="access_token" class="input-field" placeholder="APP_USR-XXXXX" required>
+            </div>
+
+            <button type="submit"
+                    class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                Guardar Cuenta
+            </button>
+        </form>
+
+        <div class="mt-8">
+            <a href="{{ url_for('admin_dashboard') }}" class="text-indigo-600 hover:underline">
+                ← Volver al panel
+            </a>
+        </div>
+    </div>
+
+<script>
+async function activarCuenta(id) {
+    const resp = await fetch(`/cuentas/activar/${id}`, { method: "POST" });
+    const data = await resp.json();
+    alert(data.message);
+    location.reload();
+}
+</script>
+
+{% endblock %}

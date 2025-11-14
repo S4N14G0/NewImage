@@ -79,304 +79,208 @@
     </div>
 </div>
     
-<!-- Checkout (modal) -->
-    <div class="fixed inset-0 overflow-hidden z-50 " id="checkoutModal">
-        <div class="absolute inset-0 overflow-hidden">
-            <div class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" id="checkoutOverlay"></div>
-            <div class="fixed inset-y-0 right-0 max-w-full flex">
-                <div class="w-screen max-w-7xl">
-                    <div class="h-full flex flex-col bg-white shadow-xl overflow-y-scroll">
-                        <div class="py-24 px-4 sm:px-6">
-                            <div class="flex items-start justify-between">
-                                <h2 class="text-2xl font-bold text-gray-900">Finalizar compra</h2>
-                                <button type="button" id="closeCheckoutButton" class="-mr-2  p-0 text-gray-400 hover:text-gray-500">
-                                    <span class="sr-only">
-                                        Cerrar panel
-                                    </span>
-                                    <a href="{{ url_for('shop') }}">
-                                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </a>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="flex flex-1 overflow-hidden">
-                            <!-- Pasos del checkout -->
-                            <div class="w-1/3 p-6 bg-gray-50 overflow-y-auto ">
-                                <div class="space-y-4">
-                                    <div class="checkout-step active p-4 rounded" data-step="1">
-                                        <h3 class="font-medium text-lg">1. Información de contacto</h3>
-                                        <p class="text-sm text-gray-500">Datos para la facturación</p>
-                                    </div>
-                                    <div class="checkout-step p-4 rounded" data-step="2">
-                                        <h3 class="font-medium text-lg">2. Dirección de envío</h3>
-                                        <p class="text-sm text-gray-500">¿Dónde enviamos tu pedido?</p>
-                                    </div>
-                                    <div class="checkout-step p-4 rounded" data-step="3">
-                                        <h3 class="font-medium text-lg">3. Método de envío</h3>
-                                        <p class="text-sm text-gray-500">Cómo recibirás tu compra</p>
-                                    </div>
-                                    <div class="checkout-step p-4 rounded" data-step="4">
-                                        <h3 class="font-medium text-lg">4. Método de pago</h3>
-                                        <p class="text-sm text-gray-500">Cómo pagarás tu compra</p>
-                                    </div>
-                                    <div class="checkout-step p-4 rounded" data-step="5">
-                                        <h3 class="font-medium text-lg">5. Confirmación</h3>
-                                        <p class="text-sm text-gray-500">Revisa y finaliza tu compra</p>
-                                    </div>
-                                </div>
-                                <div class="mt-8 border-t border-gray-200 pt-6">
-                                    <h3 class="font-medium text-lg mb-4">Resumen del pedido</h3>
-                                    <div id="checkoutSummary">
-                                        <!-- Resumen del pedido se actualizará aquí -->
-                                    </div>
-                                    <div class="flex justify-between mt-4 font-medium">
-                                        <p>Total</p>
-                                        <p id="checkoutTotal"><span id="cartTotal">$0.00</span></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Contenido del paso actual -->
-                            <div class="w-2/3 p-6 overflow-y-auto">
-                                <div class="max-w-lg mx-auto">
-                                    <!-- Paso 1: Información de contacto -->
-                                    <div id="step1" class="checkout-content animate-fadeIn">
-                                        <h3 class="text-lg font-medium mb-6">Información de contacto</h3>
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label for="firstName" class="block text-sm font-medium text-gray-700">Nombre</label>
-                                                <input type="text" id="firstName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                            </div>
-                                            <div>
-                                                <label for="lastName" class="block text-sm font-medium text-gray-700">Apellido</label>
-                                                <input type="text" id="lastName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                            </div>
-                                        </div>
-                                        <div class="mt-4">
-                                            <label for="email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
-                                            <input type="email" id="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                        </div>
-                                        <div class="mt-4">
-                                            <label for="phone" class="block text-sm font-medium text-gray-700">Teléfono</label>
-                                            <input type="tel" id="phone" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                        </div>
-                                        <div class="mt-6 pt-6 border-t border-gray-200">
-                                            <button onclick="NextStep2()" class="w-full bg-indigo-600 border border-transparent rounded-md py-2 px-4 text-white font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-next="2">
-                                                Continuar
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <!-- Paso 2: Dirección de envío -->
-                                    <div id="step2" class="checkout-content hidden animate-fadeIn">
-                                        <h3 class="text-lg font-medium mb-6">Dirección de envío</h3>
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label for="address" class="block text-sm font-medium text-gray-700">Dirección</label>
-                                                <input type="text" id="address" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                            </div>
-                                            <div>
-                                                <label for="apt" class="block text-sm font-medium text-gray-700">Apto/Casa</label>
-                                                <input type="text" id="apt" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                            </div>
-                                        </div>
-                                        <div class="grid grid-cols-3 gap-4 mt-4">
-                                            <div class="col-span-2">
-                                                <label for="city" class="block text-sm font-medium text-gray-700">Ciudad</label>
-                                                <input type="text" id="city" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                            </div>
-                                            <div>
-                                                <label for="zip" class="block text-sm font-medium text-gray-700">Código postal</label>
-                                                <input type="text" id="zip" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                            </div>
-                                        </div>
-                                        <div class="mt-4">
-                                            <label for="country" class="block text-sm font-medium text-gray-700">País</label>
-                                            <select id="country" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                                <option>Seleccionar</option>
-                                                <option>Argentina</option>
-                                                <option>Chile</option>
-                                                <option>Colombia</option>
-                                                <option>España</option>
-                                                <option>México</option>
-                                                <option>Perú</option>
-                                                <option>Estados Unidos</option>
-                                                <option>Otro</option>
-                                            </select>
-                                        </div>
-                                        <div class="mt-4">
-                                            <label for="instructions" class="block text-sm font-medium text-gray-700">Instrucciones especiales</label>
-                                            <textarea id="instructions" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
-                                        </div>
-                                        <div class="mt-6 pt-6 border-t border-gray-200 flex justify-between">
-                                            <button onclick="BackStep2()" class="bg-white border border-gray-300 rounded-md py-2 px-4 text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-prev="1">
-                                                Atrás
-                                            </button>
-                                            <button onclick="NextStep3()" class="bg-indigo-600 border border-transparent rounded-md py-2 px-4 text-white font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-next="3">
-                                                Continuar
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <!-- Paso 3: Método de envío -->
-                                    <div id="step3" class="checkout-content hidden animate-fadeIn">
-                                        <h3 class="text-lg font-medium mb-6">Método de envío</h3>
-                                        
-                                        <div class="space-y-4">
-                                            <div class="relative">
-                                                <input class="sr-only peer" type="radio" name="shipping" id="shipping-standard" checked>
-                                                <label class="flex p-4 border border-gray-300 rounded-lg cursor-pointer peer-checked:border-indigo-500 peer-checked:bg-indigo-50" for="shipping-standard">
-                                                    <div class="flex items-center mr-4">
-                                                        <span class="w-5 h-5 inline-block rounded-full border-2 border-gray-300 peer-checked:border-indigo-600"></span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="block font-medium">Envío estándar</span>
-                                                        <span class="block text-sm text-gray-500">3-5 días hábiles</span>
-                                                    </div>
-                                                    <span class="ml-auto font-medium">$25.00</span>
-                                                </label>
-                                            </div>
-                                            <div class="relative">
-                                                <input class="sr-only peer" type="radio" name="shipping" id="shipping-express">
-                                                <label class="flex p-4 border border-gray-300 rounded-lg cursor-pointer peer-checked:border-indigo-500 peer-checked:bg-indigo-50" for="shipping-express">
-                                                    <div class="flex items-center mr-4">
-                                                        <span class="w-5 h-5 inline-block rounded-full border-2 border-gray-300 peer-checked:border-indigo-600"></span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="block font-medium">Envío express</span>
-                                                        <span class="block text-sm text-gray-500">1-2 días hábiles</span>
-                                                    </div>
-                                                    <span class="ml-auto font-medium">$45.00</span>
-                                                </label>
-                                            </div>
-                                            <div class="relative">
-                                                <input class="sr-only peer" type="radio" name="shipping" id="shipping-pickup">
-                                                <label class="flex p-4 border border-gray-300 rounded-lg cursor-pointer peer-checked:border-indigo-500 peer-checked:bg-indigo-50" for="shipping-pickup">
-                                                    <div class="flex items-center mr-4">
-                                                        <span class="w-5 h-5 inline-block rounded-full border-2 border-gray-300 peer-checked:border-indigo-600"></span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="block font-medium">Recogida en tienda</span>
-                                                        <span class="block text-sm text-gray-500">Sin costo adicional</span>
-                                                    </div>
-                                                    <span class="ml-auto font-medium">$0.00</span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="mt-6 pt-6 border-t border-gray-200 flex justify-between">
-                                            <button onclick="BackStep3()" class="bg-white border border-gray-300 rounded-md py-2 px-4 text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-prev="2">
-                                                Atrás
-                                            </button>
-                                            <button onclick="NextStep4()" class="bg-indigo-600 border border-transparent rounded-md py-2 px-4 text-white font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-next="4">
-                                                Continuar
-                                            </button>
-                                        </div>
-                                    </div>
-  <!-- Paso 4: Método de pago -->
-                                    <div id="step4" class="checkout-content hidden animate-fadeIn">
-                                        <h3 class="text-lg font-medium mb-6">Método de pago</h3>
-                                        
-                                        <div class="mb-6">
-                                            <div class="relative">
-                                                <input class="sr-only peer" type="radio" name="payment" id="payment-credit" checked>
-                                                <label class="flex p-4 border border-gray-300 rounded-lg cursor-pointer peer-checked:border-indigo-500 peer-checked:bg-indigo-50" for="payment-credit">
-                                                    <div class="flex items-center mr-4">
-                                                        <span class="w-5 h-5 inline-block rounded-full border-2 border-gray-300 peer-checked:border-indigo-600"></span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="block font-medium">Tarjeta de crédito/débito</span>
-                                                    </div>
-                                                    <span class="ml-auto"><i class="fab fa-cc-visa text-blue-900 mr-2"></i><i class="fab fa-cc-mastercard text-red-600 mr-2"></i><i class="fab fa-cc-amex text-blue-500"></i></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div id="credit-card-form">
-                                            <div class="mb-4">
-                                                <label for="card-number" class="block text-sm font-medium text-gray-700">Número de tarjeta</label>
-                                                <input type="text" id="card-number" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="1234 5678 9012 3456">
-                                            </div>
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <label for="card-expiry" class="block text-sm font-medium text-gray-700">Fecha de expiración</label>
-                                                    <input type="text" id="card-expiry" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="MM/AA">
-                                                </div>
-                                                <div>
-                                                    <label for="card-cvc" class="block text-sm font-medium text-gray-700">Código CVC</label>
-                                                    <input type="text" id="card-cvc" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="CVC">
-                                                </div>
-                                            </div>
-                                            <div class="mt-4">
-                                                <label for="card-name" class="block text-sm font-medium text-gray-700">Nombre en la tarjeta</label>
-                                                <input type="text" id="card-name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                            </div>
-                                        </div>
-                                        <div class="mt-6">
-                                            <div class="relative">
-                                                <input class="sr-only peer" type="radio" name="payment" id="payment-paypal">
-                                                <label class="flex p-4 border border-gray-300 rounded-lg cursor-pointer peer-checked:border-indigo-500 peer-checked:bg-indigo-50" for="payment-paypal">
-                                                    <div class="flex items-center mr-4">
-                                                        <span class="w-5 h-5 inline-block rounded-full border-2 border-gray-300 peer-checked:border-indigo-600"></span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="block font-medium">PayPal</span>
-                                                    </div>
-                                                    <span class="ml-auto"><i class="fab fa-paypal text-blue-600"></i></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="mt-6">
-                                            <div class="relative">
-                                                <input class="sr-only peer" type="radio" name="payment" id="payment-transfer">
-                                                <label class="flex p-4 border border-gray-300 rounded-lg cursor-pointer peer-checked:border-indigo-500 peer-checked:bg-indigo-50" for="payment-transfer">
-                                                    <div class="flex items-center mr-4">
-                                                        <span class="w-5 h-5 inline-block rounded-full border-2 border-gray-300 peer-checked:border-indigo-600"></span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="block font-medium">Transferencia bancaria</span>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="mt-6 pt-6 border-t border-gray-200 flex justify-between">
-                                            <button onclick="BackStep4 ()" class="bg-white border border-gray-300 rounded-md py-2 px-4 text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-prev="3">
-                                                Atrás
-                                            </button>
-                                            <button onclick="NextStep5()" class="bg-indigo-600 border border-transparent rounded-md py-2 px-4 text-white font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-next="5">
-                                                Continuar
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <!-- Paso 5: Confirmación -->
-                                    <div id="step5" class="checkout-content hidden animate-fadeIn">
-                                        <div class="text-center">
-                                            <svg class="mx-auto h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            <h3 class="text-lg font-medium text-gray-900 mt-4">¡Pedido completado!</h3>
-                                                    
-                                            <!-- Resumen Final -->
-                                            <div class="mt-6" id="finalSummary"></div>
-                                            <p class="font-bold mt-4">Total: <span id="finalTotal">$0.00</span></p>
-                                            
-                                            <div class="mt-10 border-t border-gray-200 pt-6">
-                                            <p class="text-sm text-gray-500">Número de pedido:</p>
-                                            <p class="text-lg font-medium text-gray-900 mt-1" id="orderNumber">OR-XXXX</p>
-                                            </div>
-                                            
-                                            <div class="mt-6">
-                                            <a href="{{ url_for('shop') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
-                                                Volver a la tienda
-                                            </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Checkout -->
+    <div class="min-h-screen bg-gray-50 py-10">
+        <div class="max-w-7xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-3">
+            
+            <!-- Panel izquierdo (Resumen del pedido) -->
+            <aside class="bg-gray-100 p-6 lg:border-r border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">Resumen del pedido</h2>
+
+            <div id="checkoutSummary" class="space-y-6">
+                <div>
+                <h3 class="font-semibold text-gray-800 mb-2">🏋️ Máquinas</h3>
+                <ul id="checkoutMachines" class="space-y-1 text-sm text-gray-600"></ul>
+                </div>
+                <div>
+                <h3 class="font-semibold text-gray-800 mb-2">🔧 Repuestos (con envío)</h3>
+                <ul id="checkoutRepuestos" class="space-y-1 text-sm text-gray-600"></ul>
                 </div>
             </div>
+
+            <div class="border-t border-gray-300 mt-6 pt-4 space-y-2">
+                <p class="text-sm text-yellow-600 flex items-start gap-1">
+                ⚠️ <span>El envío solo aplica a repuestos. Las máquinas requieren coordinación de entrega.</span>
+                </p>
+                <div class="flex justify-between items-center text-gray-700 font-semibold text-lg mt-3">
+                <span>Total:</span>
+                <span id="checkoutTotal" class="text-indigo-600 font-bold">$0</span>
+                </div>
+            </div>
+            </aside>
+
+            <!-- Panel derecho (Pasos del checkout) -->
+            <section class="col-span-2 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-2xl font-bold text-gray-900">Finalizar compra</h1>
+                <a href="{{ url_for('shop') }}" class="text-gray-400 hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                </a>
+            </div>
+
+            <!-- Barra de progreso -->
+            <div class="w-full bg-gray-200 rounded-full h-2 mb-8 overflow-hidden">
+               <div id="progressBar" class="bg-indigo-600 h-2 w-0 transition-all duration-500 ease-in-out"></div>
+            </div>
+
+            <!-- Indicador textual del paso -->
+            <p id="progressText" class="text-sm text-gray-500 text-right mb-6">Paso 1 de 5</p>
+                        <!-- Contenido dinámico -->
+            <div class="max-w-lg mx-auto">
+
+                <!-- Paso 1: Contacto -->
+                <div id="step1" class="checkout-step-content">
+                <h3 class="text-lg font-semibold text-gray-800 mb-6">Información de contacto</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                    <label class="text-sm font-medium text-gray-700">Nombre</label>
+                    <input id="firstName" type="text" class="input-field" placeholder="Ej: Santiago">
+                    </div>
+                    <div>
+                    <label class="text-sm font-medium text-gray-700">Apellido</label>
+                    <input id="lastName" type="text" class="input-field" placeholder="Ej: Fernández">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label class="text-sm font-medium text-gray-700">Correo electrónico</label>
+                    <input id="email" type="email" class="input-field" placeholder="Ej: santi@gmail.com">
+                </div>
+
+                <div class="mt-4">
+                    <label class="text-sm font-medium text-gray-700">Teléfono</label>
+                    <input id="phone" type="tel" class="input-field" placeholder="+54 9 351...">
+                </div>
+
+                <div class="mt-8 text-right">
+                    <button onclick="NextStep2()" class="btn-primary w-full sm:w-auto">Continuar</button>
+                </div>
+                </div>
+
+                <!-- Paso 2: Envío -->
+                <div id="step2" class="checkout-step-content hidden">
+                <h3 class="text-lg font-semibold text-gray-800 mb-6">Dirección de envío</h3>
+                <div class="space-y-4">
+                    <input id="address" type="text" class="input-field" placeholder="Dirección">
+                    <input id="city" type="text" class="input-field" placeholder="Ciudad">
+                    <input id="zip" type="text" class="input-field" placeholder="Código postal">
+                    <textarea id="instructions" class="input-field" rows="3" placeholder="Instrucciones adicionales..."></textarea>
+                </div>
+                <div class="flex justify-between mt-8">
+                    <button onclick="BackStep2()" class="btn-secondary">Atrás</button>
+                    <button onclick="NextStep3()" class="btn-primary">Continuar</button>
+                </div>
+                </div>
+
+                <!-- Paso 3: Método de envío -->
+                <div id="step3" class="checkout-step-content hidden">
+                <h3 class="text-lg font-semibold text-gray-800 mb-6">Método de envío</h3>
+                <div class="space-y-3">
+                    <label class="option-card">
+                    <input type="radio" name="shipping" checked>
+                    <div>
+                        <p class="font-medium text-gray-800">Envío estándar</p>
+                        <p class="text-sm text-gray-500">3-5 días hábiles</p>
+                    </div>
+                    <span class="text-indigo-600 font-semibold">$25</span>
+                    </label>
+                    <label class="option-card">
+                    <input type="radio" name="shipping">
+                    <div>
+                        <p class="font-medium text-gray-800">Envío express</p>
+                        <p class="text-sm text-gray-500">1-2 días hábiles</p>
+                    </div>
+                    <span class="text-indigo-600 font-semibold">$45</span>
+                    </label>
+                    <label class="option-card">
+                    <input type="radio" name="shipping">
+                    <div>
+                        <p class="font-medium text-gray-800">Retiro en tienda</p>
+                        <p class="text-sm text-gray-500">Sin costo adicional</p>
+                    </div>
+                    <span class="text-gray-700 font-medium">$0</span>
+                    </label>
+                </div>
+                <div class="flex justify-between mt-8">
+                    <button onclick="BackStep3()" class="btn-secondary">Atrás</button>
+                    <button onclick="NextStep4()" class="btn-primary">Continuar</button>
+                </div>
+                </div>
+
+                <!-- Paso 4: Pago -->
+                <div id="step4" class="checkout-step-content hidden">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-6">Método de pago</h3>
+
+                    <div class="space-y-4">
+
+                        <!-- Opción 1 - Mercado Pago -->
+                        <label class="option-card cursor-pointer">
+                            <input type="radio" name="payment" value="mp" checked>
+                            <div class="flex justify-between w-full items-center">
+                                <p class="font-medium text-gray-800">Tarjeta (Mercado Pago)</p>
+                                <span class="text-indigo-600 text-lg">💳</span>
+                            </div>
+                        </label>
+
+                        <!-- Botón de pago Mercado Pago -->
+                        <div id="mpButtonContainer">
+                            <button onclick="pagarConMP()" class="btn-primary w-full">
+                                💳 Pagar con Mercado Pago
+                            </button>
+                        </div>
+
+                        <!-- Opción 2 - Transferencia bancaria -->
+                        <label class="option-card cursor-pointer">
+                            <input type="radio" name="payment" value="bank">
+                            <div class="flex justify-between w-full items-center">
+                                <p class="font-medium text-gray-800">Transferencia bancaria</p>
+                                <span class="text-indigo-600 text-lg">🏦</span>
+                            </div>
+                        </label>
+
+                        <!-- Datos bancarios -->
+                        <div id="transferenciaInfo" class="hidden bg-gray-50 p-4 rounded-lg border">
+                            <p><strong>Banco:</strong> {{ cuenta_activa.banco }}</p>
+                            <p><strong>Alias:</strong> {{ cuenta_activa.alias }}</p>
+                            <p><strong>CBU:</strong> {{ cuenta_activa.cbu }}</p>
+                            <p><strong>Titular:</strong> {{ cuenta_activa.nombre }}</p>
+                        </div>
+
+                    </div>
+
+                    <div class="flex justify-between mt-8">
+                        <button onclick="BackStep4()" class="btn-secondary">Atrás</button>
+                        <button onclick="NextStep5()" class="btn-primary">Confirmar pedido</button>
+                    </div>
+                </div>
+
+                <!-- Paso 5: Confirmación -->
+                <div id="step5" class="checkout-step-content hidden text-center">
+                <div class="bg-green-50 border border-green-200 p-8 rounded-xl">
+                    <svg class="mx-auto h-16 w-16 text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <h3 class="text-xl font-bold text-gray-800">¡Pedido completado!</h3>
+                    <p class="text-gray-600 mt-2">Gracias por tu compra. Te contactaremos para coordinar la entrega.</p>
+                    <div class="mt-6 text-left bg-white border rounded-lg shadow p-4 mx-auto w-fit">
+                    <h4 class="font-medium text-gray-700 mb-2">Resumen final</h4>
+                    <div id="finalSummary"></div>
+                    <p class="font-bold mt-4 text-indigo-600 text-lg">Total: <span id="finalTotal">$0</span></p>
+                    </div>
+                    <p class="mt-4 text-gray-500 text-sm">Número de pedido: <span id="orderNumber" class="font-semibold"></span></p>
+                    <a href="{{ url_for('shop') }}" class="btn-primary mt-6 inline-block">Volver a la tienda</a>
+                </div>
+                </div>
+
+            </div>
+            </section>
         </div>
     </div>
     <script src="../static/CheckOut.js"></script>
+    <script src="/static/pagos.js"></script>
 </body>
 </html>
