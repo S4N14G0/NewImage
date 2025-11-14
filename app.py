@@ -1,36 +1,104 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session, g, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Product, Order, OrderItem, ProductImage, Configuracion, CuentaPago
 from helpers import login_required
-import os
 from werkzeug.utils import secure_filename
 from functools import wraps
 from flask import abort
 # from flask_migrate import Migrate
 from mercadopago import SDK
 
+# ---------------------------------------------------
+# CONFIGURACIÓN DE FLASK
+# ---------------------------------------------------
 app = Flask(__name__)
-app.secret_key = "NewImage" 
+app.secret_key = "NewImage"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tienda.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # migrate = Migrate(app, db)
 
+
 db.init_app(app)
+
+#----------------------------------------------------
+# CONFIGURACION MERCADO PAGO
+#----------------------------------------------------
+sdk = SDK("TOKEN")
+
+MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
+MP_PUBLIC_KEY = os.getenv("MP_PUBLIC_KEY")
+
+if SDK and MP_ACCESS_TOKEN:
+    mp = SDK(MP_ACCESS_TOKEN)
+else:
+    mp = None
+
+
 
 # Crea tablas
 with app.app_context():
     db.create_all()
 
-#Ruta Index
+# ---------------------------------------------------
+# DECORADORES Y FUNCIONES AUXILIARES
+# ---------------------------------------------------
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect(url_for("login"))
+        
+        user = User.query.get(session["user_id"])
+        if not user or not user.is_admin:
+            abort(403)  # Prohibido
+        return f(*args, **kwargs)
+    return decorated_function
+
+def obtener_estado_ventas():
+    config = Configuracion.query.first()
+    if not config:
+        config = Configuracion(dolar_manual=1450, ventas_activas=True)
+        db.session.add(config)
+        db.session.commit()
+    return config.ventas_activas
+
+def obtener_dolar_manual():
+    config = Configuracion.query.first()
+    if not config:
+        config = Configuracion(dolar_manual=1450, ventas_activas=True)
+        db.session.add(config)
+        db.session.commit()
+    return config.dolar_manual
+
+def serializar_producto(producto):
+    return {
+        "id": producto.id,
+        "nombre": producto.nombre,
+        "descripcion": producto.descripcion,
+        "precio": producto.precio,
+        "tipo": producto.tipo,
+        "imagenes": [{"filename": img.filename} for img in producto.imagenes],
+        "stock": producto.stock,
+        "en_stock": producto.en_stock,
+        "observacion": producto.observacion
+    }
+
+# ---------------------------------------------------
+# RUTAS PRINCIPALES
+# ---------------------------------------------------
+
+# Ruta Index
 @app.route("/")
 def index():
     user = None
     if "user_id" in session:
-        user = User.query.get(session["user_id"]) # Recupera el usuario logueado
+        user = User.query.get(session["user_id"])  # Recupera el usuario logueado
     return render_template("index.html", user=user)
 
-#Ruta Login
+# Ruta Login
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -81,66 +149,6 @@ def signup():
 
     return render_template("Login.html")
 
-
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if "user_id" not in session:
-            return redirect(url_for("login"))
-        
-        user = User.query.get(session["user_id"])
-        if not user or not user.is_admin:
-            abort(403)  # Prohibido
-        return f(*args, **kwargs)
-    return decorated_function
-
-
-@app.route("/update_dolar", methods=["POST"])
-@admin_required
-def update_dolar():
-    nuevo_valor = float(request.form["dolar_manual"])
-    config = Configuracion.query.first()
-    if not config:
-        config = Configuracion(dolar_manual=nuevo_valor)
-        db.session.add(config)
-    else:
-        config.dolar_manual = nuevo_valor
-    db.session.commit()
-    flash(f"Valor del dolar actualizado a ${nuevo_valor}","succes")
-    return redirect(url_for("admin_dashboard"))
-
-
-def obtener_estado_ventas():
-    config = Configuracion.query.first()
-    if not config:
-        config = Configuracion(dolar_manual=1450, ventas_activas=True)
-        db.session.add(config)
-        db.session.commit()
-    return config.ventas_activas
-
-def obtener_dolar_manual():
-    config = Configuracion.query.first()
-    if not config:
-        config = Configuracion(dolar_manual=1450, ventas_activas=True)
-        db.session.add(config)
-        db.session.commit()
-    return config.dolar_manual
-
-
-def serializar_producto(producto):
-    return {
-        "id": producto.id,
-        "nombre": producto.nombre,
-        "descripcion": producto.descripcion,
-        "precio": producto.precio,
-        "tipo": producto.tipo,
-        "imagenes": [{"filename": img.filename} for img in producto.imagenes],
-        "stock": producto.stock,
-        "en_stock": producto.en_stock,
-        "observacion": producto.observacion
-    }
-
-
 # Ruta tienda (protegida, requiere login)
 @app.route("/shop")
 def shop():
@@ -148,25 +156,21 @@ def shop():
     dolar_manual = obtener_dolar_manual()
     ventas_activas = obtener_estado_ventas()
     
-        # Convertir productos a lista de diccionarios
+    # Convertir productos a lista de diccionarios
     productos_json = [serializar_producto(p) for p in products]
 
     return render_template("Shop.html", products=productos_json, dolar=dolar_manual, ventas_activas=ventas_activas)
 
-
-
-
 # Ruta de los repuestos
 @app.route("/repuestos")
 def repuestos():
-    productos  = Product.query.filter_by(tipo="repuesto", activo=True).all()
+    productos = Product.query.filter_by(tipo="repuesto", activo=True).all()
     dolar_manual = obtener_dolar_manual()
     ventas_activas = obtener_estado_ventas()
     
     productos_json = [serializar_producto(p) for p in productos]
     
     return render_template("repuestos.html", products=productos_json, dolar=dolar_manual, ventas_activas=ventas_activas)
-
 
 # Página de detalle de un producto
 @app.route("/product/<int:product_id>")
@@ -191,15 +195,17 @@ def formato_pesos(valor):
         return "{:,.2f}".format(float(valor)).replace(",", "X").replace(".", ",").replace("X", ".")
     except (ValueError, TypeError):
         return valor
-    
+
+# ---------------------------------------------------
+# RUTAS DE CHECKOUT Y SESIÓN
+# ---------------------------------------------------
+
 # Ruta checkout
 @app.route("/check")
 @login_required
 def check():
     cuenta_activa = get_cuenta_activa
-    return render_template("CheckOut.html",cuenta_activa=cuenta_activa)
-
-
+    return render_template("CheckOut.html", cuenta_activa=cuenta_activa)
 
 @app.route("/checkout_repuestos")
 @login_required
@@ -214,15 +220,18 @@ def logout():
     session.pop("username", None)
     return redirect(url_for("index"))
 
+# ---------------------------------------------------
+# RUTAS DE PERFIL Y ADMIN
+# ---------------------------------------------------
 
-#Ruta de perfiles
+# Ruta de perfiles
 @app.route("/profile")
 @login_required
 def profile():
     user = User.query.get(session["user_id"])
     return render_template("profile.html", user=user)
 
-#Ruta de admin
+# Ruta de admin
 @app.route("/admin")
 @admin_required
 def admin_dashboard():
@@ -248,6 +257,10 @@ def admin_cuentas():
     cuentas = CuentaPago.query.all()
     return render_template("admin_cuentas.html", cuentas=cuentas)
 
+# ---------------------------------------------------
+# CONTEXT PROCESSORS Y BEFORE REQUEST
+# ---------------------------------------------------
+
 @app.context_processor
 def inject_user():
     user_id = session.get("user_id")
@@ -256,17 +269,15 @@ def inject_user():
         return dict(user=user)
     return dict(user=None)
 
-
 @app.before_request
 def load_logged_in_user():
     g.user = None
     if "user_id" in session:
         g.user = User.query.get(session["user_id"])
 
-
-
-#----------------------------------------------------------------------------
-# Carpeta donde se guardarán las imágenes
+# ----------------------------------------------------------------------------
+# CONFIGURACIÓN DE SUBIDAS DE ARCHIVOS
+# ----------------------------------------------------------------------------
 UPLOAD_FOLDER = os.path.join("static", "uploads")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
@@ -276,6 +287,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Crea la carpeta si no existe
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# ---------------------------------------------------
+# RUTAS DE PRODUCTOS (ADMIN)
+# ---------------------------------------------------
 
 # Crear producto
 @app.route("/product/new", methods=["GET", "POST"])
@@ -320,7 +334,7 @@ def new_product():
 
     return render_template("new_product.html")
 
-#Editar un producto
+# Editar un producto
 @app.route("/product/<int:product_id>/edit", methods=["GET", "POST"])
 @admin_required
 def edit_product(product_id):
@@ -335,7 +349,6 @@ def edit_product(product_id):
         product.stock = int(request.form["stock"])
         product.en_stock = product.stock > 0
         product.tipo = request.form.get("tipo", "principal")
-
 
         # Manejo de imágenes (permite varias)
         files = request.files.getlist("imagenes")
@@ -368,8 +381,7 @@ def edit_product(product_id):
     
     return render_template("edit_product.html", product=product)
 
-
-#Eliminar un producto
+# Eliminar un producto
 @app.route("/product/delete/<int:product_id>", methods=["POST"])
 @admin_required
 def delete_product(product_id):
@@ -379,8 +391,9 @@ def delete_product(product_id):
     flash("Producto eliminado con éxito", "success")
     return redirect(url_for("admin_dashboard"))
 
-#----------------------------------------------------------------------------
-
+# ---------------------------------------------------
+# RUTAS DE CHECKOUT Y PAGOS
+# ---------------------------------------------------
 
 @app.route("/update_observacion/<int:product_id>", methods=["POST"])
 @admin_required
@@ -428,7 +441,6 @@ def checkout():
         "total": total
     }, 201
 
-
 @app.route("/checkout/confirm", methods=["POST"])
 @login_required
 def checkout_confirm():
@@ -447,6 +459,8 @@ def checkout_confirm():
 
 @app.route("/crear_pago", methods=["POST"])
 def crear_pago():
+    if not mp:
+        return jsonify({"error": "MercadoPago no está configurado"}), 400
     cuenta = get_cuenta_activa()
 
     if not cuenta or not cuenta.access_token:
@@ -489,6 +503,9 @@ def crear_pago():
     print("Email:", data.get("email"))
     return jsonify(preference_response["response"])
 
+# ---------------------------------------------------
+# FUNCIONES AUXILIARES
+# ---------------------------------------------------
 
 def ventas_activas():
     """Obtiene el estado de las ventas desde la tabla Configuracion."""
@@ -499,6 +516,12 @@ def ventas_activas():
         db.session.commit()
     return config.ventas_activas
 
+def get_cuenta_activa():
+    return CuentaPago.query.filter_by(activo=True).first()
+
+# ---------------------------------------------------
+# RUTAS DE CONFIGURACIÓN
+# ---------------------------------------------------
 
 @app.route("/toggle_ventas", methods=["POST"])
 @admin_required
@@ -517,11 +540,9 @@ def toggle_ventas():
     flash(f"Las ventas fueron {estado}.", "success")
     return redirect(url_for("admin_dashboard"))
 
-
-
-
-# -----------------------------------------------------------------
-# -----------------------------------------------------------------
+# ---------------------------------------------------
+# RUTAS DE CUENTAS DE PAGO
+# ---------------------------------------------------
 
 @app.route("/admin/set_cuenta/<int:cuenta_id>", methods=["POST"])
 @login_required
@@ -583,7 +604,7 @@ def obtener_cuentas():
         "cuentas": [c.to_dict() for c in cuentas],
         "activa": activa.to_dict() if activa else None
     })
-    
+
 @app.route("/cuentas/activar/<int:cuenta_id>", methods=["POST"])
 @login_required
 def activar_cuenta(cuenta_id):
@@ -594,10 +615,6 @@ def activar_cuenta(cuenta_id):
     cuenta.activo = True
     db.session.commit()
     return jsonify({"message": f"Cuenta '{cuenta.nombre}' activada correctamente"})
-
-def get_cuenta_activa():
-    return CuentaPago.query.filter_by(activo=True).first()
-
 
 @app.route("/admin/cuentas/editar/<int:cuenta_id>", methods=["POST"])
 @login_required
@@ -628,8 +645,10 @@ def eliminar_cuenta(cuenta_id):
     flash("Cuenta eliminada correctamente", "success")
     return redirect(url_for("admin_dashboard"))
 
+# ---------------------------------------------------
+# RUTAS DE CHECKOUT Y WEBHOOKS
+# ---------------------------------------------------
 
-#-----------------------------------------------------------------
 @app.route("/checkout/success")
 def checkout_success():
     flash("Pago aprobado correctamente", "success")
@@ -651,6 +670,9 @@ def mp_webhook():
     print("WEBHOOK MP:", data)
     return "OK", 200
 
-#-----------------------------------------------------------------
+# ---------------------------------------------------
+# EJECUCIÓN DE LA APLICACIÓN
+# ---------------------------------------------------
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
