@@ -7,14 +7,14 @@ import os
 from werkzeug.utils import secure_filename
 from functools import wraps
 from flask import abort
-from flask_migrate import Migrate
+# from flask_migrate import Migrate
 from mercadopago import SDK
 
 app = Flask(__name__)
 app.secret_key = "NewImage" 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tienda.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-migrate = Migrate(app, db)
+# migrate = Migrate(app, db)
 
 db.init_app(app)
 
