@@ -19,6 +19,11 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tienda.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # migrate = Migrate(app, db)
 
+ALLOWED_HOSTS = [
+    "newimagepilates.com",
+    "www.newimagepilates.com",
+    "newimage-9i3u.onrender.com",
+]
 
 db.init_app(app)
 
