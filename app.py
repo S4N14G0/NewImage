@@ -73,6 +73,27 @@ def obtener_dolar_manual():
         db.session.commit()
     return config.dolar_manual
 
+@app.route('/update_dolar', methods=['POST'])
+@login_required
+def update_dolar():
+    nuevo_valor = request.form.get("nuevo_dolar")
+
+    if not nuevo_valor:
+        flash("Debes ingresar un valor.", "error")
+        return redirect(url_for('admin_dashboard'))
+
+    config = Configuracion.query.first()
+    if not config:
+        config = Configuracion(dolar=nuevo_valor)
+        db.session.add(config)
+    else:
+        config.dolar = nuevo_valor
+
+    db.session.commit()
+
+    flash("Valor del dólar actualizado correctamente.", "success")
+    return redirect(url_for('admin_dashboard'))
+
 def serializar_producto(producto):
     return {
         "id": producto.id,
