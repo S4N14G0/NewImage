@@ -19,22 +19,23 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function pagarConMP() {
-    const cart = JSON.parse(localStorage.getItem("checkoutCart") || "[]");
-    const email = document.getElementById("email").value;
+    const carrito = JSON.parse(localStorage.getItem("cart")) || [];
+    const email = document.getElementById("email")?.value ?? "";
 
-    const resp = await fetch("/crear_pago", {
+    const response = await fetch("/crear_pago", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },                
-        body: JSON.stringify({ cart, email })
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            email: email,
+            cart: carrito
+        })
     });
 
-    const data = await resp.json();
-        if (data.init_point) {
-            window.location.href = data.init_point; // Ir a MercadoPago
-        } else {
-            alert("Error al iniciar pago: " + data.error);
-        }
-    }
+    const data = await response.json();
+    console.log("Respuesta MP:", data);
+}
 
 const mp = new MercadoPago("TU_PUBLIC_KEY", {
     locale: "es-AR"
