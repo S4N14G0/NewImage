@@ -231,10 +231,11 @@ def formato_pesos(valor):
 @login_required
 def check():
     cuenta = get_cuenta_activa()
-    
-    if cuenta is None:
-        return "No hay cuenta activa configurada en el panel admin", 500
-    
+    print("DEBUG cuenta:", cuenta)
+
+    if not cuenta:
+        return "No hay cuenta activa configurada en la base de datos", 500
+
     return render_template("CheckOut.html", cuenta=cuenta, public_key=cuenta.public_key)
 
 print(CuentaPago.query.all())        # Ver si hay cuentas
