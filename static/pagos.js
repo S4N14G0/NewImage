@@ -36,4 +36,6 @@ async function pagarConMP() {
     const data = await response.json();
     console.log("Respuesta MP:", data);
 }
+
+const mp = new MercadoPago(PUBLIC_KEY, { locale: "es-AR" });
 console.log("Carrito localStorage:", carrito);
