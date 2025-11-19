@@ -230,14 +230,13 @@ def formato_pesos(valor):
 @app.route("/check")
 @login_required
 def check():
-    cuenta_activa = get_cuenta_activa
-    return render_template("CheckOut.html", cuenta_activa=cuenta_activa)
+    cuenta = get_cuenta_activa()
+    if not cuenta:
+        return "No hay ninguna cuenta activa", 500
+    
+    return render_template("CheckOut.html", cuenta=cuenta,public_key=cuenta.public_key)
 
-@app.route("/checkout_repuestos")
-@login_required
-def checkout_repuestos():
-    cuenta_activa = get_cuenta_activa()
-    return render_template("checkout_repuestos.html", cuenta_activa=cuenta_activa)
+
 
 # Logout
 @app.route("/logout", methods=["POST"])
