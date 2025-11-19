@@ -238,9 +238,6 @@ def check():
 
     return render_template("CheckOut.html", cuenta=cuenta, public_key=cuenta.public_key)
 
-print(CuentaPago.query.all())        # Ver si hay cuentas
-print(CuentaPago.query.filter_by(activo=True).first())   # Ver si hay activa
-
 # Logout
 @app.route("/logout", methods=["POST"])
 def logout():
