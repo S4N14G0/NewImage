@@ -707,6 +707,8 @@ def mp_webhook():
 # ---------------------------------------------------
 # EJECUCIÓN DE LA APLICACIÓN
 # ---------------------------------------------------
+print("DEBUG cuentas:", CuentaPago.query.all())
+print("DEBUG activa:", get_cuenta_activa())
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
