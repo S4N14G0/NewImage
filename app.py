@@ -9,7 +9,8 @@ from functools import wraps
 from flask import abort
 # from flask_migrate import Migrate
 from mercadopago import SDK
-
+print(CuentaPago.query.all())        # Ver si hay cuentas
+print(CuentaPago.query.filter_by(activo=True).first())   # Ver si hay activa
 # ---------------------------------------------------
 # CONFIGURACIÓN DE FLASK
 # ---------------------------------------------------
@@ -231,10 +232,11 @@ def formato_pesos(valor):
 @login_required
 def check():
     cuenta = get_cuenta_activa()
-    if not cuenta:
-        return "No hay ninguna cuenta activa", 500
     
-    return render_template("CheckOut.html", cuenta=cuenta,public_key=cuenta.public_key)
+    if cuenta is None:
+        return "No hay cuenta activa configurada en el panel admin", 500
+    
+    return render_template("CheckOut.html", cuenta=cuenta, public_key=cuenta.public_key)
 
 
 
