@@ -35,3 +35,7 @@ async function pagarConMP() {
             alert("Error al iniciar pago: " + data.error);
         }
     }
+
+const mp = new MercadoPago("TU_PUBLIC_KEY", {
+    locale: "es-AR"
+});

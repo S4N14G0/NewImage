@@ -35,7 +35,7 @@ sdk = SDK("TOKEN")
 MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
 MP_PUBLIC_KEY = os.getenv("MP_PUBLIC_KEY")
 
-if SDK and MP_ACCESS_TOKEN:
+if MP_ACCESS_TOKEN:
     mp = SDK(MP_ACCESS_TOKEN)
 else:
     mp = None
@@ -485,18 +485,22 @@ def checkout_confirm():
 
 @app.route("/crear_pago", methods=["POST"])
 def crear_pago():
-    if not mp:
-        return jsonify({"error": "MercadoPago no está configurado"}), 400
+    # Obtener la cuenta activa desde la base de datos
     cuenta = get_cuenta_activa()
 
     if not cuenta or not cuenta.access_token:
         return jsonify({"error": "No hay una cuenta activa con Access Token configurado"}), 400
 
+    # Instancia real del SDK con el Access Token de la cuenta activa
     sdk = SDK(cuenta.access_token)
-    data = request.json
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No se recibió JSON válido"}), 400
 
     email = data.get("email")
     cart = data.get("cart", [])
+
     if not cart:
         return jsonify({"error": "El carrito está vacío"}), 400
 
@@ -516,17 +520,20 @@ def crear_pago():
             "email": email
         },
         "back_urls": {
-            "success": "http://localhost:5000/pago_exitoso",
-            "failure": "http://localhost:5000/pago_fallido",
-            "pending": "http://localhost:5000/pago_pendiente"
+            "success": "https://newimagepilates.com/pago_exitoso",
+            "failure": "https://newimagepilates.com/pago_fallido",
+            "pending": "https://newimagepilates.com/pago_pendiente"
         },
         "auto_return": "approved"
     }
 
     preference_response = sdk.preference().create(preference_data)
+
+    # Log para debug
     print("JSON recibido:", data)
-    print("Carrito:", data.get("cart"))
-    print("Email:", data.get("email"))
+    print("Carrito:", cart)
+    print("Email:", email)
+
     return jsonify(preference_response["response"])
 
 # ---------------------------------------------------
