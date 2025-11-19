@@ -235,8 +235,8 @@ def check():
     print("DEBUG cuentas:", CuentaPago.query.all())
     print("DEBUG activa:", get_cuenta_activa())
 
-    if not cuenta:
-        return "No hay cuenta activa configurada en la base de datos", 500
+    # if not cuenta:
+    #     return "No hay cuenta activa configurada en la base de datos", 500
 
     return render_template("CheckOut.html", cuenta=cuenta, public_key=cuenta.public_key)
 
