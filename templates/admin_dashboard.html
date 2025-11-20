@@ -224,14 +224,6 @@
     </div>
     <script src="../static/Shop.js" defer></script>
     <script>
-        async function showDolarInAdmin() {
-            const res = await fetch("https://api.bluelytics.com.ar/v2/latest");
-            const data = await res.json();
-            document.getElementById("dolarValue").textContent =
-            `$${data.blue.value_avg.toFixed(2)} ARS`;
-        }
-        showDolarInAdmin();
-
         async function guardarObservacion(input){
             const productId = input.dataset.id;
             const nuevaObs = input.value.trim();
