@@ -19,7 +19,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function pagarConMP() {
-    const carrito = JSON.parse(localStorage.getItem("cart")) || [];
+    // Combinar los carritos igual que en checkout.js
+    const cartPrincipal = JSON.parse(localStorage.getItem("cart_principal")) || [];
+    const cartRepuestos = JSON.parse(localStorage.getItem("cart_repuestos")) || [];
+    const carrito = [...cartPrincipal, ...cartRepuestos];
+
+    console.log("🧾 Carrito enviado a MP:", carrito);
+
     const email = document.getElementById("email")?.value ?? "";
 
     const response = await fetch("/crear_pago", {
@@ -37,5 +43,5 @@ async function pagarConMP() {
     console.log("Respuesta MP:", data);
 }
 
+// ⚠ esto estaba mal ubicado antes
 const mp = new MercadoPago("{{ public_key }}");
-console.log("Carrito localStorage:", carrito);

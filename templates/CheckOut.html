@@ -280,8 +280,11 @@
             </section>
         </div>
     </div>
-    <script src="../static/CheckOut.js"></script>
-    <script src="/static/pagos.js"></script>
-    <script>const mp = new MercadoPago("{{ public_key }}", { locale: "es-AR" });</script>
+    <script src="{{ url_for('static', filename='js/CheckOut.js') }}"></script>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script>
+        const PUBLIC_KEY = "{{ public_key }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/pagos.js') }}"></script>
 </body>
 </html>
