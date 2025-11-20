@@ -508,12 +508,20 @@ def crear_pago():
     # Convertir carrito a items de MercadoPago
     items_mp = []
     for item in cart:
-        items_mp.append({
-            "title": item["name"],
-            "quantity": int(item["quantity"]),
-            "currency_id": "ARS",
-            "unit_price": float(item["price"])
-        })
+        # Detectar precio correcto
+        if "priceARS" in item:
+            precio = float(item["priceARS"])
+        elif "priceUSD" in item:
+            precio = float(item["priceUSD"])
+        else:
+            return jsonify({"error": f"Item sin precio válido: {item}"}), 400
+
+    items_mp.append({
+        "title": item["name"],
+        "quantity": int(item["quantity"]),
+        "currency_id": "ARS",  
+        "unit_price": precio
+    })
 
     preference_data = {
         "items": items_mp,
@@ -660,9 +668,9 @@ def guardar_edicion_cuenta(cuenta_id):
     cuenta.alias = request.form.get("alias")
     cuenta.cbu = request.form.get("cbu")
     cuenta.email = request.form.get("email")
-    cuenta.public_key = request.form.get("public_key")
-    cuenta.access_token = request.form.get("access_token")
-
+    cuenta.public_key = request.form.get("public_key").strip()
+    cuenta.access_token = request.form.get("access_token").strip()
+    
     db.session.commit()
 
     flash("Cuenta actualizada correctamente", "success")
