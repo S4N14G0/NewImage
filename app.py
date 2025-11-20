@@ -81,18 +81,19 @@ def obtener_dolar_manual():
 @app.route('/update_dolar', methods=['POST'])
 @login_required
 def update_dolar():
-    nuevo_valor = request.form.get("nuevo_dolar")
+    nuevo_valor = request.form.get("dolar_manual")   # ← nombre correcto
 
     if not nuevo_valor:
         flash("Debes ingresar un valor.", "error")
         return redirect(url_for('admin_dashboard'))
 
     config = Configuracion.query.first()
+
     if not config:
-        config = Configuracion(dolar=nuevo_valor)
+        config = Configuracion(dolar_manual=float(nuevo_valor), ventas_activas=True)
         db.session.add(config)
     else:
-        config.dolar = nuevo_valor
+        config.dolar_manual = float(nuevo_valor)     # ← campo correcto
 
     db.session.commit()
 
