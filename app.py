@@ -14,8 +14,8 @@ from mercadopago import SDK
 # CONFIGURACIÓN DE FLASK
 # ---------------------------------------------------
 app = Flask(__name__)
-app.secret_key = "NewImage"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tienda.db"
+app.secret_key = "NewImage2025"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////opt/render/project/src/tienda.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # migrate = Migrate(app, db)
 
