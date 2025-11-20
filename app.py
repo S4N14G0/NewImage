@@ -671,6 +671,12 @@ def guardar_edicion_cuenta(cuenta_id):
     cuenta.public_key = request.form.get("public_key").strip()
     cuenta.access_token = request.form.get("access_token").strip()
     
+    print("PUBLIC_KEY RECIBIDA:", request.form.get("public_key"))
+    print("ACCESS_TOKEN RECIBIDO:", request.form.get("access_token"))
+
+    print("PUBLIC_KEY GUARDADA:", cuenta.public_key)
+    print("ACCESS_TOKEN GUARDADO:", cuenta.access_token)
+    
     db.session.commit()
 
     flash("Cuenta actualizada correctamente", "success")
