@@ -3,3 +3,4 @@ flask_sqlalchemy
 flask_bcrypt
 gunicorn
 mercadopago
+psycopg2-binary
