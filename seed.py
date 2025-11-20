@@ -1,5 +1,6 @@
 from app import app, db
 from models import User, Product, ProductImage, Configuracion, CuentaPago
+from werkzeug.security import generate_password_hash
 
 with app.app_context():
 
@@ -17,7 +18,7 @@ with app.app_context():
     admin = User(
         username="admin",
         email="admin@admin.com",
-        password="admin123",   # cambiá luego por un hash real
+        password=generate_password_hash("1"),
         is_admin=True
     )
     db.session.add(admin)
