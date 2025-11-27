@@ -71,7 +71,7 @@ def obtener_estado_ventas():
     return config.ventas_activas
 
 def obtener_dolar_manual():
-    config = Configuracion.query.first()
+    config = Configuracion.query.execution_options(populate_existing=True).first()
     if not config:
         config = Configuracion(dolar_manual=1450, ventas_activas=True)
         db.session.add(config)
@@ -266,20 +266,29 @@ def profile():
 def admin_dashboard():
     cuentas = CuentaPago.query.all()
     filtro = request.args.get("filtro", "todo")
+
     config = Configuracion.query.first()
+    if config:
+        db.session.refresh(config)   # ← Fuerza a recargar desde la DB
+
     ventas_activas = config.ventas_activas if config else True
-    
+    dolar = config.dolar_manual if config else 1450
+
     if filtro == "principal":
         productos = Product.query.filter_by(tipo="principal").all()
     elif filtro == "repuesto":
         productos = Product.query.filter_by(tipo="repuesto").all()
-    else: 
+    else:
         productos = Product.query.all()
-        
-    dolar = obtener_dolar_manual()    
-    
-    return render_template("admin_dashboard.html", cuentas=cuentas, products=productos, filtro=filtro, dolar=dolar, ventas_activas=ventas_activas)
 
+    return render_template(
+        "admin_dashboard.html",
+        cuentas=cuentas,
+        products=productos,
+        filtro=filtro,
+        dolar=dolar,
+        ventas_activas=ventas_activas
+    )
 @app.route("/admin_cuentas")
 @login_required
 def admin_cuentas():
