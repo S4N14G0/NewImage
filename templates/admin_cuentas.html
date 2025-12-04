@@ -106,17 +106,6 @@
                 <p class="text-sm text-gray-600">Public Key: {{ cuenta.public_key }}</p>
                 <p class="text-sm text-gray-600">Access Token: {{ cuenta.access_token }}</p>
             </div>
-
-            <button onclick="activarCuenta({{ cuenta.id }})"
-                class="px-4 py-2 rounded text-white
-                {% if cuenta.activo %}
-                    bg-green-600
-                {% else %}
-                    bg-indigo-600 hover:bg-indigo-700
-                {% endif %}">
-                {% if cuenta.activo %} Activa ✔ {% else %} Activar {% endif %}
-            </button>
-
         </div>
         {% endfor %}
     </div>
