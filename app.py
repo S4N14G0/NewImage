@@ -78,7 +78,11 @@ def obtener_estado_ventas():
     return config.ventas_activas
 
 def obtener_dolar_manual():
-    config = Configuracion.query.execution_options(populate_existing=True).first()
+    config = (
+        Configuracion.query
+        .execution_options(populate_existing=True)
+        .first()
+    )
     if not config:
         config = Configuracion(dolar_manual=1450, ventas_activas=True)
         db.session.add(config)
@@ -94,7 +98,11 @@ def update_dolar():
         flash("Debes ingresar un valor.", "error")
         return redirect(url_for('admin_dashboard'))
 
-    config = Configuracion.query.first()
+    config = (
+        Configuracion.query
+        .execution_options(populate_existing=True)
+        .first()
+    )
 
     if not config:
         config = Configuracion(dolar_manual=float(nuevo_valor), ventas_activas=True)
@@ -103,7 +111,9 @@ def update_dolar():
         config.dolar_manual = float(nuevo_valor)
 
     db.session.commit()
-    db.session.refresh(config)  # ← fuerza a leer el valor actualizado
+
+    # 🔥 Fuerza a leer desde la DB, NO desde caché
+    db.session.refresh(config)
 
     flash("Valor del dólar actualizado correctamente.", "success")
     return redirect(url_for('admin_dashboard'))
