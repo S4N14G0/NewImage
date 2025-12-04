@@ -283,7 +283,10 @@
     <script src="{{ url_for('static', filename='CheckOut.js') }}"></script>
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script>
-        const PUBLIC_KEY = "{{ public_key }}";
+        const PUBLIC_KEY = "{{ public_key }}".trim();
+        const mp = new MercadoPago(PUBLIC_KEY);
+        console.log("🔑 PUBLIC_KEY =", PUBLIC_KEY);
+        console.log("🧩 MercadoPago instance =", mp);
     </script>
     <script src="{{ url_for('static', filename='pagos.js') }}"></script>
 </body>

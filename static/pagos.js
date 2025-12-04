@@ -41,7 +41,9 @@ async function pagarConMP() {
 
     const data = await response.json();
     console.log("Respuesta MP:", data);
-}
 
-// ⚠ esto estaba mal ubicado antes
-const mp = new MercadoPago("{{ public_key }}");
+    // Redirigir al checkout de MercadoPago
+    if (data.init_point) {
+        window.location.href = data.init_point;
+    }
+}
