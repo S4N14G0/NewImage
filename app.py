@@ -50,6 +50,13 @@ with app.app_context():
 # DECORADORES Y FUNCIONES AUXILIARES
 # ---------------------------------------------------
 
+@app.after_request
+def agregar_headers_no_cache(response):
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -100,6 +107,8 @@ def update_dolar():
 
     flash("Valor del dólar actualizado correctamente.", "success")
     return redirect(url_for('admin_dashboard'))
+
+
 
 def serializar_producto(producto):
     return {
