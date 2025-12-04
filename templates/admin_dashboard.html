@@ -130,6 +130,20 @@
                             </button>
                         </form>
 
+                        <button onclick="activarCuenta({{ cuenta.id }})"
+                            class="px-4 py-2 rounded text-white text-sm
+                            {% if cuenta.activo %}
+                                bg-green-600
+                            {% else %}
+                                bg-indigo-600 hover:bg-indigo-700
+                            {% endif %}">
+                            
+                            {% if cuenta.activo %}
+                                Activa ✔
+                            {% else %}
+                                Activar
+                            {% endif %}
+                        </button>
                     </div>
                 </div>
 
