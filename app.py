@@ -556,6 +556,19 @@ def crear_pago():
 
     return jsonify(preference_response["response"])
 
+@app.route('/pago_exitoso')
+def pago_exitoso():
+    return render_template("pago_exitoso.html")
+
+@app.route('/pago_pendiente')
+def pago_pendiente():
+    return render_template("pago_pendiente.html")
+
+@app.route('/pago_fallido')
+def pago_fallido():
+    return render_template("pago_fallido.html")
+
+
 # ---------------------------------------------------
 # FUNCIONES AUXILIARES
 # ---------------------------------------------------
