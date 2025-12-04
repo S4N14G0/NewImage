@@ -105,16 +105,26 @@ function NextStep2() { if (validateStep(1)) goToStep(2); }
 function NextStep3() { if (validateStep(2)) goToStep(3); }
 function NextStep4() { goToStep(4); }
 async function NextStep5() {
+    const metodoPago = document.querySelector('input[name="payment"]:checked').value;
+
     if (cart.length === 0) {
-    alert("El carrito está vacío. Agrega productos antes de continuar.");
-    return;
-}
+        alert("El carrito está vacío. Agrega productos antes de continuar.");
+        return;
+    }
+
+    // Si el pago es Mercado Pago → no muestres Step 5, redirige directo
+    if (metodoPago === "mp") {
+        pagarConMP();
+        return;
+    }
+
+    // Si es transferencia → continúa como siempre
     if (validateStep(4)) {
         try {
             const response = await fetch("/checkout", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     cart: cartPrincipal,
                     repuestos: cartRepuestos
                 })
@@ -126,10 +136,9 @@ async function NextStep5() {
 
             console.log("✅ Pedido registrado:", data);
 
-            // Pasamos order_id a la función siguiente
             renderFinalSummary(data.order_id, data.total);
-
             goToStep(5);
+
         } catch (err) {
             console.error("❌ Error al enviar checkout:", err);
         }
@@ -145,6 +154,7 @@ function BackStep4() { goToStep(3); }
 function renderFinalSummary(orderId, total) {
     // Número de orden real del backend
     document.getElementById("orderNumber").textContent = "OR-" + orderId;
+    
 
     // Mostrar total formateado
     const totalFormatted = total.toLocaleString("es-AR", { style: "currency", currency: "ARS" });
