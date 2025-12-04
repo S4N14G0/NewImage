@@ -85,86 +85,128 @@
     </div>
 
 {% block content %}
-<main class="container mx-auto px-24 py-8">
-    <h1 class="text-3xl font-bold text-center mb-8">Panel de Administración</h1>
-    <section class="p-6 bg-white shadow rounded-lg max-w-3xl mx-auto mt-8">
+<main class="container mx-auto px-10 py-8">
+
+    <!-- TÍTULO -->
+    <h1 class="text-3xl font-bold text-center mb-10">Panel de Administración</h1>
+
+    <!-- === CUENTAS MERCADOPAGO (ORDENADO) === -->
+    <section class="p-6 bg-white shadow rounded-lg max-w-3xl mx-auto">
         <h2 class="text-2xl font-semibold mb-6">💳 Cuentas de Pago (Mercado Pago)</h2>
-        <!-- Lista de cuentas existentes -->
-        {% for cuenta in cuentas %}
-        <div class="p-4 bg-white border rounded-lg shadow flex justify-between">
-            <div>
-                <p class="font-bold text-lg">{{ cuenta.nombre }}</p>
-                <p class="text-sm text-gray-600">Banco: {{ cuenta.banco }}</p>
-                <p class="text-sm text-gray-600">Alias: {{ cuenta.alias }}</p>
-                <p class="text-sm text-gray-600">CBU: {{ cuenta.cbu }}</p>
-                <p class="text-sm text-gray-600">Email: {{ cuenta.email }}</p>
-            </div>
 
-            <div class="flex flex-col gap-2">
-                <a href="{{ url_for('editar_cuenta', cuenta_id=cuenta.id) }}"
-                class="bg-indigo-600 px-3 py-1 rounded text-white text-sm">
-                    ✏️ Editar
-                </a>
+        <div class="space-y-4">
 
-                <form action="{{ url_for('eliminar_cuenta', cuenta_id=cuenta.id) }}"
-                    method="POST"
-                    onsubmit="return confirm('¿Seguro que deseas eliminar esta cuenta?');">
-                    <button class="bg-red-600 px-3 py-1 rounded text-white text-sm">
-                        🗑️ Eliminar
-                    </button>
-                </form>
+            {% for cuenta in cuentas %}
+            <div class="bg-gray-50 border rounded-lg shadow-md">
+                
+                <!-- Encabezado clickable con el nombre -->
+                <button
+                    class="w-full text-left px-4 py-3 font-semibold text-lg bg-gray-100 hover:bg-gray-200 rounded-t-lg flex justify-between items-center"
+                    onclick="this.nextElementSibling.classList.toggle('hidden')">
+                    {{ cuenta.nombre }}
+                    <span>▼</span>
+                </button>
+
+                <!-- Contenido interno -->
+                <div class="hidden p-4">
+
+                    <p class="text-sm text-gray-700"><strong>Banco:</strong> {{ cuenta.banco }}</p>
+                    <p class="text-sm text-gray-700"><strong>Alias:</strong> {{ cuenta.alias }}</p>
+                    <p class="text-sm text-gray-700"><strong>CBU:</strong> {{ cuenta.cbu }}</p>
+                    <p class="text-sm text-gray-700"><strong>Email:</strong> {{ cuenta.email }}</p>
+
+                    <div class="flex gap-3 mt-4">
+
+                        <a href="{{ url_for('editar_cuenta', cuenta_id=cuenta.id) }}"
+                        class="bg-indigo-600 px-3 py-1 rounded text-white text-sm hover:bg-indigo-700">
+                            ✏️ Editar
+                        </a>
+
+                        <form action="{{ url_for('eliminar_cuenta', cuenta_id=cuenta.id) }}"
+                            method="POST"
+                            onsubmit="return confirm('¿Seguro que deseas eliminar esta cuenta?');">
+                            <button class="bg-red-600 px-3 py-1 rounded text-white text-sm hover:bg-red-700">
+                                🗑️ Eliminar
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-        <button class="btn btn-primary">
-            <a href="{{ url_for('admin_cuentas') }}">Agregar Cuenta</a>
-        </button>
+
+        <!-- Botón agregar cuenta -->
+        <div class="mt-6 text-center">
+            <a href="{{ url_for('admin_cuentas') }}"
+                class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                ➕ Agregar Cuenta
+            </a>
+        </div>
+
     </section>
 
-    <form action="{{ url_for('toggle_ventas') }}" method="POST" class="inline">
-        {% if ventas_activas %}
-            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-            🚫 Desactivar ventas
-            </button>
-        {% else %}
-            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            ✅ Activar ventas
-            </button>
-        {% endif %}
-    </form>
-    <form action="{{ url_for('update_dolar') }}" method="POST" class="flex items-center gap-4 mt-4">
-        <label for="dolar_manual" class="font-semibold text-lg">Valor del dólar:</label>
-        <input type="number" step="0.01" name="dolar_manual" id="dolar_manual"
-                value="{{ dolar }}" class="border rounded px-6 py-1 w-32">
-        <button type="submit" class="btn btn-primary">Actualizar</button>
-    </form>
+    <!-- === SECCIÓN DE CONFIGURACIONES === -->
+    <div class="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow">
 
-    <div class="flex justify-end gap-3 mb-6">
+        <!-- activar/desactivar ventas -->
+        <div class="mb-6">
+            <form action="{{ url_for('toggle_ventas') }}" method="POST">
+                {% if ventas_activas %}
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        🚫 Desactivar ventas
+                    </button>
+                {% else %}
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                        ✅ Activar ventas
+                    </button>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- dolar manual -->
+        <form action="{{ url_for('update_dolar') }}" method="POST" class="flex items-center gap-4">
+            <label for="dolar_manual" class="font-semibold text-lg">Valor del dólar:</label>
+            <input type="number" step="0.01" name="dolar_manual" id="dolar_manual"
+                value="{{ dolar }}" class="border rounded px-6 py-1 w-32">
+            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                Actualizar
+            </button>
+        </form>
+
+    </div>
+
+    <!-- === FILTROS DE PRODUCTOS === -->
+    <div class="flex justify-end gap-3 mb-6 mt-10">
         <a href="{{ url_for('admin_dashboard', filtro='todos') }}"
-        class="px-4 py-2 rounded-lg font-semibold 
-                {% if filtro == 'todos' %}bg-indigo-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
+        class="px-4 py-2 rounded-lg font-semibold
+            {% if filtro == 'todos' %}bg-indigo-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
             Todos
         </a>
 
         <a href="{{ url_for('admin_dashboard', filtro='principal') }}"
-        class="px-4 py-2 rounded-lg font-semibold 
-                {% if filtro == 'principal' %}bg-indigo-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
+        class="px-4 py-2 rounded-lg font-semibold
+            {% if filtro == 'principal' %}bg-indigo-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
             Productos
         </a>
 
         <a href="{{ url_for('admin_dashboard', filtro='repuesto') }}"
-        class="px-4 py-2 rounded-lg font-semibold 
-                {% if filtro == 'repuesto' %}bg-indigo-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
+        class="px-4 py-2 rounded-lg font-semibold
+            {% if filtro == 'repuesto' %}bg-indigo-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
             Repuestos
         </a>
     </div>
 
     <!-- Botón agregar producto -->
     <div class="mb-3 flex justify-end">
-        <a href="{{ url_for('new_product') }}" class="btn btn-primary">➕ Agregar producto</a>
+        <a href="{{ url_for('new_product') }}"
+            class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+            ➕ Agregar producto
+        </a>
     </div>
 
-    <!-- Tabla de productos -->
+    <!-- === TABLA DE PRODUCTOS === -->
     <div class="overflow-x-auto bg-white rounded-lg shadow">
         <table class="min-w-full text-left">
             <thead class="bg-gray-900 border-b text-gray-100">
@@ -180,7 +222,7 @@
             </thead>
             <tbody>
                 {% for product in products %}
-                <tr class="bg-gray-300 border-b hover:bg-green-200">
+                <tr class="bg-gray-100 border-b hover:bg-green-100">
                     <td class="py-3 px-4">{{ product.id }}</td>
                     <td class="py-3 px-4">{{ product.nombre }}</td>
                     <td class="px-4 py-2">
@@ -189,7 +231,8 @@
                                 data-id="{{ product.id }}"
                                 onchange="guardarObservacion(this)"
                                 class="border rounded px-2 py-1 text-sm focus:ring-2 focus:ring-indigo-400">
-                        <button type="submit" class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 text-sm">
+                        <button type="submit"
+                                class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 text-sm">
                             💾
                         </button>
                     </td>
@@ -201,17 +244,22 @@
                             <span class="text-red-600 font-semibold">Sin stock</span>
                         {% endif %}
                     </td>
-                    <td>
+                    <td class="py-3 px-4">
                         {% if product.imagenes %}
-                        <img src="{{ url_for('static', filename='uploads/' ~ product.imagenes[0].filename) }}" alt="{{ product.nombre }}" width="90">
+                        <img src="{{ url_for('static', filename='uploads/' ~ product.imagenes[0].filename) }}"
+                             alt="{{ product.nombre }}" width="90"
+                             class="rounded shadow">
                         {% endif %}
                     </td>
                     <td class="py-3 px-4 flex gap-2">
-                        <a href="{{ url_for('edit_product', product_id=product.id) }}" 
-                           class="btn btn-gray">✏️ Editar</a>
-                        <form action="{{ url_for('delete_product', product_id=product.id) }}" 
-                              method="POST" style="display:inline;">
-                            <button type="submit" class="btn btn-gray"
+                        <a href="{{ url_for('edit_product', product_id=product.id) }}"
+                           class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">
+                            ✏️ Editar
+                        </a>
+                        <form action="{{ url_for('delete_product', product_id=product.id) }}"
+                              method="POST">
+                            <button type="submit"
+                                    class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
                                     onclick="return confirm('¿Seguro que quieres eliminar este producto?');">
                                 🗑️ Eliminar
                             </button>
