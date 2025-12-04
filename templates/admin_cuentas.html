@@ -88,28 +88,6 @@
 {% block content %}
 <div class="max-w-3xl mx-auto py-12">
 
-    <h2 class="text-2xl font-bold mb-6">Cuentas de Cobro</h2>
-
-    <!-- Si no hay cuentas -->
-    {% if cuentas|length == 0 %}
-        <p class="text-gray-500 mb-6">No hay cuentas registradas aún.</p>
-    {% endif %}
-
-    <!-- Listado de cuentas -->
-    <div class="space-y-4 mb-10">
-        {% for cuenta in cuentas %}
-        <div class="p-4 border rounded-lg shadow bg-white flex justify-between">
-
-            <div>
-                <p class="font-semibold text-lg">{{ cuenta.nombre }}</p>
-                <p class="text-sm text-gray-600">Email: {{ cuenta.email }}</p>
-                <p class="text-sm text-gray-600">Public Key: {{ cuenta.public_key }}</p>
-                <p class="text-sm text-gray-600">Access Token: {{ cuenta.access_token }}</p>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
     <!-- Formulario agregar cuenta -->
     <div class="max-w-3xl mx-auto py-12">
         <h2 class="text-2xl font-bold mb-6">Agregar Nueva Cuenta de Cobro</h2>
