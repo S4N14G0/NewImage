@@ -496,6 +496,11 @@ body {
 
 }
 
+.button2.facebook::after{
+    background:#133ed6
+
+}
+
 .button2:hover {
   color: #ffffff;
   border: 1px solid #009087;
@@ -504,6 +509,11 @@ body {
 .button2.instagram:hover{
     border: 1px solid #d62976;
     }
+
+.button2:hover {
+  color: #ffffff;
+  border: 1px solid #133ed6;
+}
 
 .button2:hover:before {
   top: -35%;
