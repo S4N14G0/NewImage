@@ -247,7 +247,7 @@ def formato_pesos(valor):
 @admin_required
 def historial_ventas():
     ventas = Venta.query.order_by(Venta.fecha.desc()).all()
-    return render_template("admin/historial_ventas.html", ventas=ventas)
+    return render_template("historial_ventas.html", ventas=ventas)
 # ---------------------------------------------------
 # RUTAS DE CHECKOUT Y SESIÓN
 # ---------------------------------------------------
