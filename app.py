@@ -243,7 +243,7 @@ def formato_pesos(valor):
     except (ValueError, TypeError):
         return valor
 
-@app.route("/admin/historial_ventas")
+@app.route("/historial_ventas")
 @admin_required
 def historial_ventas():
     ventas = Venta.query.order_by(Venta.fecha.desc()).all()
