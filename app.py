@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session, g, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Product, Order, OrderItem, ProductImage, Configuracion, CuentaPago
+from models import db, User, Product, Order, OrderItem, ProductImage, Configuracion, CuentaPago, Venta, VentaItem
 from helpers import login_required
 from werkzeug.utils import secure_filename
 from functools import wraps
@@ -243,6 +243,11 @@ def formato_pesos(valor):
     except (ValueError, TypeError):
         return valor
 
+@app.route("/admin/historial_ventas")
+@admin_required
+def historial_ventas():
+    ventas = Venta.query.order_by(Venta.fecha.desc()).all()
+    return render_template("admin/historial_ventas.html", ventas=ventas)
 # ---------------------------------------------------
 # RUTAS DE CHECKOUT Y SESIÓN
 # ---------------------------------------------------
@@ -309,7 +314,7 @@ def admin_dashboard():
         ventas_activas=ventas_activas
     )
 @app.route("/admin_cuentas")
-@login_required
+@admin_required
 def admin_cuentas():
     cuentas = CuentaPago.query.all()
     return render_template("admin_cuentas.html", cuentas=cuentas)
@@ -567,11 +572,39 @@ def crear_pago():
     }
 
     preference_response = sdk.preference().create(preference_data)
+    
+    nombre = request.form.get("nombre")
+    telefono = request.form.get("telefono")
+    email = request.form.get("email")
+    metodo_pago = request.form.get("metodo_pago")   # "mercado_pago" o "transferencia"
+    cuenta_alias_o_cbu = request.form.get("cuenta_destino")  # alias o CBU
+    total_pesos = request.form.get("total")  # total ya convertido
+    carrito = session.get("cart", [])
+    
+    venta = Venta(
+        comprador_nombre=nombre,
+        comprador_telefono=telefono,
+        comprador_email=email,
+        metodo_pago=metodo_pago,   # "mercado_pago" o "transferencia"
+        cuenta_destino=cuenta_alias_o_cbu,
+        monto_total=total_pesos
+    )
 
-    # Log para debug
-    print("JSON recibido:", data)
-    print("Carrito:", cart)
-    print("Email:", email)
+    db.session.add(venta)
+    db.session.commit()
+
+    # Agregar items
+    for item in carrito:
+        item_reg = VentaItem(
+            venta_id=venta.id,
+            producto_nombre=item.producto.nombre,
+            cantidad=item.cantidad,
+            precio_unitario=item.producto.precio
+        )
+        db.session.add(item_reg)
+
+    db.session.commit()
+
 
     return jsonify(preference_response["response"])
 

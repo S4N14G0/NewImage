@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -78,3 +79,31 @@ class CuentaPago(db.Model):
             "public_key": self.public_key,
             "activo": self.activo
         }
+        
+
+class Venta(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    comprador_nombre = db.Column(db.String(120))
+    comprador_telefono = db.Column(db.String(50))
+    comprador_email = db.Column(db.String(120))
+    metodo_pago = db.Column(db.String(50))  # MP - Transferencia
+    cuenta_destino = db.Column(db.String(120))  # alias o CBU
+    monto_total = db.Column(db.Float)
+    items = db.relationship("VentaItem", backref="venta", cascade="all, delete-orphan")
+
+
+class VentaItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    venta_id = db.Column(db.Integer, db.ForeignKey("venta.id"))
+    producto_nombre = db.Column(db.String(200))
+    cantidad = db.Column(db.Integer)
+    precio_unitario = db.Column(db.Float)
+
+
+
+
+
+
+
+

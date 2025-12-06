@@ -26,7 +26,27 @@ async function pagarConMP() {
 
     console.log("🧾 Carrito enviado a MP:", carrito);
 
+    const firstName = document.getElementById("firstName")?.value ?? "";
+    const lastName = document.getElementById("lastName")?.value ?? "";
     const email = document.getElementById("email")?.value ?? "";
+    const telefono = document.getElementById("phone")?.value ?? "";
+    const comprador_nombre = `${firstName} ${lastName}`;
+
+    // Método de pago fijo (Mercado Pago)
+    const metodo_pago = "mercado_pago";
+
+    // Total final mostrado en el checkout
+    const totalTexto = document.getElementById("checkoutTotal").innerText.replace("$", "").trim();
+    const monto_total = parseFloat(totalTexto.replace(".", "").replace(",", "."));
+
+    console.log("🧾 Enviando a MP:", {
+        comprador_nombre,
+        email,
+        telefono,
+        metodo_pago,
+        monto_total,
+        carrito
+    });
 
     const response = await fetch("/crear_pago", {
         method: "POST",
