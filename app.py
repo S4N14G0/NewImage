@@ -521,18 +521,15 @@ def checkout_confirm():
 
 @app.route("/crear_pago", methods=["POST"])
 def crear_pago():
-    # Obtener la cuenta activa desde la base de datos
     cuenta = get_cuenta_activa()
-
     if not cuenta or not cuenta.access_token:
-        return jsonify({"error": "No hay una cuenta activa con Access Token configurado"}), 400
+        return jsonify({"error": "No hay cuenta activa configurada"}), 400
 
-    # Instancia real del SDK con el Access Token de la cuenta activa
     sdk = SDK(cuenta.access_token)
 
     data = request.get_json()
     if not data:
-        return jsonify({"error": "No se recibió JSON válido"}), 400
+        return jsonify({"error": "JSON inválido"}), 400
 
     email = data.get("email")
     cart = data.get("cart", [])
@@ -540,46 +537,42 @@ def crear_pago():
     if not cart:
         return jsonify({"error": "El carrito está vacío"}), 400
 
-    # Convertir carrito a items de MercadoPago
     items_mp = []
     for item in cart:
-        # Detectar precio correcto
         if "priceARS" in item:
             precio = float(item["priceARS"])
         elif "priceUSD" in item:
             precio = float(item["priceUSD"])
         else:
-            return jsonify({"error": f"Item sin precio válido: {item}"}), 400
+            return jsonify({"error": "Item sin precio"}), 400
 
-    items_mp.append({
-        "title": item["name"],
-        "quantity": int(item["quantity"]),
-        "currency_id": "ARS",  
-        "unit_price": precio
-    })
+        items_mp.append({
+            "title": item.get("name", "Producto"),
+            "quantity": int(item.get("quantity", 1)),
+            "currency_id": "ARS",
+            "unit_price": precio
+        })
 
     preference_data = {
         "items": items_mp,
-        "payer": {
-            "email": email
-        },
+        "payer": {"email": email},
         "back_urls": {
-            "success": "https://newimagepilates.com/pago_exitoso",
-            "failure": "https://newimagepilates.com/pago_fallido",
-            "pending": "https://newimagepilates.com/pago_pendiente"
+            "success": url_for("pago_exitoso", _external=True),
+            "failure": url_for("pago_fallido", _external=True),
+            "pending": url_for("pago_pendiente", _external=True)
         },
         "auto_return": "approved"
     }
 
-    preference_response = sdk.preference().create(preference_data)
+    preference = sdk.preference().create(preference_data)
     
-    nombre = request.form.get("nombre")
-    telefono = request.form.get("telefono")
-    email = request.form.get("email")
-    metodo_pago = request.form.get("metodo_pago")   # "mercado_pago" o "transferencia"
-    cuenta_alias_o_cbu = request.form.get("cuenta_destino")  # alias o CBU
-    total_pesos = request.form.get("total")  # total ya convertido
-    carrito = session.get("cart", [])
+    nombre = data.get("comprador_nombre")
+    telefono = data.get("comprador_telefono")
+    email = data.get("comprador_email")
+    metodo_pago = data.get("metodo_pago")
+    cuenta_alias_o_cbu = data.get("cuenta_destino")  # alias o CBU
+    total_pesos = data.get("monto_total")
+    carrito = cart
     
     venta = Venta(
         comprador_nombre=nombre,
@@ -606,7 +599,7 @@ def crear_pago():
     db.session.commit()
 
 
-    return jsonify(preference_response["response"])
+    return jsonify(preference["response"])
 
 @app.route('/pago_exitoso')
 def pago_exitoso():

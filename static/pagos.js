@@ -19,12 +19,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function pagarConMP() {
-    // Combinar carritos
+    // Combinar los carritos igual que en checkout.js
     const cartPrincipal = JSON.parse(localStorage.getItem("cart_principal")) || [];
     const cartRepuestos = JSON.parse(localStorage.getItem("cart_repuestos")) || [];
     const carrito = [...cartPrincipal, ...cartRepuestos];
 
-    // Datos del formulario del checkout
+    console.log("🧾 Carrito enviado a MP:", carrito);
+
     const firstName = document.getElementById("firstName")?.value ?? "";
     const lastName = document.getElementById("lastName")?.value ?? "";
     const email = document.getElementById("email")?.value ?? "";
@@ -47,28 +48,26 @@ async function pagarConMP() {
         carrito
     });
 
-    // Enviar datos al backend
     const response = await fetch("/crear_pago", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            comprador_nombre,
+            comprador_nombre: comprador_nombre,
             comprador_telefono: telefono,
             comprador_email: email,
-            metodo_pago,
-            monto_total,
-            carrito
+            metodo_pago: "mercado_pago",
+            monto_total: monto_total,
+            cart: carrito
         })
     });
 
     const data = await response.json();
     console.log("Respuesta MP:", data);
 
+    // Redirigir al checkout de MercadoPago
     if (data.init_point) {
-        window.location.href = data.init_point; // redirige al checkout MP
-    } else {
-        alert("Error al iniciar el pago con Mercado Pago.");
+        window.location.href = data.init_point;
     }
 }
