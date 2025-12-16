@@ -522,7 +522,6 @@ def checkout_confirm():
 @app.route("/crear_pago", methods=["POST"])
 def crear_pago():
     try:
-        
         cuenta = get_cuenta_activa()
         if not cuenta or not cuenta.access_token:
             return jsonify({"error": "No hay cuenta activa configurada"}), 400
@@ -539,18 +538,21 @@ def crear_pago():
         if not cart:
             return jsonify({"error": "El carrito está vacío"}), 400
 
+        # ---------------------------
+        # CREAR ITEMS MERCADO PAGO
+        # ---------------------------
         items_mp = []
+        total = 0
+
         for item in cart:
-            if "priceARS" in item:
-                precio = float(item["priceARS"])
-            elif "priceUSD" in item:
-                precio = float(item["priceUSD"])
-            else:
-                return jsonify({"error": "Item sin precio"}), 400
+            precio = float(item.get("priceARS", 0))
+            cantidad = int(item.get("quantity", 1))
+
+            total += precio * cantidad
 
             items_mp.append({
                 "title": item.get("name", "Producto"),
-                "quantity": int(item.get("quantity", 1)),
+                "quantity": cantidad,
                 "currency_id": "ARS",
                 "unit_price": precio
             })
@@ -567,45 +569,42 @@ def crear_pago():
         }
 
         preference = sdk.preference().create(preference_data)
-        
-        nombre = data.get("comprador_nombre")
-        telefono = data.get("comprador_telefono")
-        email = data.get("comprador_email")
-        metodo_pago = data.get("metodo_pago")
-        cuenta_alias_o_cbu = data.get("cuenta_destino")  # alias o CBU
-        total_pesos = data.get("monto_total")
-        carrito = cart
-        
+
+        # ---------------------------
+        # GUARDAR VENTA
+        # ---------------------------
         venta = Venta(
-            comprador_nombre=nombre,
-            comprador_telefono=telefono,
+            comprador_nombre=data.get("comprador_nombre"),
+            comprador_telefono=data.get("telefono"),
             comprador_email=email,
-            metodo_pago=metodo_pago,   # "mercado_pago" o "transferencia"
-            cuenta_destino=cuenta_alias_o_cbu,
-            monto_total=total_pesos
+            metodo_pago="mercado_pago",
+            cuenta_destino=cuenta.alias or cuenta.cbu,
+            monto_total=total
         )
 
         db.session.add(venta)
         db.session.commit()
 
-        # Agregar items
-        for item in carrito:
+        # ---------------------------
+        # GUARDAR ITEMS DE VENTA
+        # ---------------------------
+        for item in cart:
             item_reg = VentaItem(
                 venta_id=venta.id,
-                producto_nombre=item.producto.nombre,
-                cantidad=item.cantidad,
-                precio_unitario=item.producto.precio
+                producto_nombre=item.get("name"),
+                cantidad=int(item.get("quantity", 1)),
+                precio_unitario=float(item.get("priceARS", 0))
             )
             db.session.add(item_reg)
 
         db.session.commit()
-
 
         return jsonify(preference["response"])
 
     except Exception as e:
         print("🔥 ERROR crear_pago:", e)
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/pago_exitoso')
 def pago_exitoso():

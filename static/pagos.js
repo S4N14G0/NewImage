@@ -50,15 +50,13 @@ async function pagarConMP() {
 
     const response = await fetch("/crear_pago", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            comprador_nombre: comprador_nombre,
-            comprador_telefono: telefono,
-            comprador_email: email,
+            comprador_nombre,
+            telefono,
+            email,
             metodo_pago: "mercado_pago",
-            monto_total: monto_total,
+            monto_total,
             cart: carrito
         })
     });
