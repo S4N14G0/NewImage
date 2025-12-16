@@ -63,6 +63,13 @@ async function pagarConMP() {
         })
     });
 
+    if (!response.ok) {
+        const text = await response.text();
+        console.error("❌ Error backend:", text);
+        alert("Error al iniciar el pago");
+        return;
+    }
+
     const data = await response.json();
     console.log("Respuesta MP:", data);
 
