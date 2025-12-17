@@ -91,7 +91,7 @@ function updateActiveStep() {
 }
 
 function updateProgressBar() {
-  const totalSteps = 5; // cantidad de pasos
+  const totalSteps = 4; // cantidad de pasos
   const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
   
   const bar = document.getElementById("progressBar");

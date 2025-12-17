@@ -161,55 +161,27 @@
                 </div>
                 </div>
 
-                <!-- Paso 2: Envío -->
+                <!-- Paso 2: Aviso sin envíos -->
                 <div id="step2" class="checkout-step-content hidden">
-                <h3 class="text-lg font-semibold text-gray-800 mb-6">Dirección de envío</h3>
-                <div class="space-y-4">
-                    <input id="address" type="text" class="input-field" placeholder="Dirección">
-                    <input id="city" type="text" class="input-field" placeholder="Ciudad">
-                    <input id="zip" type="text" class="input-field" placeholder="Código postal">
-                    <textarea id="instructions" class="input-field" rows="3" placeholder="Instrucciones adicionales..."></textarea>
-                </div>
-                <div class="flex justify-between mt-8">
-                    <button onclick="BackStep2()" class="btn-secondary">Atrás</button>
-                    <button onclick="NextStep3()" class="btn-primary">Continuar</button>
-                </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                        📦 Importante sobre la entrega
+                    </h3>
+
+                    <div class="bg-yellow-50 border border-yellow-300 rounded-xl p-5 text-gray-700">
+                        <p class="font-semibold mb-2">Actualmente no realizamos envíos</p>
+
+                        <p class="text-sm">
+                        Una vez confirmado el pedido, nos contactate con nosotros via WhatsApp
+                        para coordinar el <strong>retiro del pedido</strong>.
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between mt-8">
+                        <button onclick="BackStep1()" class="btn-secondary">Atrás</button>
+                        <button onclick="NextStep4()" class="btn-primary">Continuar</button>
+                    </div>
                 </div>
 
-                <!-- Paso 3: Método de envío -->
-                <div id="step3" class="checkout-step-content hidden">
-                <h3 class="text-lg font-semibold text-gray-800 mb-6">Método de envío</h3>
-                <div class="space-y-3">
-                    <label class="option-card">
-                    <input type="radio" name="shipping" checked>
-                    <div>
-                        <p class="font-medium text-gray-800">Envío estándar</p>
-                        <p class="text-sm text-gray-500">3-5 días hábiles</p>
-                    </div>
-                    <span class="text-indigo-600 font-semibold">$25</span>
-                    </label>
-                    <label class="option-card">
-                    <input type="radio" name="shipping">
-                    <div>
-                        <p class="font-medium text-gray-800">Envío express</p>
-                        <p class="text-sm text-gray-500">1-2 días hábiles</p>
-                    </div>
-                    <span class="text-indigo-600 font-semibold">$45</span>
-                    </label>
-                    <label class="option-card">
-                    <input type="radio" name="shipping">
-                    <div>
-                        <p class="font-medium text-gray-800">Retiro en tienda</p>
-                        <p class="text-sm text-gray-500">Sin costo adicional</p>
-                    </div>
-                    <span class="text-gray-700 font-medium">$0</span>
-                    </label>
-                </div>
-                <div class="flex justify-between mt-8">
-                    <button onclick="BackStep3()" class="btn-secondary">Atrás</button>
-                    <button onclick="NextStep4()" class="btn-primary">Continuar</button>
-                </div>
-                </div>
 
                 <!-- Paso 4: Pago -->
                 <div id="step4" class="checkout-step-content hidden">
@@ -257,7 +229,7 @@
                     </div>
 
                     <div class="flex justify-between mt-8">
-                        <button onclick="BackStep4()" class="btn-secondary">Atrás</button>
+                        <button onclick="BackStep2()" class="btn-secondary">Atrás</button>
                         <button onclick="NextStep5()" class="btn-primary">Confirmar pedido</button>
                     </div>
                 </div>
