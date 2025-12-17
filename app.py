@@ -472,37 +472,52 @@ def update_observacion(product_id):
 @app.route("/checkout", methods=["POST"])
 @login_required
 def checkout():
-    cart = request.json.get("cart", [])
-    repuestos = request.json.get("repuestos", [])
+    data = request.json
+    cart = data.get("cart", [])
 
-    if not cart and not repuestos:
+    if not cart:
         return {"error": "El carrito está vacío"}, 400
 
-    total = sum(
-        (item.get("priceARS") or item.get("price") or 0) * item.get("quantity", 0)
-        for item in cart + repuestos
+    total = 0
+    for item in cart:
+        total += float(item.get("priceARS", 0)) * int(item.get("quantity", 1))
+
+    # ---------------------------
+    # GUARDAR VENTA (TRANSFERENCIA)
+    # ---------------------------
+    venta = Venta(
+        comprador_nombre=data.get("comprador_nombre"),
+        comprador_telefono=data.get("telefono"),
+        comprador_email=data.get("email"),
+        metodo_pago="transferencia",
+        cuenta_destino=data.get("cuenta_destino"),
+        monto_total=total,
+        estado="pendiente"  # 👈 CLAVE
     )
-    order = Order(user_id=session["user_id"], total=total)
-    db.session.add(order)
+
+    db.session.add(venta)
     db.session.commit()
 
-    for item in cart + repuestos:
-        order_item = OrderItem(
-            order_id=order.id,
-            product_id=item["id"],
-            quantity=item["quantity"],
-            price=item.get("priceARS") or item.get("price") or 0
+    # ---------------------------
+    # ITEMS DE VENTA
+    # ---------------------------
+    for item in cart:
+        item_reg = VentaItem(
+            venta_id=venta.id,
+            producto_nombre=item.get("name"),
+            cantidad=int(item.get("quantity", 1)),
+            precio_unitario=float(item.get("priceARS", 0))
         )
-        db.session.add(order_item)
+        db.session.add(item_reg)
 
     db.session.commit()
 
     return {
-        "message": "Compra realizada con éxito",
-        "order_id": order.id,
-        "total": total
+        "success": True,
+        "message": "Pedido registrado. Esperando transferencia.",
+        "venta_id": venta.id
     }, 201
-
+    
 @app.route("/checkout/confirm", methods=["POST"])
 @login_required
 def checkout_confirm():
@@ -518,6 +533,14 @@ def checkout_confirm():
                 product.en_stock = False
     db.session.commit()
     return {"success": True, "message": "Compra realizada correctamente."}
+
+@app.route("/historial_ventas", methods=["POST"])
+@login_required
+def confirmar_transferencia(id):
+    venta = Venta.query.get_or_404(id)
+    venta.estado = "pagado"
+    db.session.commit()
+    return {"success": True}
 
 @app.route("/crear_pago", methods=["POST"])
 def crear_pago():

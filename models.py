@@ -90,6 +90,7 @@ class Venta(db.Model):
     metodo_pago = db.Column(db.String(50))  # MP - Transferencia
     cuenta_destino = db.Column(db.String(120))  # alias o CBU
     monto_total = db.Column(db.Float)
+    estado = db.Column(db.String(20), default="pendiente")
     items = db.relationship("VentaItem", backref="venta", cascade="all, delete-orphan")
 
 

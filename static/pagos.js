@@ -56,7 +56,7 @@ async function pagarConMP() {
             telefono,
             email,
             metodo_pago: "mercado_pago",
-            monto_total,
+            monto_total,    
             cart: carrito
         })
     });
