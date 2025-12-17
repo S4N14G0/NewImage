@@ -534,12 +534,17 @@ def checkout_confirm():
     db.session.commit()
     return {"success": True, "message": "Compra realizada correctamente."}
 
-@app.route("/historial_ventas", methods=["POST"])
+@app.route("/ventas/<int:id>/confirmar", methods=["POST"])
 @login_required
 def confirmar_transferencia(id):
     venta = Venta.query.get_or_404(id)
+
+    if venta.metodo_pago != "transferencia":
+        return {"error": "Esta venta no es por transferencia"}, 400
+
     venta.estado = "pagado"
     db.session.commit()
+
     return {"success": True}
 
 @app.route("/crear_pago", methods=["POST"])
@@ -603,6 +608,7 @@ def crear_pago():
             metodo_pago="mercado_pago",
             cuenta_destino=cuenta.alias or cuenta.cbu,
             monto_total=total
+            
         )
 
         db.session.add(venta)
@@ -627,6 +633,51 @@ def crear_pago():
     except Exception as e:
         print("🔥 ERROR crear_pago:", e)
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/crear_transferencia", methods=["POST"])
+@login_required
+def crear_transferencia():
+    data = request.get_json()
+    cart = data.get("cart", [])
+
+    if not cart:
+        return {"error": "Carrito vacío"}, 400
+
+    total = 0
+    for item in cart:
+        total += float(item.get("priceARS", 0)) * int(item.get("quantity", 1))
+
+    venta = Venta(
+        comprador_nombre=data.get("comprador_nombre"),
+        comprador_telefono=data.get("telefono"),
+        comprador_email=data.get("email"),
+        metodo_pago="transferencia",
+        cuenta_destino=data.get("cuenta_destino"),
+        monto_total=total,
+        estado="pendiente"
+    )
+
+    db.session.add(venta)
+    db.session.commit()
+
+    for item in cart:
+        db.session.add(VentaItem(
+            venta_id=venta.id,
+            producto_nombre=item.get("name"),
+            cantidad=item.get("quantity", 1),
+            precio_unitario=item.get("priceARS", 0)
+        ))
+
+    db.session.commit()
+
+    return {
+        "success": True,
+        "venta_id": venta.id,
+        "mensaje": "Pedido registrado. Esperando confirmación de transferencia."
+    }
+
+
 
 
 @app.route('/pago_exitoso')

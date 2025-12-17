@@ -108,7 +108,19 @@
                 <td class="p-2">{{ v.metodo_pago }}</td>
                 <td class="p-2">{{ v.cuenta_destino }}</td>
                 <td class="p-2">$ {{ v.monto_total }}</td>
-                <td class="p-2">{{ v.confirmar_transferencia }}</td>
+                <td class="p-2">
+                    {% if v.metodo_pago == "transferencia" and v.estado == "pendiente" %}
+                        <button
+                            onclick="confirmarTransferencia({{ v.id }})"
+                            class="bg-green-600 text-white px-3 py-1 rounded text-sm">
+                            Confirmar
+                        </button>
+                    {% elif v.estado == "pagado" %}
+                        ✅ Pagado
+                    {% else %}
+                        ⏳ Pendiente
+                    {% endif %}
+                </td>
                 <td class="p-2">
                     {% for item in v.items %}
                         ● {{ item.producto_nombre }} (x{{ item.cantidad }})<br>
@@ -118,4 +130,24 @@
             {% endfor %}
         </table>
     </div>
+    <script>
+        function confirmarTransferencia(id) {
+            if (!confirm("¿Confirmar transferencia recibida?")) return;
+
+            fetch(`/ventas/${id}/confirmar`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token() }}"
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert("Error al confirmar");
+                }
+            });
+        }
+    </script>
 </body>
