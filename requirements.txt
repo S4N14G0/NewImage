@@ -4,3 +4,4 @@ flask_bcrypt
 gunicorn
 mercadopago
 psycopg2-binary
+Flask-Migrate

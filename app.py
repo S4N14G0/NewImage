@@ -7,6 +7,7 @@ from helpers import login_required
 from werkzeug.utils import secure_filename
 from functools import wraps
 from flask import abort
+from flask_migrate import Migrate
 # from flask_migrate import Migrate
 from mercadopago import SDK
 
@@ -15,9 +16,8 @@ from mercadopago import SDK
 # ---------------------------------------------------
 app = Flask(__name__)
 app.secret_key = "NewImage2025"
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# migrate = Migrate(app, db)
 
 ALLOWED_HOSTS = [
     "newimagepilates.com",
@@ -27,6 +27,7 @@ ALLOWED_HOSTS = [
 
 db.init_app(app)
 
+migrate = Migrate(app, db)
 #----------------------------------------------------
 # CONFIGURACION MERCADO PAGO
 #----------------------------------------------------
