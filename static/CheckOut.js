@@ -102,7 +102,6 @@ function updateProgressBar() {
 }
 
 function NextStep2() { if (validateStep(1)) goToStep(2); }
-function NextStep3() { if (validateStep(2)) goToStep(3); }
 function NextStep4() { goToStep(4); }
 async function NextStep5() {
     const metodoPago = document.querySelector('input[name="payment"]:checked').value;
@@ -146,8 +145,7 @@ async function NextStep5() {
 }
 
 function BackStep2() { goToStep(1); }
-function BackStep3() { goToStep(2); }
-function BackStep4() { goToStep(3); }
+function BackStep4() { goToStep(2); }
 
 
 // Paso final (confirmación)
