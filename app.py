@@ -10,6 +10,7 @@ from flask import abort
 from flask_migrate import Migrate
 # from flask_migrate import Migrate
 from mercadopago import SDK
+from authlib.integrations.flask_client import OAuth
 
 # ---------------------------------------------------
 # CONFIGURACIÓN DE FLASK
@@ -28,6 +29,8 @@ ALLOWED_HOSTS = [
 db.init_app(app)
 
 migrate = Migrate(app, db)
+
+oauth = OAuth(app)
 #----------------------------------------------------
 # CONFIGURACION MERCADO PAGO
 #----------------------------------------------------
@@ -50,7 +53,15 @@ with app.app_context():
 # ---------------------------------------------------
 # DECORADORES Y FUNCIONES AUXILIARES
 # ---------------------------------------------------
-
+google = oauth.register(
+    name="google",
+    client_id=os.environ["GOOLGE_CLIENT_ID"],
+    client_secret=os.environ["GOOGLE_CLIENT_SECRET"],
+    access_token_url='https://oauth2.googleapis.com/token',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    api_base_url='https://www.googleapis.com/oauth2/v2/',
+    client_kwargs={'scope': 'openid email profile'}
+)
 @app.after_request
 def agregar_headers_no_cache(response):
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
@@ -196,6 +207,27 @@ def signup():
             return redirect(url_for("signup"))
 
     return render_template("Login.html")
+
+@app.route('/login/google')
+def login_google():
+    redirect_uri = url_for('google_callback', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+
+@app.route('/login/google/callback')
+def google_callback():
+    token = google.authorize_access_token()
+    user_info = google.get('userinfo').json()
+
+    email = user_info['email']
+    name = user_info['name']
+
+    # 1. Buscar usuario
+    # 2. Si no existe → crearlo
+    # 3. Loguearlo (session)
+
+    session['user_email'] = email
+    return redirect(url_for('shop'))
 
 # Ruta tienda (protegida, requiere login)
 @app.route("/shop")
