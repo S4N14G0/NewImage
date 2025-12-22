@@ -318,7 +318,8 @@ def reset_password(token):
     reset = PasswordReset.query.filter_by(token=token).first_or_404()
 
     if reset.expires_at < datetime.utcnow():
-        return "Token expirado"
+        flash("Token expirado", "danger")
+        return redirect(url_for('forgot_password'))
 
     if request.method == 'POST':
         user = User.query.filter_by(email=reset.email).first()
@@ -327,6 +328,7 @@ def reset_password(token):
         db.session.delete(reset)
         db.session.commit()
 
+        flash("Contraseña actualizada", "success")
         return redirect(url_for('login'))
 
     return render_template('reset_password.html')
