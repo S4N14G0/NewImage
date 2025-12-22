@@ -284,24 +284,34 @@ def logout():
     session.pop("username", None)
     return redirect(url_for("index"))
 
-@app.route('/forgot-password', methods=['POST'])
-def forgot_password():
-    email = request.form['email']
-    token = secrets.token_urlsafe(32)
+@app.route('/contraseña_olvidada', methods=['GET', 'POST'])
+def contraseña_olvidada():
+    if request.method == 'POST':
+        email = request.form['email']
 
-    reset = PasswordReset(
-        email=email,
-        token=token,
-        expires_at=datetime.utcnow() + timedelta(hours=1)
-    )
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash("Si el email existe, recibirás un correo", "info")
+            return redirect(url_for('contraseña_olvidada'))
 
-    db.session.add(reset)
-    db.session.commit()
+        token = secrets.token_urlsafe(32)
 
-    link = url_for('reset_password', token=token, _external=True)
-    send_email(email, link)
+        reset = PasswordReset(
+            email=email,
+            token=token,
+            expires_at=datetime.utcnow() + timedelta(hours=1)
+        )
 
-    return "Email enviado"
+        db.session.add(reset)
+        db.session.commit()
+
+        link = url_for('reset_password', token=token, _external=True)
+        send_email(email, link)
+
+        flash("Revisá tu email para restablecer la contraseña", "success")
+        return redirect(url_for('login'))
+
+    return render_template('contraseña_olvidada.html')
 
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
