@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session, g, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Product, Order, OrderItem, ProductImage, Configuracion, CuentaPago, Venta, VentaItem
+from models import *
 from helpers import login_required
 from werkzeug.utils import secure_filename
 from functools import wraps
@@ -10,6 +10,9 @@ from flask import abort
 from flask_migrate import Migrate
 # from flask_migrate import Migrate
 from mercadopago import SDK
+import secrets
+from datetime import datetime, timedelta
+from flask import request, url_for, redirect, render_template
 
 # ---------------------------------------------------
 # CONFIGURACIÓN DE FLASK
@@ -134,6 +137,12 @@ def serializar_producto(producto):
         "en_stock": producto.en_stock,
         "observacion": producto.observacion
     }
+
+def send_email(to, link):
+    print(f"Enviar email a {to} con link: {link}")
+
+
+
 
 # ---------------------------------------------------
 # RUTAS PRINCIPALES
@@ -275,6 +284,42 @@ def logout():
     session.pop("username", None)
     return redirect(url_for("index"))
 
+@app.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    email = request.form['email']
+    token = secrets.token_urlsafe(32)
+
+    reset = PasswordReset(
+        email=email,
+        token=token,
+        expires_at=datetime.utcnow() + timedelta(hours=1)
+    )
+
+    db.session.add(reset)
+    db.session.commit()
+
+    link = url_for('reset_password', token=token, _external=True)
+    send_email(email, link)
+
+    return "Email enviado"
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    reset = PasswordReset.query.filter_by(token=token).first_or_404()
+
+    if reset.expires_at < datetime.utcnow():
+        return "Token expirado"
+
+    if request.method == 'POST':
+        user = User.query.filter_by(email=reset.email).first()
+        user.set_password(request.form['password'])
+
+        db.session.delete(reset)
+        db.session.commit()
+
+        return redirect(url_for('login'))
+
+    return render_template('reset_password.html')
 # ---------------------------------------------------
 # RUTAS DE PERFIL Y ADMIN
 # ---------------------------------------------------
