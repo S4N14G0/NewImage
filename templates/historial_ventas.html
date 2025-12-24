@@ -109,6 +109,11 @@
                 <td class="p-2">{{ v.cuenta_destino }}</td>
                 <td class="p-2">$ {{ v.monto_total }}</td>
                 <td class="p-2">
+                    {% for item in v.items %}
+                        ● {{ item.producto_nombre }} (x{{ item.cantidad }})<br>
+                    {% endfor %}
+                </td>
+                <td class="p-2">
                     {% if v.metodo_pago == "transferencia" and v.estado == "pendiente" %}
                         <button
                             onclick="confirmarTransferencia({{ v.id }})"
@@ -121,11 +126,7 @@
                         ⏳ Pendiente
                     {% endif %}
                 </td>
-                <td class="p-2">
-                    {% for item in v.items %}
-                        ● {{ item.producto_nombre }} (x{{ item.cantidad }})<br>
-                    {% endfor %}
-                </td>
+
             </tr>
             {% endfor %}
         </table>
