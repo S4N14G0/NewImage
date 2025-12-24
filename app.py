@@ -14,7 +14,7 @@ import secrets
 from datetime import datetime, timedelta
 from flask import request, url_for, redirect, render_template
 from flask_mail import Mail, Message
-
+from flask_wtf import CSRFProtect
 
 
 # ---------------------------------------------------
@@ -43,6 +43,8 @@ app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")  # app password
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_USERNAME")
 
 mail = Mail(app)
+
+csrf = CSRFProtect(app)
 
 #----------------------------------------------------
 # CONFIGURACION MERCADO PAGO
