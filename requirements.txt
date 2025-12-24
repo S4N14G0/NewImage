@@ -5,3 +5,4 @@ gunicorn
 mercadopago
 psycopg2-binary
 Flask-Migrate
+Flask-Mail
