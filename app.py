@@ -13,6 +13,9 @@ from mercadopago import SDK
 import secrets
 from datetime import datetime, timedelta
 from flask import request, url_for, redirect, render_template
+from flask_mail import Mail, Message
+
+
 
 # ---------------------------------------------------
 # CONFIGURACIÓN DE FLASK
@@ -31,6 +34,15 @@ ALLOWED_HOSTS = [
 db.init_app(app)
 
 migrate = Migrate(app, db)
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")  # tu gmail
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")  # app password
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_USERNAME")
+
+mail = Mail(app)
 
 #----------------------------------------------------
 # CONFIGURACION MERCADO PAGO
@@ -332,6 +344,58 @@ def reset_password(token):
         return redirect(url_for('login'))
 
     return render_template('reset_password.html')
+
+def send_email(to, link):
+    msg = Message(
+        subject="Restablecer contraseña",
+        recipients=[to]
+    )
+
+    msg.html = f"""
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 600px; margin: auto; color: #333;">
+        <h2 style="color: #1f2937;">Restablecimiento de contraseña</h2>
+
+        <p>Hola,</p>
+
+        <p>
+            Recibimos una solicitud para restablecer la contraseña de tu cuenta en 
+            <strong>NewImage</strong>, fabricantes de equipamiento profesional para Pilates.
+        </p>
+
+        <p>
+            Para crear una nueva contraseña, hacé clic en el siguiente botón:
+        </p>
+
+        <p style="text-align: center; margin: 30px 0;">
+            <a href="{link}"
+            style="
+                    background-color: #4f46e5;
+                    color: #ffffff;
+                    padding: 12px 24px;
+                    text-decoration: none;
+                    border-radius: 6px;
+                    font-weight: bold;
+            ">
+            Restablecer contraseña
+            </a>
+        </p>
+
+        <p>
+            Este enlace es válido por <strong>1 hora</strong>.  
+            Si no realizás el cambio dentro de ese tiempo, deberás solicitar uno nuevo.
+        </p>
+
+        <hr style="margin: 30px 0;">
+
+        <p style="font-size: 12px; color: #6b7280;">
+            © {datetime.utcnow().year} NewImage · Equipamiento profesional para Pilates<br>
+            Este es un mensaje automático, por favor no respondas a este correo.
+        </p>
+    </div>
+    """
+
+    mail.send(msg)
+
 # ---------------------------------------------------
 # RUTAS DE PERFIL Y ADMIN
 # ---------------------------------------------------
