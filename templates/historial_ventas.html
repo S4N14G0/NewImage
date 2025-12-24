@@ -134,17 +134,24 @@
         function confirmarTransferencia(id) {
             if (!confirm("¿Confirmar transferencia recibida?")) return;
 
+            const csrfToken = document
+                .querySelector('meta[name="csrf-token"]')
+                .getAttribute('content');
+
             fetch(`/ventas/${id}/confirmar`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content
+                    "X-CSRFToken": csrfToken
                 }
             })
             .then(r => r.json())
             .then(data => {
-                if (data.success) location.reload();
-                else alert("Error al confirmar");
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert("Error al confirmar");
+                }
             });
         }
     </script>

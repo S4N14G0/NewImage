@@ -1,8 +1,9 @@
-flask
-flask_sqlalchemy
-flask_bcrypt
-gunicorn
-mercadopago
-psycopg2-binary
+Flask
+Flask-SQLAlchemy
 Flask-Migrate
+Flask-Login
 Flask-Mail
+Flask-WTF
+python-dotenv
+mercadopago
+gunicorn
