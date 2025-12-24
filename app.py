@@ -173,7 +173,7 @@ def login():
 
         else:
             flash("La contraseña o el email no son correctos. Inténtalo de nuevo.", "error")
-            return redirect(url_for("Login"))
+            return redirect(url_for("login"))
 
     return render_template("Login.html")
 
