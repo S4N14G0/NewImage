@@ -136,7 +136,7 @@ async function NextStep4() {
             console.log("✅ Pedido registrado:", data);
 
             renderFinalSummary(data.order_id, data.total);
-            goToStep(5);
+            goToStep(4);
 
         } catch (err) {
             console.error("❌ Error al enviar checkout:", err);

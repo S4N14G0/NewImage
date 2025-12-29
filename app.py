@@ -605,7 +605,7 @@ def checkout():
     total = 0
     for item in cart:
         total += float(item.get("priceARS", 0)) * int(item.get("quantity", 1))
-
+    
     # ---------------------------
     # GUARDAR VENTA (TRANSFERENCIA)
     # ---------------------------
@@ -638,8 +638,9 @@ def checkout():
 
     return {
         "success": True,
-        "message": "Pedido registrado. Esperando transferencia.",
-        "venta_id": venta.id
+        "order_id": venta.id,
+        "total": total,
+        "message": "Pedido registrado. Esperando transferencia."
     }, 201
     
 @app.route("/checkout/confirm", methods=["POST"])
