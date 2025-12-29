@@ -7,7 +7,6 @@
     <meta name="description" content="Tienda especializada en máquinas de pilates profesionales. Reformers, sillas, barriles y accesorios de las mejores marcas.">
     <meta name="keywords" content="máquinas pilates, reformer pilates, equipo pilates, estudio pilates, accesorios pilates">
     <meta name="author" content="PilatesPro">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="/static/style-Main.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagenes/Logo.png') }}">
     <script src="https://sdk.mercadopago.com/js/v2"></script>
@@ -91,7 +90,6 @@
 
     <form action="{{ url_for('new_product') }}" method="POST" enctype="multipart/form-data" 
           class="bg-white shadow-md rounded-lg p-6 max-w-lg mx-auto ">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <!-- Nombre -->
         <div class="mb-4">
             <label for="nombre" class="block font-semibold mb-2">Nombre</label>

@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>NewImage</title>
   <link rel="stylesheet" href="../static/Shop.css">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -297,61 +296,61 @@
     // console.log("Ventas habilitadas:", window.ventasHabilitadas);
 </script>
 <script>
-const swiper = new Swiper(".mySwiper", {
-loop: true,
-spaceBetween: 20,
-pagination: {
-el: ".swiper-pagination",
-    clickable: true,
-},
-navigation: {
-  nextEl: ".swiper-button-next",
-  prevEl: ".swiper-button-prev",
-},
-});
-
-
-
-const swiperImages = document.querySelectorAll('.swiper-slide img');
-const lightboxModal = document.getElementById('lightboxModal');
-const closeLightbox = document.getElementById('closeLightbox');
-
-// Inicializamos Swiper para el modal
-let lightboxSwiper;
-
-swiperImages.forEach((img, index) => {
-    img.addEventListener('click', () => {
-        lightboxModal.classList.remove('hidden');
-
-        // Inicializamos o actualizamos Swiper
-        if (!lightboxSwiper) {
-            lightboxSwiper = new Swiper('.lightboxSwiper', {
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
-                initialSlide: index  // Empezar en la imagen clickeada
-            });
-        } else {
-            lightboxSwiper.slideTo(index, 0);
-        }
-    });
-});
-
-    // Cerrar modal
-    closeLightbox.addEventListener('click', () => {
-        lightboxModal.classList.add('hidden');
+    const swiper = new Swiper(".mySwiper", {
+    loop: true,
+    spaceBetween: 20,
+    pagination: {
+    el: ".swiper-pagination",
+        clickable: true,
+    },
+    navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+    },
     });
 
-    lightboxModal.addEventListener('click', (e) => {
-        if (e.target === lightboxModal) {
+
+
+    const swiperImages = document.querySelectorAll('.swiper-slide img');
+    const lightboxModal = document.getElementById('lightboxModal');
+    const closeLightbox = document.getElementById('closeLightbox');
+
+    // Inicializamos Swiper para el modal
+    let lightboxSwiper;
+
+    swiperImages.forEach((img, index) => {
+        img.addEventListener('click', () => {
+            lightboxModal.classList.remove('hidden');
+
+            // Inicializamos o actualizamos Swiper
+            if (!lightboxSwiper) {
+                lightboxSwiper = new Swiper('.lightboxSwiper', {
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    initialSlide: index  // Empezar en la imagen clickeada
+                });
+            } else {
+                lightboxSwiper.slideTo(index, 0);
+            }
+        });
+    });
+
+        // Cerrar modal
+        closeLightbox.addEventListener('click', () => {
             lightboxModal.classList.add('hidden');
-        }
-    });
+        });
+
+        lightboxModal.addEventListener('click', (e) => {
+            if (e.target === lightboxModal) {
+                lightboxModal.classList.add('hidden');
+            }
+        });
 
 
 

@@ -7,7 +7,6 @@
     <meta name="description" content="Tienda especializada en máquinas de pilates profesionales. Reformers, sillas, barriles y accesorios de las mejores marcas.">
     <meta name="keywords" content="máquinas pilates, reformer pilates, equipo pilates, estudio pilates, accesorios pilates">
     <meta name="author" content="PilatesPro">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="/static/style-Main.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagenes/Logo.png') }}">
     <script src="https://sdk.mercadopago.com/js/v2"></script>
@@ -126,7 +125,6 @@
                         <form action="{{ url_for('eliminar_cuenta', cuenta_id=cuenta.id) }}"
                             method="POST"
                             onsubmit="return confirm('¿Seguro que deseas eliminar esta cuenta?');">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button class="bg-red-600 px-3 py-1 rounded text-white text-sm hover:bg-red-700">
                                 🗑️ Eliminar
                             </button>
@@ -169,7 +167,6 @@
         <!-- activar/desactivar ventas -->
         <div class="mb-6">
             <form action="{{ url_for('toggle_ventas') }}" method="POST">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 {% if ventas_activas %}
                     <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
                         🚫 Desactivar ventas
@@ -184,7 +181,6 @@
 
         <!-- dolar manual -->
         <form action="{{ url_for('update_dolar') }}" method="POST" class="flex items-center gap-4">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label for="dolar_manual" class="font-semibold text-lg">Valor del dólar:</label>
             <input type="number" step="0.01" name="dolar_manual" id="dolar_manual"
                 value="{{ dolar }}" class="border rounded px-6 py-1 w-32">
@@ -283,7 +279,6 @@
                         </a>
                         <form action="{{ url_for('delete_product', product_id=product.id) }}"
                               method="POST">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit"
                                     class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
                                     onclick="return confirm('¿Seguro que quieres eliminar este producto?');">

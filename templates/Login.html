@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>NewImage</title>
     <link rel="stylesheet" href="../static/Login-SignUp.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagenes/Logo.png') }}">
@@ -90,7 +89,6 @@
 <!-- Formulario de Login -->
 <div class="form-container">
     <form class="form active" id="loginForm" action="{{ url_for('login') }}" method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-group">
             <label class="form-label">Email</label>
             <input type="email" class="form-input" id="loginEmail" name="email" placeholder="tu@email.com" required>
@@ -120,7 +118,6 @@
 
     <!-- Formulario de Registro -->
     <form class="form" id="signupForm" action="{{ url_for('signup') }}" method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-group">
             <label class="form-label">Nombre completo</label>
             <input type="text" class="form-input" id="signupName" name="username" placeholder="Tu nombre completo" required>
