@@ -57,7 +57,7 @@ function validateStep(step) {
             alert("Por favor completa todos los campos de dirección.");
             valid = false;
         }
-    } else if (step === 4) {
+    } else if (step === 3) {
         const paymentSelected = document.querySelector('input[name="payment"]:checked');
         if (!paymentSelected) {
             alert("Por favor selecciona un método de pago.");
@@ -102,8 +102,8 @@ function updateProgressBar() {
 }
 
 function NextStep2() { if (validateStep(1)) goToStep(2); }
-function NextStep4() { goToStep(4); }
-async function NextStep5() {
+function NextStep3() { goToStep(3); }
+async function NextStep4() {
     const metodoPago = document.querySelector('input[name="payment"]:checked').value;
 
     if (cart.length === 0) {
@@ -144,8 +144,8 @@ async function NextStep5() {
     }
 }
 
-function BackStep2() { goToStep(1); }
-function BackStep4() { goToStep(2); }
+function BackStep2() { goToStep(2); }
+function BackStep3() { goToStep(3); }
 
 
 // Paso final (confirmación)
