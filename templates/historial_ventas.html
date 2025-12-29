@@ -132,18 +132,14 @@
         </table>
     </div>
     <script>
+
         function confirmarTransferencia(id) {
             if (!confirm("¿Confirmar transferencia recibida?")) return;
-
-            const csrfToken = document
-                .querySelector('meta[name="csrf-token"]')
-                .getAttribute('content');
 
             fetch(`/ventas/${id}/confirmar`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": csrfToken
+                    "Content-Type": "application/json"
                 }
             })
             .then(r => r.json())
@@ -155,5 +151,6 @@
                 }
             });
         }
+
     </script>
 </body>
