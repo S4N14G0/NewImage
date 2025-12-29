@@ -89,6 +89,7 @@
 <!-- Formulario de Login -->
 <div class="form-container">
     <form class="form active" id="loginForm" action="{{ url_for('login') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-group">
             <label class="form-label">Email</label>
             <input type="email" class="form-input" id="loginEmail" name="email" placeholder="tu@email.com" required>
@@ -118,6 +119,7 @@
 
     <!-- Formulario de Registro -->
     <form class="form" id="signupForm" action="{{ url_for('signup') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-group">
             <label class="form-label">Nombre completo</label>
             <input type="text" class="form-input" id="signupName" name="username" placeholder="Tu nombre completo" required>

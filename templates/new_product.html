@@ -90,7 +90,7 @@
 
     <form action="{{ url_for('new_product') }}" method="POST" enctype="multipart/form-data" 
           class="bg-white shadow-md rounded-lg p-6 max-w-lg mx-auto ">
-
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <!-- Nombre -->
         <div class="mb-4">
             <label for="nombre" class="block font-semibold mb-2">Nombre</label>
