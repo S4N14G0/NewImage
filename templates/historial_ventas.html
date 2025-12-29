@@ -115,19 +115,19 @@
                     {% endfor %}
                 </td>
                 <td class="p-2">
-                    {% if v.metodo_pago == "transferencia" and v.estado == "pendiente" %}
+
+                    {% if v.estado == "pagado" %}
+                        ✅ Pagado
+                    {% elif v.metodo_pago == "transferencia" and v.estado == "pendiente" %}
                         <button
                             onclick="confirmarTransferencia({{ v.id }})"
                             class="bg-green-600 text-white px-3 py-1 rounded text-sm">
                             Confirmar
                         </button>
-                    {% elif v.estado == "pagado" %}
-                        ✅ Pagado
                     {% else %}
                         ⏳ Pendiente
                     {% endif %}
                 </td>
-
             </tr>
             {% endfor %}
         </table>
