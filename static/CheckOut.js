@@ -124,8 +124,12 @@ async function NextStep4() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    cart: cartPrincipal,
-                    repuestos: cartRepuestos
+                        cart: cart,
+                        comprador_nombre: document.getElementById("firstName").value + " " +
+                                        document.getElementById("lastName").value,
+                        telefono: document.getElementById("phone").value,
+                        email: document.getElementById("email").value,
+                        cuenta_destino: document.querySelector('input[name="bank"]:checked')?.value
                 })
             });
 
