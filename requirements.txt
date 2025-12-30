@@ -7,3 +7,4 @@ python-dotenv
 mercadopago
 gunicorn
 psycopg2
+pytz
