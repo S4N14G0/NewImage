@@ -276,6 +276,13 @@ def formato_pesos(valor):
 @admin_required
 def historial_ventas():
     ventas = Venta.query.order_by(Venta.fecha.desc()).all()
+    zona_ar = pytz.timezone("America/Argentina/Buenos_Aires")
+
+    for v in ventas:
+        if v.fecha:
+            # Si viene en UTC
+            v.fecha = v.fecha.replace(tzinfo=pytz.utc).astimezone(zona_ar)
+
     return render_template("historial_ventas.html", ventas=ventas)
 # ---------------------------------------------------
 # RUTAS DE CHECKOUT Y SESIÓN
