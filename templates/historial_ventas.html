@@ -102,12 +102,18 @@
 
             {% for v in ventas %}
             <tr class="border-b">
-                <td class="p-2">{{ v.fecha.strftime("%d/%m/%Y") }}</td>
+                <td class="p-2">{{ (v.fecha - timedelta(hours=3)).strftime("%d/%m/%Y") }}</td>
                 <td class="p-2">{{ v.comprador_nombre }}</td>
                 <td class="p-2">{{ v.comprador_telefono }}</td>
                 <td class="p-2">{{ v.comprador_email }}</td>
                 <td class="p-2">{{ v.metodo_pago }}</td>
-                <td class="p-2">{{ v.cuenta_destino }}</td>
+                <td class="p-2">
+                    {% if v.cuenta_destino %}
+                        {{ v.cuenta_destino }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
                 <td class="p-2">$ {{ v.monto_total }}</td>
                 <td class="p-2">
                     {% for item in v.items %}

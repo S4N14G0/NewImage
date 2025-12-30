@@ -105,7 +105,11 @@ function NextStep2() { if (validateStep(1)) goToStep(2); }
 function NextStep3() { goToStep(3); }
 async function NextStep4() {
     const metodoPago = document.querySelector('input[name="payment"]:checked').value;
+    
+    const paymentInput = document.querySelector('input[name="payment"]:checked');
 
+    const cuentaId = paymentInput?.dataset.cuentaId || null;
+    
     if (cart.length === 0) {
         alert("El carrito está vacío. Agrega productos antes de continuar.");
         return;
@@ -129,8 +133,7 @@ async function NextStep4() {
                                     document.getElementById("lastName").value,
                     telefono: document.getElementById("phone").value,
                     email: document.getElementById("email").value,
-                    cuenta_destino: document.querySelector('input[name="payment"]:checked')
-                        ?.dataset.cuenta || null
+                    cuenta_id: cuentaId
                 })
             });
 

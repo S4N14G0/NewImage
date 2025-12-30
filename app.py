@@ -14,6 +14,8 @@ import secrets
 from datetime import datetime, timedelta
 from flask import request, url_for, redirect, render_template
 from flask_mail import Mail, Message
+from datetime import datetime
+import pytz
 
 
 
@@ -74,6 +76,9 @@ def agregar_headers_no_cache(response):
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
+def ahora_arg():
+    return datetime.now(pytz.timezone("America/Argentina/Buenos_Aires"))
 
 def admin_required(f):
     @wraps(f)
@@ -598,7 +603,10 @@ def update_observacion(product_id):
 def checkout():
     data = request.json
     cart = data.get("cart", [])
-
+    cuenta_id = data.get("cuenta_id")
+    
+    cuenta = CuentaPago.query.get(cuenta_id) if cuenta_id else None
+    
     if not cart:
         return {"error": "El carrito está vacío"}, 400
 
@@ -614,7 +622,7 @@ def checkout():
         comprador_telefono=data.get("telefono"),
         comprador_email=data.get("email"),
         metodo_pago="transferencia",
-        cuenta_destino=data.get("cuenta_destino"),
+        cuenta_destino=cuenta.alias if cuenta else None,
         monto_total=total,
         estado="pendiente"  # 👈 CLAVE
     )
