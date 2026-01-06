@@ -618,9 +618,24 @@ def checkout():
         return {"error": "El carrito está vacío"}, 400
 
     total = 0
-    for item in cart:
-        total += float(item.get("priceARS", 0)) * int(item.get("quantity", 1))
+    items_validos = []
     
+    for item in cart:
+        product = Product.query.get(item["id"])
+        
+        if not product:
+            return {"error":"Producto inexistente"}, 400
+        
+        if product.stock < item["quantity"]:
+            return {
+                "error": f"Stock insuficiente para {product.nombre}"
+            }, 400
+
+        precio_real = product.precio * obtener_dolar_manual()
+        subtotal = precio_real * item["quantity"]
+        total += subtotal
+
+        items_validos.append((product, item["quantity"], precio_real))
     # ---------------------------
     # GUARDAR VENTA (TRANSFERENCIA)
     # ---------------------------
@@ -640,14 +655,14 @@ def checkout():
     # ---------------------------
     # ITEMS DE VENTA
     # ---------------------------
-    for item in cart:
-        item_reg = VentaItem(
+    
+    for product, cantidad, precio in items_validos:
+        db.session.add(VentaItem(
             venta_id=venta.id,
-            producto_nombre=item.get("name"),
-            cantidad=int(item.get("quantity", 1)),
-            precio_unitario=float(item.get("priceARS", 0))
-        )
-        db.session.add(item_reg)
+            producto_nombre=product.nombre,
+            cantidad=cantidad,
+            precio_unitario=precio
+        ))
 
     db.session.commit()
 
@@ -679,8 +694,22 @@ def checkout_confirm():
 def confirmar_transferencia(id):
     venta = Venta.query.get_or_404(id)
 
-    if venta.metodo_pago != "transferencia":
-        return {"error": "Esta venta no es por transferencia"}, 400
+    if venta.estado == "pagado":
+        return {"error": "Venta ya confirmada"}, 400
+
+    for item in venta.items:
+        product = Product.query.filter_by(nombre=item.producto_nombre).first()
+
+        if not product:
+            return {"error": f"{item.producto_nombre} no existe"}, 400
+
+        if product.stock < item.cantidad:
+            return {"error": f"Stock insuficiente para {product.nombre}"}, 400
+
+    for item in venta.items:
+        product = Product.query.filter_by(nombre=item.producto_nombre).first()
+        product.stock -= item.cantidad
+        product.en_stock = product.stock > 0
 
     venta.estado = "pagado"
     db.session.commit()
@@ -822,6 +851,18 @@ def crear_transferencia():
 
 @app.route('/pago_exitoso')
 def pago_exitoso():
+    venta_id = request.args.get("external_reference")
+    venta = Venta.query.get(venta_id)
+
+    if venta and venta.estado != "pagado":
+        for item in venta.items:
+            product = Product.query.filter_by(nombre=item.producto_nombre).first()
+            product.stock -= item.cantidad
+            product.en_stock = product.stock > 0
+
+        venta.estado = "pagado"
+        db.session.commit()
+
     return render_template("pago_exitoso.html")
 
 @app.route('/pago_pendiente')
