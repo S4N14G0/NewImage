@@ -101,10 +101,7 @@ function updateCart() {
   let subtotal = 0;
 
   cart.forEach(item => {
-    const productData = window.products.find(p => p.id === item.id);
-    if (!productData) return;
-
-    const priceARS = productData.precio * dolarManual;
+    const priceARS = item.priceARS;
     const itemTotal = priceARS * item.quantity;
 
     const li = document.createElement("li");
