@@ -62,7 +62,7 @@ function addToCart(button) {
   if (existing) {
     existing.quantity += qty;
   } else {
-    cart.push({ id, name, quantity: qty });
+    cart.push({ id, name, priceUSD, priceARS, quantity: qty });
   }
 
   localStorage.setItem("cart_principal", JSON.stringify(cart));
