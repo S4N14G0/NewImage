@@ -620,25 +620,29 @@ def checkout():
     total = 0
     items_validos = []
     
+    dolar = obtener_dolar_manual()
+
     for item in cart:
         product = Product.query.get(item["id"])
-        
-        if not product:
-            return {"error":"Producto inexistente"}, 400
-        
-        if product.stock < item["quantity"]:
-            return {
-                "error": f"Stock insuficiente para {product.nombre}"
-            }, 400
 
-        precio_real = product.precio * obtener_dolar_manual()
-        subtotal = precio_real * item["quantity"]
+        if not product:
+            return {"error": "Producto inexistente"}, 400
+        
+        cantidad = int(item.get("quantity", 1))
+
+        if product.stock < cantidad:
+            return {"error": f"Stock insuficiente para {product.nombre}"}, 400
+
+        precio_ars = product.precio * dolar
+        subtotal = precio_ars * cantidad
         total += subtotal
 
-        items_validos.append((product, item["quantity"], precio_real))
-    # ---------------------------
-    # GUARDAR VENTA (TRANSFERENCIA)
-    # ---------------------------
+        items_validos.append({
+            "product": product,
+            "cantidad": cantidad,                
+            "precio": precio_ars
+        })
+
     venta = Venta(
         comprador_nombre=data.get("comprador_nombre"),
         comprador_telefono=data.get("telefono"),
@@ -646,33 +650,28 @@ def checkout():
         metodo_pago="transferencia",
         cuenta_destino=cuenta.alias if cuenta else None,
         monto_total=total,
-        estado="pendiente"  # 👈 CLAVE
+        estado="pendiente"
     )
 
     db.session.add(venta)
     db.session.commit()
 
-    # ---------------------------
-    # ITEMS DE VENTA
-    # ---------------------------
-    
-    for product, cantidad, precio in items_validos:
+    for i in items_validos:
         db.session.add(VentaItem(
             venta_id=venta.id,
-            producto_nombre=product.nombre,
-            cantidad=cantidad,
-            precio_unitario=precio
+            producto_nombre=i["product"].nombre,
+            cantidad=i["cantidad"],
+            precio_unitario=i["precio"]
         ))
 
     db.session.commit()
 
     return {
-        "success": True,
+        "success": True,            
         "order_id": venta.id,
-        "total": total,
-        "message": "Pedido registrado. Esperando transferencia."
+        "total": total
     }, 201
-    
+        
 @app.route("/checkout/confirm", methods=["POST"])
 @login_required
 def checkout_confirm():
@@ -723,36 +722,41 @@ def crear_pago():
         if not cuenta or not cuenta.access_token:
             return jsonify({"error": "No hay cuenta activa configurada"}), 400
 
-        sdk = SDK(cuenta.access_token)
-
         data = request.get_json()
-        if not data:
-            return jsonify({"error": "JSON inválido"}), 400
-
-        email = data.get("email")
         cart = data.get("cart", [])
+        email = data.get("email")
 
         if not cart:
             return jsonify({"error": "El carrito está vacío"}), 400
 
-        # ---------------------------
-        # CREAR ITEMS MERCADO PAGO
-        # ---------------------------
+        dolar = obtener_dolar_manual()
         items_mp = []
         total = 0
+        items_validos = []
 
         for item in cart:
-            precio = float(item.get("priceARS", 0))
+            product = Product.query.get(item["id"])
             cantidad = int(item.get("quantity", 1))
 
-            total += precio * cantidad
+            if not product:
+                return jsonify({"error": "Producto inexistente"}), 400
+
+            if product.stock < cantidad:
+                return jsonify({"error": f"Stock insuficiente para {product.nombre}"}), 400
+
+            precio_ars = product.precio * dolar
+            total += precio_ars * cantidad
 
             items_mp.append({
-                "title": item.get("name", "Producto"),
+                "title": product.nombre,
                 "quantity": cantidad,
                 "currency_id": "ARS",
-                "unit_price": precio
+                "unit_price": float(precio_ars)
             })
+
+            items_validos.append((product, cantidad, precio_ars))
+
+        sdk = SDK(cuenta.access_token)
 
         preference_data = {
             "items": items_mp,
@@ -767,9 +771,6 @@ def crear_pago():
 
         preference = sdk.preference().create(preference_data)
 
-        # ---------------------------
-        # GUARDAR VENTA
-        # ---------------------------
         venta = Venta(
             comprador_nombre=data.get("comprador_nombre"),
             comprador_telefono=data.get("telefono"),
@@ -777,23 +778,18 @@ def crear_pago():
             metodo_pago="mercado_pago",
             cuenta_destino=cuenta.alias or cuenta.cbu,
             monto_total=total
-            
         )
 
         db.session.add(venta)
         db.session.commit()
 
-        # ---------------------------
-        # GUARDAR ITEMS DE VENTA
-        # ---------------------------
-        for item in cart:
-            item_reg = VentaItem(
+        for product, cantidad, precio in items_validos:
+            db.session.add(VentaItem(
                 venta_id=venta.id,
-                producto_nombre=item.get("name"),
-                cantidad=int(item.get("quantity", 1)),
-                precio_unitario=float(item.get("priceARS", 0))
-            )
-            db.session.add(item_reg)
+                producto_nombre=product.nombre,
+                cantidad=cantidad,
+                precio_unitario=precio
+            ))
 
         db.session.commit()
 
@@ -802,7 +798,6 @@ def crear_pago():
     except Exception as e:
         print("🔥 ERROR crear_pago:", e)
         return jsonify({"error": str(e)}), 500
-
 
 @app.route("/crear_transferencia", methods=["POST"])
 @login_required
