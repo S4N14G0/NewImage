@@ -681,21 +681,6 @@ def checkout():
         ]
     }, 201
         
-@app.route("/checkout/confirm", methods=["POST"])
-@login_required
-def checkout_confirm():
-    cart = request.json.get("cart", [])
-    for item in cart:
-        product = Product.query.get(item["id"])
-        if product:
-            if product.stock < item["quantity"]:
-                return {"error": f"Stock insuficiente para {product.nombre}"}, 400
-            
-            product.stock -= item["quantity"]
-            if product.stock <= 0:
-                product.en_stock = False
-    db.session.commit()
-    return {"success": True, "message": "Compra realizada correctamente."}
 
 @app.route("/ventas/<int:id>/confirmar", methods=["POST"])
 @login_required
@@ -770,6 +755,7 @@ def crear_pago():
         preference_data = {
             "items": items_mp,
             "payer": {"email": email},
+            "external_reference": str(venta.id),
             "back_urls": {
                 "success": url_for("pago_exitoso", _external=True),
                 "failure": url_for("pago_fallido", _external=True),
@@ -808,47 +794,6 @@ def crear_pago():
         print("🔥 ERROR crear_pago:", e)
         return jsonify({"error": str(e)}), 500
 
-@app.route("/crear_transferencia", methods=["POST"])
-@login_required
-def crear_transferencia():
-    data = request.get_json()
-    cart = data.get("cart", [])
-
-    if not cart:
-        return {"error": "Carrito vacío"}, 400
-
-    total = 0
-    for item in cart:
-        total += float(item.get("priceARS", 0)) * int(item.get("quantity", 1))
-
-    venta = Venta(
-        comprador_nombre=data.get("comprador_nombre"),
-        comprador_telefono=data.get("telefono"),
-        comprador_email=data.get("email"),
-        metodo_pago="transferencia",
-        cuenta_destino=data.get("cuenta_destino"),
-        monto_total=total,
-        estado="pendiente"
-    )
-
-    db.session.add(venta)
-    db.session.commit()
-
-    for item in cart:
-        db.session.add(VentaItem(
-            venta_id=venta.id,
-            producto_nombre=item.get("name"),
-            cantidad=item.get("quantity", 1),
-            precio_unitario=item.get("priceARS", 0)
-        ))
-
-    db.session.commit()
-
-    return {
-        "success": True,
-        "venta_id": venta.id,
-        "mensaje": "Pedido registrado. Esperando confirmación de transferencia."
-    }
 
 
 
