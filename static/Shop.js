@@ -62,7 +62,7 @@ function addToCart(button) {
   if (existing) {
     existing.quantity += qty;
   } else {
-    cart.push({ id, name, quantity: qty });
+    cart.push({ id, name, priceUSD, quantity: qty });
   }
 
   localStorage.setItem("cart_principal", JSON.stringify(cart));
@@ -101,9 +101,6 @@ function updateCart() {
   let subtotal = 0;
 
   cart.forEach(item => {
-    const productData = window.products.find(p => p.id === item.id);
-    if (!productData) return;
-
     const priceARS = productData.precio * dolarManual;
     const itemTotal = priceARS * item.quantity;
     subtotal += itemTotal;
@@ -113,31 +110,36 @@ function updateCart() {
     
     li.innerHTML = `
       <div class="flex items-center gap-4 w-full">
-          <div class="flex-1">
-            <p class="font-semibold text-gray-800">${item.name}</p>
-            <p class="text-sm text-gray-500">Precio unitario: 
-              <span class="font-medium text-gray-700">$${item.priceARS.toLocaleString("es-AR")} ARS</span>
-            </p>
-            <div class="flex items-center gap-2 mt-1">
-              <label for="qty-${item.id}" class="text-sm text-gray-600">Cantidad:</label>
-              <input id="qty-${item.id}" 
-                    type="number" 
-                    min="1" 
-                    value="${item.quantity}" 
-                    class="w-14 text-center border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
-                    onchange="updateQuantity(${item.id}, this.value)">
-            </div>
-          </div>
-          <div class="text-right">
-            <p class="font-bold text-indigo-600 text-lg">$${itemTotal.toLocaleString("es-AR")} ARS</p>
-            <button onclick="removeFromCart(${item.id})" 
-                    class="text-red-500 hover:text-red-700 mt-1 text-sm font-medium flex items-center gap-1">
-              <span>🗑</span> Quitar
-            </button>
+        <div class="flex-1">
+          <p class="font-semibold text-gray-800">${item.name}</p>
+          <p class="text-sm text-gray-500">
+            Precio unitario:
+            <span class="font-medium text-gray-700">
+              $${priceARS.toLocaleString("es-AR")} ARS
+            </span>
+          </p>
+          <div class="flex items-center gap-2 mt-1">
+            <label class="text-sm text-gray-600">Cantidad:</label>
+            <input type="number"
+                  min="1"
+                  value="${item.quantity}"
+                  class="w-14 text-center border border-gray-300 rounded-md"
+                  onchange="updateQuantity(${item.id}, this.value)">
           </div>
         </div>
-      `;
-    cartItemsContainer.appendChild(li);
+        <div class="text-right">
+          <p class="font-bold text-indigo-600 text-lg">
+            $${itemTotal.toLocaleString("es-AR")} ARS
+          </p>
+          <button onclick="removeFromCart(${item.id})"
+                  class="text-red-500 hover:text-red-700 mt-1 text-sm">
+            🗑 Quitar
+          </button>
+        </div>
+      </div>
+    `;
+
+  cartItemsContainer.appendChild(li);
   });
 
   document.getElementById("cartSubtotal").textContent = `$${subtotal.toLocaleString("es-AR")} ARS`;
