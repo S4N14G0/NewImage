@@ -3,13 +3,6 @@ let cart = JSON.parse(localStorage.getItem("cart_principal")) || [];
 let cartRepuestos = JSON.parse(localStorage.getItem("cart_repuestos")) || [];
 
 
-
-// // 💵 Valor del dólar manual (inyectado desde Flask)
-// if (typeof dolarManual === "undefined") {
-//   console.warn("⚠️ No se definió 'dolarManual' en el template Flask");
-//   var dolarManual = 1450; // fallback
-// }
-
 // 🖼️ Renderizar productos en la tienda
 function renderProducts(products) {
   const container = document.getElementById("productGrid");
@@ -69,7 +62,7 @@ function addToCart(button) {
   if (existing) {
     existing.quantity += qty;
   } else {
-    cart.push({ id, name, priceUSD, priceARS, quantity: qty });
+    cart.push({ id, name, quantity: qty });
   }
 
   localStorage.setItem("cart_principal", JSON.stringify(cart));
@@ -108,12 +101,11 @@ function updateCart() {
   let subtotal = 0;
 
   cart.forEach(item => {
-    // 🔧 Si el producto no tiene priceARS, lo calculamos en base al USD
-    if (typeof item.priceARS === "undefined" || isNaN(item.priceARS)) {
-      item.priceARS = item.priceUSD ? item.priceUSD * dolarManual : 0;
-    }
+    const productData = window.products.find(p => p.id === item.id);
+    if (!productData) return;
 
-    const itemTotal = item.priceARS * item.quantity;
+    const priceARS = productData.precio * dolarManual;
+    const itemTotal = priceARS * item.quantity;
     subtotal += itemTotal;
 
     const li = document.createElement("li");
