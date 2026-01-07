@@ -667,9 +667,18 @@ def checkout():
     db.session.commit()
 
     return {
-        "success": True,            
+        "success": True,
         "order_id": venta.id,
-        "total": total
+        "total": total,
+        "items": [
+            {
+                "nombre": i["product"].nombre,
+                "cantidad": i["cantidad"],
+                "precio_unitario": i["precio"],
+                "subtotal": i["precio"] * i["cantidad"]
+            }
+            for i in items_validos
+        ]
     }, 201
         
 @app.route("/checkout/confirm", methods=["POST"])
