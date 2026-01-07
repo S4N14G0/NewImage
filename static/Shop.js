@@ -62,7 +62,7 @@ function addToCart(button) {
   if (existing) {
     existing.quantity += qty;
   } else {
-    cart.push({ id, name, priceUSD, quantity: qty });
+    cart.push({ id, name, quantity: qty });
   }
 
   localStorage.setItem("cart_principal", JSON.stringify(cart));
@@ -101,9 +101,11 @@ function updateCart() {
   let subtotal = 0;
 
   cart.forEach(item => {
+    const productData = window.products.find(p => p.id === item.id);
+    if (!productData) return;
+
     const priceARS = productData.precio * dolarManual;
     const itemTotal = priceARS * item.quantity;
-    subtotal += itemTotal;
 
     const li = document.createElement("li");
     li.className = "py-3 flex items-center justify-between border-b hover:bg-gray-50 transition-colors duration-200 rounded-md px-2";
