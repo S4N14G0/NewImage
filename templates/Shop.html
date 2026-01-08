@@ -251,13 +251,12 @@
             © 2025 NewImage. Todos los derechos reservados.
         </div>
         </footer>
-    
+    <script src="{{ url_for('static', filename='Shop.js') }}" defer></script>
     <script>
         const dolarManual = {{ dolar | tojson }};
         const products = {{ products | tojson | safe }};
         console.log("🛍️ Productos recibidos:", products);
     </script>
-    <script src="{{ url_for('static', filename='Shop.js') }}" defer></script>
     <script>
         const descripciones = document.querySelectorAll(".descripcion_corta");
         const limite = 150; // cantidad de caracteres
