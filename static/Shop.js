@@ -62,7 +62,7 @@ function addToCart(button) {
   if (existing) {
     existing.quantity += qty;
   } else {
-    cart.push({ id, name, priceUSD, priceARS, quantity: qty });
+    cart.push({ id, name, priceUSD, quantity: qty });
   }
 
   localStorage.setItem("cart_principal", JSON.stringify(cart));
@@ -83,7 +83,7 @@ function updateCart() {
   const cartCount = document.getElementById("cartCount");
   const cartItemsContainer = document.getElementById("cartItems");
   if (!cartItemsContainer) return;
-
+  if (isNaN(priceARS)) return;
   if (cartCount) {
     cartCount.textContent = cart.reduce((t, item) => t + item.quantity, 0);
   }
@@ -170,13 +170,14 @@ function removeFromCart(productId) {
 
 // 💰 Actualizar totales (checkout)
 function updateTotals() {
-  const subtotal = cart.reduce((s, item) => s + item.priceARS * item.quantity, 0);
+  const subtotal = cart.reduce((s, item) => s + item.priceUSD * dolarManual * item.quantity, 0);
   const subtotalEl = document.getElementById("subtotal");
   const totalEl = document.getElementById("total");
 
-  if (subtotalEl) subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-  if (totalEl) totalEl.textContent = `$${subtotal.toFixed(2)}`;
+  if (subtotalEl) subtotalEl.textContent = `$${subtotal.toLocaleString("es-AR")} ARS`;
+  if (totalEl) totalEl.textContent = `$${subtotal.toLocaleString("es-AR")} ARS`;
 }
+
 
 
 
