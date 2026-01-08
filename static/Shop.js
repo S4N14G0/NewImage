@@ -111,7 +111,6 @@ function updateCart() {
     const itemTotal = priceARS * item.quantity;
     subtotal += itemTotal;
 
-    if (isNaN(priceARS)) return;
     const li = document.createElement("li");
     li.className = "py-3 flex items-center justify-between border-b hover:bg-gray-50 transition-colors duration-200 rounded-md px-2";
     
