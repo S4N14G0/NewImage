@@ -54,6 +54,13 @@ function addToCart(button) {
   const name = button.dataset.name;
   const priceUSD = parseFloat(button.dataset.price);
 
+  if (isNaN(priceUSD)) {
+    console.error("❌ Precio inválido", button.dataset);
+    return;
+  }
+
+  const priceARS = priceUSD * dolarManual;
+
   let qtyInput = document.getElementById(`qty-${id}`);
   let qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
 
@@ -61,7 +68,7 @@ function addToCart(button) {
   if (existing) {
     existing.quantity += qty;
   } else {
-    cart.push({ id, name, priceUSD, quantity: qty });
+    cart.push({ id, name, priceARS, quantity: qty });
   }
 
   localStorage.setItem("cart_principal", JSON.stringify(cart));
@@ -100,8 +107,7 @@ function updateCart() {
   let subtotal = 0;
 
   cart.forEach(item => {
-    
-    const priceARS = item.priceUSD * dolarManual;
+
     const itemTotal = priceARS * item.quantity;
     subtotal += itemTotal;
 
@@ -171,7 +177,7 @@ function removeFromCart(productId) {
 
 // 💰 Actualizar totales (checkout)
 function updateTotals() {
-  const subtotal = cart.reduce((s, item) => s + (item.priceUSD * dolarManual) * item.quantity);
+  const subtotal = cart.reduce((s, item) =>  (s, item) => s + item.priceARS * item.quantity,0 );
   const subtotalEl = document.getElementById("subtotal");
   const totalEl = document.getElementById("total");
 
