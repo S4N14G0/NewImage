@@ -251,10 +251,9 @@
             © 2025 NewImage. Todos los derechos reservados.
         </div>
         </footer>
-    <script src="../static/Shop.js" defer></script>
+    <script src="{{ url_for('static', filename='Shop.js') }}" defer></script>
     <script>
         const dolarManual = {{ dolar | tojson }};
-        renderProducts(products);
     </script>
     <script>
         window.products = {{ products | tojson }};
