@@ -53,7 +53,6 @@ function addToCart(button) {
   const id = parseInt(button.dataset.id);
   const name = button.dataset.name;
   const priceUSD = parseFloat(button.dataset.price);
-  const priceARS = priceUSD * dolarManual;
 
   let qtyInput = document.getElementById(`qty-${id}`);
   let qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
@@ -83,7 +82,7 @@ function updateCart() {
   const cartCount = document.getElementById("cartCount");
   const cartItemsContainer = document.getElementById("cartItems");
   if (!cartItemsContainer) return;
-  if (isNaN(priceARS)) return;
+  
   if (cartCount) {
     cartCount.textContent = cart.reduce((t, item) => t + item.quantity, 0);
   }
@@ -101,6 +100,8 @@ function updateCart() {
   let subtotal = 0;
 
   cart.forEach(item => {
+    if (isNaN(priceARS)) return;
+
     const priceARS = item.priceUSD * dolarManual;
     const itemTotal = priceARS * item.quantity;
     subtotal += itemTotal;
