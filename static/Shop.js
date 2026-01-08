@@ -82,7 +82,7 @@ function updateCart() {
   const cartCount = document.getElementById("cartCount");
   const cartItemsContainer = document.getElementById("cartItems");
   if (!cartItemsContainer) return;
-  
+
   if (cartCount) {
     cartCount.textContent = cart.reduce((t, item) => t + item.quantity, 0);
   }
@@ -100,12 +100,12 @@ function updateCart() {
   let subtotal = 0;
 
   cart.forEach(item => {
-    if (isNaN(priceARS)) return;
-
+    
     const priceARS = item.priceUSD * dolarManual;
     const itemTotal = priceARS * item.quantity;
     subtotal += itemTotal;
 
+    if (isNaN(priceARS)) return;
     const li = document.createElement("li");
     li.className = "py-3 flex items-center justify-between border-b hover:bg-gray-50 transition-colors duration-200 rounded-md px-2";
     
@@ -171,7 +171,7 @@ function removeFromCart(productId) {
 
 // 💰 Actualizar totales (checkout)
 function updateTotals() {
-  const subtotal = cart.reduce((s, item) => s + item.priceUSD * dolarManual * item.quantity, 0);
+  const subtotal = cart.reduce((s, item) => s + (item.priceUSD * dolarManual) * item.quantity);
   const subtotalEl = document.getElementById("subtotal");
   const totalEl = document.getElementById("total");
 

@@ -292,7 +292,8 @@
 
     const dolarManual = {{ dolar | tojson }};
     const products = {{ product | tojson | safe }};
-    renderProducts(products);
+    window.products = {{ products | tojson }};
+    renderProducts(window.products);
 
     // window.ventasHabilitadas = {{ ventas_activas | tojson | safe }};
     // console.log("Ventas habilitadas:", window.ventasHabilitadas);
