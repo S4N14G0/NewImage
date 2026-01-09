@@ -115,8 +115,6 @@ function updateCart() {
 
   cart.forEach(item => {
 
-    if (typeof item.priceARS !== "number") return;
-
     const priceARS = item.priceUSD * dolarManual;
     const itemTotal = priceARS * item.quantity;
     subtotal += itemTotal;
@@ -186,7 +184,7 @@ function removeFromCart(productId) {
 
 // 💰 Actualizar totales (checkout)
 function updateTotals() {
-  const subtotal = cart.reduce((s, item) =>  (s, item) => s + item.priceARS * item.quantity,0 );
+  const subtotal = cart.reduce((s, item) => s + item.priceUSD * dolarManual * item.quantity,0 );
   const subtotalEl = document.getElementById("subtotal");
   const totalEl = document.getElementById("total");
 
