@@ -54,21 +54,22 @@ function addToCart(button) {
   const name = button.dataset.name;
   const priceUSD = parseFloat(button.dataset.price);
 
-  if (isNaN(priceUSD)) {
-    console.error("❌ Precio inválido", button.dataset);
-    return;
-  }
-
   const priceARS = priceUSD * dolarManual;
 
   let qtyInput = document.getElementById(`qty-${id}`);
   let qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
 
   let existing = cart.find(p => p.id === id);
+
   if (existing) {
     existing.quantity += qty;
   } else {
-    cart.push({ id, name, priceARS, quantity: qty });
+    cart.push({
+      id,
+      name,
+      priceARS, // ✅ ESTE ES EL ÚNICO PRECIO QUE USA EL CARRITO
+      quantity: qty
+    });
   }
 
   localStorage.setItem("cart_principal", JSON.stringify(cart));
@@ -108,6 +109,9 @@ function updateCart() {
 
   cart.forEach(item => {
 
+    if (typeof item.priceARS !== "number") return;
+
+    const priceARS = item.priceUSD * dolarManual;
     const itemTotal = priceARS * item.quantity;
     subtotal += itemTotal;
 
