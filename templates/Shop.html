@@ -270,10 +270,6 @@
     </script>
     <script>
         window.products = {{ products | tojson }};
-        const imageSrc =
-            p.imagenes && p.imagenes.length > 0
-                ? `/static/uploads/${p.imagenes[0].filename}`
-                : "/static/no-image.png";
     </script>
 </body>
 
