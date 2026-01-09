@@ -29,8 +29,8 @@ function renderProducts(products) {
 
         <div class="mt-3">
           <p class="text-xl font-bold text-indigo-600">
-            $${priceARS} ARS 
-            <span class="text-gray-500 text-sm">(USD ${p.precio})</span>
+            $${priceARS.toLocaleString("es-AR")}ARS 
+            <span class="text-gray-500 text-sm">(USD ${priceARS.toLocaleString("es-AR")})</span>
           </p>
         </div>
 
