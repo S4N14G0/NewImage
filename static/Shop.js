@@ -54,7 +54,13 @@ function addToCart(button) {
   const name = button.dataset.name;
   const priceUSD = parseFloat(button.dataset.price);
 
-  const priceARS = priceUSD * dolarManual;
+  if (!priceUSD || isNaN(priceUSD)) {
+    console.error("Producto sin precio:", button.dataset);
+    alert("Este producto no tiene precio asignado");
+    return;
+  }
+
+
 
   let qtyInput = document.getElementById(`qty-${id}`);
   let qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
@@ -67,7 +73,7 @@ function addToCart(button) {
     cart.push({
       id,
       name,
-      priceARS, // ✅ ESTE ES EL ÚNICO PRECIO QUE USA EL CARRITO
+      priceUSD, // ✅ ESTE ES EL ÚNICO PRECIO QUE USA EL CARRITO
       quantity: qty
     });
   }
