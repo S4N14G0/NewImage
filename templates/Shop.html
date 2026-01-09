@@ -110,7 +110,7 @@
             <!-- Imagen -->
             <div class="relative h-56 bg-gray-100 flex items-center justify-center">
                 {% if product.imagenes %}
-                <img src="{{ url_for('static', filename='uploads/' ~ product.imagenes[0].filename) }}"
+                <img src="${imageSrc}"
                     alt="{{ product.nombre }}"
                     class="object-cover h-full w-full transition-transform duration-300 hover:scale-105">
                 {% else %}
@@ -270,6 +270,10 @@
     </script>
     <script>
         window.products = {{ products | tojson }};
+        const imageSrc =
+            p.imagenes && p.imagenes.length > 0
+                ? `/static/uploads/${p.imagenes[0].filename}`
+                : "/static/no-image.png";
     </script>
 </body>
 
