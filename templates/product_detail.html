@@ -151,7 +151,7 @@
                 <div class="swiper-wrapper">
                     {% for img in product.imagenes %}
                     <div class="swiper-slide">
-                    <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" 
+                    <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}"
                         alt="{{ product.nombre }}"
                         class="w-full h-96 object-cover rounded-lg">
                     </div>

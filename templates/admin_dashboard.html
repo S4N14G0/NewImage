@@ -267,7 +267,7 @@
                     </td>
                     <td class="py-3 px-4">
                         {% if product.imagenes %}
-                        <img src="{{ url_for('static', filename='uploads/' ~ product.imagenes[0].filename) }}"
+                        <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}"
                              alt="{{ product.nombre }}" width="90"
                              class="rounded shadow">
                         {% endif %}
