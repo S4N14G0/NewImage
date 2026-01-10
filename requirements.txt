@@ -8,4 +8,4 @@ mercadopago
 gunicorn
 psycopg2
 pytz
-uuid4
+uuid
