@@ -16,7 +16,7 @@ from flask import request, url_for, redirect, render_template
 from flask_mail import Mail, Message
 from datetime import datetime
 import pytz
-
+from uuid import uuid4
 
 
 # ---------------------------------------------------
@@ -518,11 +518,24 @@ def new_product():
         # Manejo de múltiples imágenes
         files = request.files.getlist("imagenes")
         for file in files:
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            if allowed_file(file.filename):
+                ext = file.filename.rsplit(".", 1)[1].lower()
+                unique_name = f"{uuid4().hex}.{ext}"
 
-                new_image = ProductImage(filename=filename, product_id=product.id)
+                if product.tipo == "repuesto":
+                    subfolder = "uploads/repuestos"
+                else:
+                    subfolder = "uploads"
+
+                upload_path = os.path.join("static", subfolder)
+                os.makedirs(upload_path, exist_ok=True)
+
+                file.save(os.path.join(upload_path, unique_name))
+
+                new_image = ProductImage(
+                    filename=f"{subfolder}/{unique_name}",
+                    product_id=product.id
+                )
                 db.session.add(new_image)
 
         db.session.commit()  # guarda imágenes en la DB
@@ -567,11 +580,25 @@ def edit_product(product_id):
             # Guardar nuevas imágenes
             for file in files:
                 if allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    file.save(os.path.join(upload_folder, filename))
+                    ext = file.filename.rsplit(".", 1)[1].lower()
+                    unique_name = f"{uuid4().hex}.{ext}"
 
-                    new_image = ProductImage(filename=filename, product_id=product.id)
+                    if product.tipo == "repuesto":
+                        subfolder = "uploads/repuestos"
+                    else:
+                        subfolder = "uploads"
+
+                    upload_path = os.path.join("static", subfolder)
+                    os.makedirs(upload_path, exist_ok=True)
+
+                    file.save(os.path.join(upload_path, unique_name))
+
+                    new_image = ProductImage(
+                        filename=f"{subfolder}/{unique_name}",
+                        product_id=product.id
+                    )
                     db.session.add(new_image)
+
         print("Tipo guardado:", product.tipo)
         db.session.commit()
         flash("Producto actualizado con éxito", "success")
