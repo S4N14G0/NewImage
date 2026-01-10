@@ -110,7 +110,7 @@
             <!-- Imagen -->
             <div class="relative h-56 bg-gray-100 flex items-center justify-center">
                 {% if product.imagenes %}
-                <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}"
+                <img src="{{ url_for('static', filename='uploads/' ~ product.image) }}"
                     alt="{{ product.nombre }}"
                     class="object-cover h-full w-full transition-transform duration-300 hover:scale-105">
                 {% else %}
