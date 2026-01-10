@@ -143,17 +143,17 @@ def update_dolar():
 
 
 
-def serializar_producto(producto):
+def serializar_producto(product):
     return {
-        "id": producto.id,
-        "nombre": producto.nombre,
-        "descripcion": producto.descripcion,
-        "precio": producto.precio,
-        "tipo": producto.tipo,
-        "imagenes": [{"filename": img.filename} for img in producto.imagenes],
-        "stock": producto.stock,
-        "en_stock": producto.en_stock,
-        "observacion": producto.observacion
+        "id": product.id,
+        "nombre": product.nombre,
+        "precio": product.precio,
+        "descripcion": product.descripcion,
+        "stock": product.stock,
+        "observacion": product.observacion,
+        "imagenes": [
+            img.filename for img in product.imagenes
+        ]
     }
 
 def send_email(to, link):

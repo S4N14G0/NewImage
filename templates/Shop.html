@@ -105,40 +105,40 @@
         <!-- Grid de productos -->
         <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {% for product in products %}
-            <div class="flex flex-col border rounded-2xl shadow-sm hover:shadow-lg transition bg-white overflow-hidden">
+                <div class="flex flex-col border rounded-2xl shadow-sm hover:shadow-lg transition bg-white overflow-hidden">
 
-            <!-- Imagen -->
-            <div class="relative h-56 bg-gray-100 flex items-center justify-center">
-                {% if product.imagenes and product.imagenes|length > 0 %}
-                <img src="{{ url_for('static', filename=product.imagenes[0]).filename }}"
-                    alt="{{ product.nombre }}"
-                    class="object-cover h-full w-full">
-                {% else %}
-                <img src="{{ url_for('static', filename='images/no-image.png') }}"
-                    alt="Sin imagen"
-                    class="object-cover h-full w-full">
-                {% endif %}
-            </div>
+                    <!-- Imagen -->
+                    <div class="relative h-56 bg-gray-100 flex items-center justify-center">
+                        {% if product.imagenes and product.imagenes|length > 0 %}
+                            <img src="{{ url_for('static', filename=product.imagenes[0]) }}"
+                                alt="{{ product.nombre }}"
+                                class="object-cover h-full w-full">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/no-image.png') }}"
+                                alt="Sin imagen"
+                                class="object-cover h-full w-full">
+                        {% endif %}
+                    </div>
 
-            <!-- Información -->
-            <div class="flex flex-col flex-grow p-5">
-                <h3 class="text-lg font-semibold mb-1 text-gray-800 truncate">{{ product.nombre }}</h3>
-                <p class="text-gray-600 text-sm mb-3 line-clamp-2">
-                {{ product.descripcion }}
-                </p>
+                    <!-- Información -->
+                    <div class="flex flex-col flex-grow p-5">
+                        <h3 class="text-lg font-semibold mb-1 text-gray-800 truncate">{{ product.nombre }}</h3>
+                        <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+                        {{ product.descripcion }}
+                        </p>
 
-                <!-- Precio -->
-                <p class="text-2xl font-bold text-indigo-600 mb-4">
-                ${{ "%.2f"|format(product.precio * dolar) | formato_pesos }}
-                </p>
+                        <!-- Precio -->
+                        <p class="text-2xl font-bold text-indigo-600 mb-4">
+                        ${{ "%.2f"|format(product.precio * dolar) | formato_pesos }}
+                        </p>
 
-                <!-- Botón -->
-                <a href="{{ url_for('product_detail', product_id=product.id) }}"
-                class="mt-auto inline-block text-center bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
-                Ver detalles
-                </a>
-            </div>
-            </div>
+                        <!-- Botón -->
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}"
+                        class="mt-auto inline-block text-center bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
+                        Ver detalles
+                        </a>
+                    </div>
+                </div>
             {% endfor %}
         </div>
     </main>
