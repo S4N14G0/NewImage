@@ -219,9 +219,10 @@
         <div class="swiper lightboxSwiper w-full max-w-3xl h-100">
             <div class="swiper-wrapper">
                 {% for img in product.imagenes %}
-                <div class="swiper-slide flex items-center justify-center">
-                    <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" 
-                        class="max-h-full max-w-full rounded-lg shadow-lg" alt="{{ product.nombre }}">
+                <div class="swiper-slide">
+                    <img src="{{ url_for('static', filename=img) }}"
+                        alt="{{ product.nombre }}"
+                        class="w-full h-96 object-cover rounded-lg">
                 </div>
                 {% endfor %}
             </div>
