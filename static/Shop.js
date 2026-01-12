@@ -19,7 +19,7 @@ function renderProducts(products) {
     container.innerHTML += `
       <div class="border rounded-lg p-4 shadow hover:shadow-lg transition bg-white">
         <div class="gallery flex justify-center mb-4">
-          <img src="/static/uploads/${p.imagenes?.[0]?.filename || 'no-image.png'}"
+          <img src="/static/uploads/${p.imagenes?.[0]|| 'images/no-image.png'}"
                alt="${p.nombre}"
                class="w-48 h-48 object-cover rounded shadow">
         </div>
