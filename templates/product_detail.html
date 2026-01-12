@@ -218,13 +218,13 @@
         
         <div class="swiper lightboxSwiper w-full max-w-3xl h-100">
             <div class="swiper-wrapper">
-            {% for img in product.imagenes %}
-            <div class="swiper-slide">
-                <img src="{{ url_for('static', filename=img) }}"
-                    alt="{{ product.nombre }}"
-                    class="w-full h-96 object-cover rounded-lg">
-            </div>
-            {% endfor %}
+                {% for img in product.imagenes if img %}
+                <div class="swiper-slide">
+                    <img src="{{ url_for('static', filename=img) }}"
+                        alt="{{ product.nombre }}"
+                        class="w-full h-96 object-cover rounded-lg">
+                </div>
+                {% endfor %}
             </div>
 
             <!-- Botones de navegación -->
@@ -292,7 +292,7 @@
 <script>
 
     const dolarManual = {{ dolar | tojson }};
-    const products = {{ product | tojson | safe }};
+    const product = {{ product | tojson | safe }};
 
     // window.ventasHabilitadas = {{ ventas_activas | tojson | safe }};
     // console.log("Ventas habilitadas:", window.ventasHabilitadas);
