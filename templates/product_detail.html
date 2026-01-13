@@ -221,11 +221,13 @@
         <div class="swiper lightboxSwiper w-full max-w-3xl h-100">
             <div class="swiper-wrapper">
                 {% for img in product.imagenes if img %}
-                <div class="swiper-slide">
-                    <img src="{{ url_for('static', filename=img) }}"
-                        alt="{{ product.nombre }}"
-                        class="w-full h-96 rounded-lg">
-                </div>
+                    {% if img.startswith('http') %}
+                    <div class="swiper-slide">
+                        <img src="{{ img }}"
+                            alt="{{ product.nombre }}"
+                            class="w-full h-96 rounded-lg">
+                    </div>
+                    {% endif %}    
                 {% endfor %}
             </div>
 
