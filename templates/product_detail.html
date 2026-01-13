@@ -222,7 +222,7 @@
             <div class="swiper-wrapper">
                 {% for img in product.imagenes if img %}
                 <div class="swiper-slide">
-                    <img src="{{ url_for('static', filename=img) }}"
+                    <img src="{{ img }}"
                         alt="{{ product.nombre }}"
                         class="w-full h-96 rounded-lg">
                 </div>
