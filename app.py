@@ -50,7 +50,6 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_USERNAME")
 
 mail = Mail(app)
 
-
 #----------------------------------------------------
 # CONFIGURACION MERCADO PAGO
 #----------------------------------------------------
