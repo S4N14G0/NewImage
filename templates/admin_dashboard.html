@@ -266,8 +266,8 @@
                         {% endif %}
                     </td>
                     <td class="py-3 px-4">
-                        {% if product.imagenes and product.imagenes[0].startswith('http') %}
-                            <img src="{{ product.imagenes[0] }}"
+                        {% if product.imagenes %}
+                            <img src="{{ product.imagenes[0].filename }}"
                                 alt="{{ product.nombre }}"
                                 class="w-24 h-24 object-cover rounded shadow">
                         {% else %}
