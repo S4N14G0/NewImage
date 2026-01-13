@@ -162,9 +162,6 @@ def serializar_producto(product):
 def send_email(to, link):
     print(f"Enviar email a {to} con link: {link}")
 
-
-load_dotenv()
-
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
     api_key=os.getenv("CLOUDINARY_API_KEY"),
@@ -532,7 +529,7 @@ def new_product():
                 ext = file.filename.rsplit(".", 1)[1].lower()
                 unique_name = f"{uuid4().hex}.{ext}"
 
-                if product.tipo == "repuesto":
+                if product.tipo == "repuestos":
                     subfolder = "uploads/repuestos"
                 else:
                     subfolder = "uploads"
@@ -573,13 +570,12 @@ def edit_product(product_id):
         product.stock = int(request.form["stock"])
         product.en_stock = product.stock > 0
         product.tipo = request.form.get("tipo", "principal")
-
+        
         files = request.files.getlist("imagenes")
 
         if files and files[0].filename:
             try:
-                for img in product.imagenes:
-                    db.session.delete(img)
+                nuevas_imagenes = []
 
                 for file in files:
                     if allowed_file(file.filename):
@@ -588,15 +584,24 @@ def edit_product(product_id):
                             folder=f"newimage/{product.tipo}"
                         )
 
-                        db.session.add(ProductImage(
-                            filename=upload["secure_url"],
-                            product_id=product.id
-                        ))
+                        nuevas_imagenes.append(
+                            ProductImage(
+                                filename=upload["secure_url"],
+                                product_id=product.id
+                            )
+                        )
+
+                # 🔥 SOLO si todo salió bien
+                for img in product.imagenes:
+                    db.session.delete(img)
+
+                for img in nuevas_imagenes:
+                    db.session.add(img)
 
             except Exception as e:
                 db.session.rollback()
                 print("ERROR CLOUDINARY:", e)
-                flash("Error al subir las imágenes", "danger")
+                flash("Error al subir imágenes", "danger")
                 return redirect(request.url)
 
         db.session.commit()
