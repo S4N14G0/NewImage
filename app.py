@@ -567,7 +567,6 @@ def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
 
     if request.method == "POST":
-        # Actualizar datos base
         product.nombre = request.form["nombre"]
         product.categoria = request.form["categoria"]
         product.precio = float(request.form["precio"])
@@ -576,53 +575,35 @@ def edit_product(product_id):
         product.en_stock = product.stock > 0
         product.tipo = request.form.get("tipo", "principal")
 
-        # Manejo de imágenes (permite varias)
         files = request.files.getlist("imagenes")
 
-        if files and files[0].filename != "":
-            # Eliminar imágenes anteriores
-            for img in product.imagenes:
-                db.session.delete(img)
+        if files and files[0].filename:
+            try:
+                for img in product.imagenes:
+                    db.session.delete(img)
 
-            # Determinar carpeta según el tipo
-            if product.tipo == "repuesto":
-                upload_folder = os.path.join(app.config["UPLOAD_FOLDER"], "repuestos")
-            else:
-                upload_folder = app.config["UPLOAD_FOLDER"]
+                for file in files:
+                    if allowed_file(file.filename):
+                        upload = cloudinary.uploader.upload(
+                            file,
+                            folder=f"newimage/{product.tipo}"
+                        )
 
-            os.makedirs(upload_folder, exist_ok=True)
+                        db.session.add(ProductImage(
+                            filename=upload["secure_url"],
+                            product_id=product.id
+                        ))
 
-            # Guardar nuevas imágenes
-            for file in files:
-                if allowed_file(file.filename):
-                    ext = file.filename.rsplit(".", 1)[1].lower()
-                    unique_name = f"{uuid4().hex}.{ext}"
+            except Exception as e:
+                db.session.rollback()
+                print("ERROR CLOUDINARY:", e)
+                flash("Error al subir las imágenes", "danger")
+                return redirect(request.url)
 
-                    if product.tipo == "repuesto":
-                        subfolder = "uploads/repuestos"
-                    else:
-                        subfolder = "uploads"
-
-                    upload_path = os.path.join("static", subfolder)
-                    os.makedirs(upload_path, exist_ok=True)
-                    
-                    upload = cloudinary.uploader.upload(
-                        file,
-                        folder=f"newimage/{product.tipo}"
-                    )
-
-                    new_image = ProductImage(
-                        filename=upload["secure_url"],  # URL completa
-                        product_id=product.id
-                    )
-                    
-                    db.session.add(new_image)
-
-        print("Tipo guardado:", product.tipo)
         db.session.commit()
         flash("Producto actualizado con éxito", "success")
         return redirect(url_for("admin_dashboard"))
-    
+
     return render_template("edit_product.html", product=product)
 
 # Eliminar un producto
