@@ -109,10 +109,10 @@
 
                     <!-- Imagen -->
                     <div class="relative h-56 bg-gray-100 flex items-center justify-center">
-                        {% if product.imagenes and product.imagenes|length > 0 %}
-                            <img src="{{ url_for('static', filename=product.imagenes[0]) }}"
+                        {% if product.imagenes and product.imagenes[0].startswith('http') %}
+                            <img src="{{ product.imagenes[0] }}"
                                 alt="{{ product.nombre }}"
-                                class="object-cover h-full w-full">
+                                class="object-cover h-full w-full transition-transform duration-300 hover:scale-105">
                         {% else %}
                             <img src="{{ url_for('static', filename='images/no-image.png') }}"
                                 alt="Sin imagen"
