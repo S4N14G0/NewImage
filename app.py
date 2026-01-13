@@ -17,6 +17,10 @@ from flask_mail import Mail, Message
 from datetime import datetime
 import pytz
 from uuid import uuid4
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+from dotenv import load_dotenv
 
 
 # ---------------------------------------------------
@@ -160,7 +164,14 @@ def send_email(to, link):
     print(f"Enviar email a {to} con link: {link}")
 
 
+load_dotenv()
 
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 
 # ---------------------------------------------------
 # RUTAS PRINCIPALES
@@ -529,13 +540,17 @@ def new_product():
 
                 upload_path = os.path.join("static", subfolder)
                 os.makedirs(upload_path, exist_ok=True)
-
-                file.save(os.path.join(upload_path, unique_name))
+                
+                upload = cloudinary.uploader.upload(
+                    file,
+                    folder=f"newimage/{product.tipo}"
+                )
 
                 new_image = ProductImage(
-                    filename=f"{subfolder}/{unique_name}",
+                    filename=upload["secure_url"],  # URL completa
                     product_id=product.id
                 )
+                
                 db.session.add(new_image)
 
         db.session.commit()  # guarda imágenes en la DB

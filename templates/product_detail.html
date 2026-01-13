@@ -150,11 +150,13 @@
             <div class="swiper mySwiper w-full max-w-xl rounded-lg shadow-lg">
                 <div class="swiper-wrapper">
                     {% for img in product.imagenes %}
-                    <div class="swiper-slide">
-                        <img src="{{ url_for('static', filename=img) }}"
-                            alt="{{ product.nombre }}"
-                            class="w-full h-96 object-cover rounded-lg">
-                    </div>
+                        {% if img.startswith('http') %}
+                        <div class="swiper-slide">
+                            <img src="{{ img }}"
+                                alt="{{ product.nombre }}"
+                                class="w-full h-96 object-cover rounded-lg">
+                        </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
 
