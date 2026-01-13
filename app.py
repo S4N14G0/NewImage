@@ -605,13 +605,17 @@ def edit_product(product_id):
 
                     upload_path = os.path.join("static", subfolder)
                     os.makedirs(upload_path, exist_ok=True)
-
-                    file.save(os.path.join(upload_path, unique_name))
+                    
+                    upload = cloudinary.uploader.upload(
+                        file,
+                        folder=f"newimage/{product.tipo}"
+                    )
 
                     new_image = ProductImage(
-                        filename=f"{subfolder}/{unique_name}",
+                        filename=upload["secure_url"],  # URL completa
                         product_id=product.id
                     )
+                    
                     db.session.add(new_image)
 
         print("Tipo guardado:", product.tipo)
