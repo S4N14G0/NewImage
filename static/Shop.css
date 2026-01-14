@@ -154,19 +154,7 @@ body {
     color: var(--primary);
 }
 
-.lightbox-wrapper {
-  width: 100%;
-  height: 80vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.lightbox-wrapper img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
 
 /* Responsive Styles */
 
