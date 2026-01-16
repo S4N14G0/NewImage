@@ -779,11 +779,6 @@ def crear_pago():
             })
 
             items_validos.append((product, cantidad, precio_ars))
-            
-        
-        sdk = SDK(cuenta.access_token)
-
-        preference = sdk.preference().create(preference_data)
         
         preference_data = {
             "items": items_mp,
@@ -797,7 +792,9 @@ def crear_pago():
             "auto_return": "approved"
         }
 
+        sdk = SDK(cuenta.access_token)
 
+        preference = sdk.preference().create(preference_data) 
 
         for product, cantidad, precio in items_validos:
             db.session.add(VentaItem(
