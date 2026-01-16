@@ -664,7 +664,7 @@ def checkout():
         if product.stock < cantidad:
             return {"error": f"Stock insuficiente para {product.nombre}"}, 400
 
-        precio_ars = product.precio * dolar
+        precio_ars = round(product.precio * dolar, 2)
         subtotal = precio_ars * cantidad
         total += subtotal
 
@@ -701,15 +701,6 @@ def checkout():
         "success": True,
         "order_id": venta.id,
         "total": total,
-        "items": [
-            {
-                "nombre": i["product"].nombre,
-                "cantidad": i["cantidad"],
-                "precio_unitario": i["precio"],
-                "subtotal": i["precio"] * i["cantidad"]
-            }
-            for i in items_validos
-        ]
     }, 201
         
 

@@ -2,10 +2,15 @@
 // Carrito global (puede contener productos de ambos tipos)
 let cartPrincipal = JSON.parse(localStorage.getItem("cart_principal")) || [];
 let cartRepuestos = JSON.parse(localStorage.getItem("cart_repuestos")) || [];
-let cart = [...cartPrincipal, ...cartRepuestos];
-console.log("🧾 Carrito combinado en checkout:", cart);
-let currentStep = 1;
 
+let cart = [...cartPrincipal, ...cartRepuestos].map(item => ({
+    id: item.id,
+    name: item.name,
+    priceUSD: item.priceUSD, //
+    quantity: item.quantity
+}));
+
+let currentStep = 1;
 
 // Render resumen del pedido (sidebar)
 function renderCheckoutSummary() {
@@ -16,25 +21,23 @@ function renderCheckoutSummary() {
     let subtotal = 0;
 
     cart.forEach(item => {
-        // 🧮 Tomamos el precio en pesos si existe, si no, usamos el de USD
-        const price = item.priceARS || item.price || 0;
-        const itemTotal = price * item.quantity;
+        const priceARS = item.priceUSD * dolarManual;
+        const itemTotal = priceARS * item.quantity;
         subtotal += itemTotal;
-        document.getElementById("checkoutTotal").textContent =
-            subtotal.toLocaleString("es-AR", { style: "currency", currency: "ARS" });
-            
+
         const div = document.createElement("div");
         div.className = "flex justify-between items-center mb-2 text-sm";
 
-        const formatted = itemTotal.toLocaleString("es-AR", { style: "currency", currency: "ARS" });
-        div.innerHTML = `<span>${item.name} x ${item.quantity}</span> <span>${formatted}</span>`;
+        div.innerHTML = `
+            <span>${item.name} x ${item.quantity}</span>
+            <span>$${itemTotal.toLocaleString("es-AR")}</span>
+        `;
+
         summary.appendChild(div);
     });
 
-    // 🔢 Mostrar total formateado
-    const totalFormatted = subtotal.toLocaleString("es-AR", { minimumFractionDigits: 0 });
-    document.getElementById("checkoutTotal").textContent = `$${totalFormatted}`;
-    document.getElementById("finalTotal").textContent = `$${totalFormatted}`;
+    document.getElementById("checkoutTotal").textContent =
+        `$${subtotal.toLocaleString("es-AR")}`;
 }
 // Validación de pasos
 function validateStep(step) {
@@ -47,14 +50,6 @@ function validateStep(step) {
         const phone = document.getElementById("phone").value.trim();
         if (!firstName || !lastName || !email || !phone) {
             alert("Por favor completa todos los campos de contacto.");
-            valid = false;
-        }
-    } else if (step === 2) {
-        const address = document.getElementById("address").value.trim();
-        const city = document.getElementById("city").value.trim();
-        const zip = document.getElementById("zip").value.trim();
-        if (!address || !city || !zip === "Seleccionar") {
-            alert("Por favor completa todos los campos de dirección.");
             valid = false;
         }
     } else if (step === 3) {
@@ -128,9 +123,10 @@ async function NextStep4() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    cart: cart,
-                    comprador_nombre: document.getElementById("firstName").value + " " +
-                                    document.getElementById("lastName").value,
+                    cart: cart, // 👈 solo USD + qty
+                    comprador_nombre:
+                        document.getElementById("firstName").value + " " +
+                        document.getElementById("lastName").value,
                     telefono: document.getElementById("phone").value,
                     email: document.getElementById("email").value,
                     cuenta_id: cuentaId
