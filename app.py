@@ -812,20 +812,42 @@ def crear_pago():
         print("🔥 ERROR crear_pago:", e)
         return jsonify({"error": str(e)}), 500
 
-@app.route('/pago_exitoso')
-def pago_exitoso():
-    venta_id = request.args.get("external_reference")
-    venta = Venta.query.get(venta_id)
+@app.route("/webhook/mp", methods=["POST"])
+def webhook_mp():
+    data = request.get_json()
+    payment_id = data.get("data", {}).get("id")
 
-    if venta and venta.estado != "pagado":
-        for item in venta.items:
-            product = Product.query.filter_by(nombre=item.producto_nombre).first()
+    if not payment_id:
+        return "ok", 200
+
+    cuenta = get_cuenta_activa()
+    sdk = SDK(cuenta.access_token)
+
+    payment = sdk.payment().get(payment_id)["response"]
+
+    if payment["status"] != "approved":
+        return "ok", 200
+
+    venta_id = payment.get("external_reference")
+    venta = Venta.query.get(int(venta_id))
+
+    if not venta or venta.estado == "pagado":
+        return "ok", 200
+
+    for item in venta.items:
+        product = Product.query.filter_by(nombre=item.producto_nombre).first()
+        if product:
             product.stock -= item.cantidad
             product.en_stock = product.stock > 0
 
-        venta.estado = "pagado"
-        db.session.commit()
+    venta.estado = "pagado"
+    db.session.commit()
 
+    return "ok", 200
+
+
+@app.route('/pago_exitoso')
+def pago_exitoso():
     return render_template("pago_exitoso.html")
 
 @app.route('/pago_pendiente')
