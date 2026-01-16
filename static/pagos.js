@@ -76,3 +76,4 @@ async function pagarConMP() {
         window.location.href = data.init_point;
     }
 }
+

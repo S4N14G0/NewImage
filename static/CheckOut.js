@@ -10,6 +10,8 @@ let cart = [...cartPrincipal, ...cartRepuestos].map(item => ({
     quantity: item.quantity
 }));
 
+
+
 let currentStep = 1;
 
 // Render resumen del pedido (sidebar)
@@ -21,7 +23,7 @@ function renderCheckoutSummary() {
     let subtotal = 0;
 
     cart.forEach(item => {
-        const priceARS = item.priceUSD * dolarManual;
+        const priceARS = item.priceUSD * dolar;
         const itemTotal = priceARS * item.quantity;
         subtotal += itemTotal;
 
