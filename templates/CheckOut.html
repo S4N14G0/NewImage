@@ -268,7 +268,12 @@
                         <a href="{{ url_for('shop') }}" class="btn-primary">Volver a la tienda</a>
                     </div>
                 </div>
-
+            </div>
+        </div>
+    </div>
+    <script>
+        const DOLAR = {{ dolar | tojson }};
+    </script>
     <script src="{{ url_for('static', filename='CheckOut.js') }}"></script>
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script>

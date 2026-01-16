@@ -2,7 +2,7 @@
 // Carrito global (puede contener productos de ambos tipos)
 let cartPrincipal = JSON.parse(localStorage.getItem("cart_principal")) || [];
 let cartRepuestos = JSON.parse(localStorage.getItem("cart_repuestos")) || [];
-
+const dolar = typeof DOLAR !== "undefined" ? DOLAR : 1;
 let cart = [...cartPrincipal, ...cartRepuestos].map(item => ({
     id: item.id,
     name: item.name,
@@ -21,7 +21,7 @@ function renderCheckoutSummary() {
     let subtotal = 0;
 
     cart.forEach(item => {
-        const priceARS = item.priceUSD * dolarManual;
+        const priceARS = item.priceUSD * dolar;
         const itemTotal = priceARS * item.quantity;
         subtotal += itemTotal;
 
