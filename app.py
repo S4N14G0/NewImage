@@ -303,10 +303,9 @@ def check():
     print("DEBUG cuenta:", cuenta)
     print("DEBUG cuentas:", CuentaPago.query.all())
     print("DEBUG activa:", get_cuenta_activa())
-    dolar = Configuracion.dolar_manual
-
-    # if not cuenta:
-    #     return "No hay cuenta activa configurada en la base de datos", 500
+    dolar = float(cuenta.configuracion.dolar_manual)
+    
+    print("DOLAR =", dolar, type(dolar))
 
     return render_template("CheckOut.html", cuenta=cuenta, public_key=cuenta.public_key, dolar=dolar)
 
