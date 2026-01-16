@@ -300,12 +300,7 @@ def historial_ventas():
 @login_required
 def check():
     cuenta = get_cuenta_activa()
-    print("DEBUG cuenta:", cuenta)
-    print("DEBUG cuentas:", CuentaPago.query.all())
-    print("DEBUG activa:", get_cuenta_activa())
-    dolar = float(cuenta.dolar_manual)
-    
-    print("DOLAR =", dolar, type(dolar))
+    dolar = obtener_dolar_manual()
 
     return render_template("CheckOut.html", cuenta=cuenta, public_key=cuenta.public_key, dolar=dolar)
 
@@ -771,8 +766,23 @@ def crear_pago():
             })
 
             items_validos.append((product, cantidad, precio_ars))
+            
+        
+        venta = Venta(
+            comprador_nombre=data.get("comprador_nombre"),
+            comprador_telefono=data.get("telefono"),
+            comprador_email=email,
+            metodo_pago="mercado_pago",
+            cuenta_destino=cuenta.alias or cuenta.cbu,
+            monto_total=total
+        )
+
+        db.session.add(venta)
+        db.session.commit()
 
         sdk = SDK(cuenta.access_token)
+
+        preference = sdk.preference().create(preference_data)
 
         preference_data = {
             "items": items_mp,
@@ -785,20 +795,6 @@ def crear_pago():
             },
             "auto_return": "approved"
         }
-
-        preference = sdk.preference().create(preference_data)
-
-        venta = Venta(
-            comprador_nombre=data.get("comprador_nombre"),
-            comprador_telefono=data.get("telefono"),
-            comprador_email=email,
-            metodo_pago="mercado_pago",
-            cuenta_destino=cuenta.alias or cuenta.cbu,
-            monto_total=total
-        )
-
-        db.session.add(venta)
-        db.session.commit()
 
         for product, cantidad, precio in items_validos:
             db.session.add(VentaItem(
