@@ -303,7 +303,7 @@ def check():
     print("DEBUG cuenta:", cuenta)
     print("DEBUG cuentas:", CuentaPago.query.all())
     print("DEBUG activa:", get_cuenta_activa())
-    dolar = float(cuenta.configuracion.dolar_manual)
+    dolar = float(cuenta.dolar_manual)
     
     print("DOLAR =", dolar, type(dolar))
 
