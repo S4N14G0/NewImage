@@ -21,7 +21,7 @@ function renderCheckoutSummary() {
     let subtotal = 0;
 
     cart.forEach(item => {
-        const priceARS = item.priceUSD * dolar;
+        const priceARS = item.priceUSD * dolarManual;
         const itemTotal = priceARS * item.quantity;
         subtotal += itemTotal;
 
