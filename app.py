@@ -815,10 +815,6 @@ def crear_pago():
         print("🔥 ERROR crear_pago:", e)
         return jsonify({"error": str(e)}), 500
 
-
-
-
-
 @app.route('/pago_exitoso')
 def pago_exitoso():
     venta_id = request.args.get("external_reference")
