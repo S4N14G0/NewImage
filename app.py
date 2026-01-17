@@ -658,9 +658,6 @@ def checkout():
 
         if product.stock < cantidad:
             return {"error": f"Stock insuficiente para {product.nombre}"}, 400
-        
-        product.stock -= cantidad
-        product.en_stock = product.stock > 0
 
         precio_ars = round(product.precio * dolar, 2)
         subtotal = precio_ars * cantidad
@@ -707,20 +704,16 @@ def checkout():
 def confirmar_transferencia(id):
     venta = Venta.query.get_or_404(id)
 
-    if venta.estado == "pagado":
-        return {"error": "Venta ya confirmada"}, 400
+    if venta.estado != "pendiente":
+        return {"error": "Venta inválida"}, 400
 
     for item in venta.items:
         product = Product.query.filter_by(nombre=item.producto_nombre).first()
-
-        if not product:
-            return {"error": f"{item.producto_nombre} no existe"}, 400
 
         if product.stock < item.cantidad:
-            return {"error": f"Stock insuficiente para {product.nombre}"}, 400
+            return {"error": "Stock insuficiente"}, 400
 
     for item in venta.items:
-        product = Product.query.filter_by(nombre=item.producto_nombre).first()
         product.stock -= item.cantidad
         product.en_stock = product.stock > 0
 
@@ -770,9 +763,6 @@ def crear_pago():
 
             if product.stock < cantidad:
                 return jsonify({"error": f"Stock insuficiente para {product.nombre}"}), 400
-            
-            product.stock -= cantidad
-            product.en_stock = product.stock > 0
 
             precio_ars = product.precio * dolar
             total += precio_ars * cantidad
@@ -831,8 +821,14 @@ def webhook_mp():
 
     payment = sdk.payment().get(payment_id)["response"]
 
-    if payment["status"] != "approved":
-        return "ok", 200
+    if payment["status"] == "approved":
+        for item in venta.items:
+            product.stock -= item.cantidad
+            product.en_stock = product.stock > 0
+
+        venta.estado = "pagado"
+        db.session.commit()
+
 
     venta_id = payment.get("external_reference")
     venta = Venta.query.get(int(venta_id))
