@@ -811,8 +811,8 @@ def crear_pago():
 @app.route("/webhook/mp", methods=["POST"])
 def webhook_mp():
     data = request.get_json()
-    payment_id = data.get("data", {}).get("id")
 
+    payment_id = data.get("data", {}).get("id")
     if not payment_id:
         return "ok", 200
 
@@ -821,14 +821,8 @@ def webhook_mp():
 
     payment = sdk.payment().get(payment_id)["response"]
 
-    if payment["status"] == "approved":
-        for item in venta.items:
-            product.stock -= item.cantidad
-            product.en_stock = product.stock > 0
-
-        venta.estado = "pagado"
-        db.session.commit()
-
+    if payment["status"] != "approved":
+        return "ok", 200
 
     venta_id = payment.get("external_reference")
     venta = Venta.query.get(int(venta_id))
@@ -848,11 +842,9 @@ def webhook_mp():
     return "ok", 200
 
 
+
 @app.route('/pago_exitoso')
 def pago_exitoso():
-    venta = Venta.query.get_or_404(id)
-    venta.estado = "pagado"
-    db.session.commit() 
     return render_template("pago_exitoso.html")
 
 @app.route('/pago_pendiente')
@@ -1046,12 +1038,6 @@ def checkout_failure():
 def checkout_pending():
     flash("El pago quedó pendiente", "warning")
     return redirect(url_for("shop"))
-
-@app.route("/webhook/mp", methods=["POST"])
-def mp_webhook():
-    data = request.json
-    print("WEBHOOK MP:", data)
-    return "OK", 200
 
 # ---------------------------------------------------
 # EJECUCIÓN DE LA APLICACIÓN
