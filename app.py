@@ -658,6 +658,9 @@ def checkout():
 
         if product.stock < cantidad:
             return {"error": f"Stock insuficiente para {product.nombre}"}, 400
+        
+        product.stock -= cantidad
+        product.en_stock = product.stock > 0
 
         precio_ars = round(product.precio * dolar, 2)
         subtotal = precio_ars * cantidad
@@ -767,6 +770,9 @@ def crear_pago():
 
             if product.stock < cantidad:
                 return jsonify({"error": f"Stock insuficiente para {product.nombre}"}), 400
+            
+            product.stock -= cantidad
+            product.en_stock = product.stock > 0
 
             precio_ars = product.precio * dolar
             total += precio_ars * cantidad
@@ -848,6 +854,9 @@ def webhook_mp():
 
 @app.route('/pago_exitoso')
 def pago_exitoso():
+    venta = Venta.query.get_or_404(id)
+    venta.estado = "pagado"
+    db.session.commit() 
     return render_template("pago_exitoso.html")
 
 @app.route('/pago_pendiente')
@@ -858,7 +867,23 @@ def pago_pendiente():
 def pago_fallido():
     return render_template("pago_fallido.html")
 
+@app.route("/ventas/<int:id>/cancelar", methods=["POST"])
+@login_required
+def cancelar_venta(id):
+    venta = Venta.query.get_or_404(id)
 
+    if venta.estado != "pendiente":
+        return {"error": "Solo se pueden cancelar ventas pendientes"}, 400
+
+    for item in venta.items:
+        product = Product.query.filter_by(nombre=item.producto_nombre).first()
+        product.stock += item.cantidad
+        product.en_stock = True
+
+    venta.estado = "cancelado"
+    db.session.commit()
+
+    return {"success": True}
 # ---------------------------------------------------
 # FUNCIONES AUXILIARES
 # ---------------------------------------------------
