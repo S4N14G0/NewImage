@@ -190,8 +190,16 @@
             <!-- Cantidad + botón -->
             <div class="flex items-center gap-4">
                 <label for="qty-{{ product.id }}" class="font-medium">Cantidad:</label>
-                <input id="qty-{{ product.id }}" type="number" value="1" min="1"
-                    class="w-20 border rounded-lg text-center px-2 py-1 focus:ring-2 focus:ring-indigo-500">
+                <input id="qty-{{ product.id }}"
+                        type="number"
+                        value="1"
+                        min="1"
+                        max="{{ product.stock }}"
+                        class="w-20 border rounded-lg text-center px-2 py-1 focus:ring-2 focus:ring-indigo-500"/>
+
+                <p class="text-sm text-gray-500 mt-1">
+                    Stock disponible: <strong>{{ product.stock }}</strong>
+                </p>
                 {% if not ventas_activas %}
                     <div class="text-center bg-red-100 text-red-700 p-4 rounded mb-4 font-semibold">
                         🚫 Las ventas están actualmente desactivadas.
@@ -203,6 +211,7 @@
                             data-id="{{ product.id }}"
                             data-name="{{ product.nombre }}"
                             data-price="{{ product.precio }}"
+                            data-stock="{{ product.stock }}"
                             onclick="addToCart(this)">
                         🛒 Agregar al carrito
                         </button>

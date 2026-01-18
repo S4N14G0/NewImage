@@ -53,14 +53,7 @@ function addToCart(button) {
   const id = parseInt(button.dataset.id);
   const name = button.dataset.name;
   const priceUSD = parseFloat(button.dataset.price);
-
-  if (!priceUSD || isNaN(priceUSD)) {
-    console.error("Producto sin precio:", button.dataset);
-    alert("Este producto no tiene precio asignado");
-    return;
-  }
-
-
+  const stock = parseInt(button.dataset.stock);
 
   let qtyInput = document.getElementById(`qty-${id}`);
   let qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
@@ -68,13 +61,23 @@ function addToCart(button) {
   let existing = cart.find(p => p.id === id);
 
   if (existing) {
+    if (existing.quantity + qty > stock) {
+      alert("No hay suficiente stock disponible");
+      return;
+    }
     existing.quantity += qty;
   } else {
+    if (qty > stock) {
+      alert("Cantidad supera el stock disponible");
+      return;
+    }
+
     cart.push({
       id,
       name,
-      priceUSD, // ✅ ESTE ES EL ÚNICO PRECIO QUE USA EL CARRITO
-      quantity: qty
+      priceUSD,
+      quantity: qty,
+      stock // 🔐 guardar stock en el item
     });
   }
 
@@ -193,7 +196,25 @@ function updateTotals() {
 }
 
 
+document.addEventListener("DOMContentLoaded", () => {
+  const qtyInput = document.querySelector('[id^="qty-"]');
+  if (!qtyInput) return;
 
+  const maxStock = parseInt(qtyInput.max);
+
+  qtyInput.addEventListener("input", () => {
+    let value = parseInt(qtyInput.value) || 1;
+
+    if (value > maxStock) {
+      qtyInput.value = maxStock;
+      alert("No hay más stock disponible");
+    }
+
+    if (value < 1) {
+      qtyInput.value = 1;
+    }
+  });
+});
 
 // Inicializar cuando cargue la página
 document.addEventListener("DOMContentLoaded", updateCart, showDolarInAdmin);
