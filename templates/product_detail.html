@@ -280,74 +280,74 @@
                 © 2025 NewImage. Todos los derechos reservados.
             </div>
         </footer>
-
-        <script src="{{ url_for('static', filename='Shop.js') }}" defer></script>
-        <script>
-
-            const dolarManual = {{ dolar | tojson }};
-            const product = {{ product | tojson | safe }};
-
-            // window.ventasHabilitadas = {{ ventas_activas | tojson | safe }};
-            // console.log("Ventas habilitadas:", window.ventasHabilitadas);
-        </script>
-        <script>
-            const swiper = new Swiper(".mySwiper", {
-            loop: true,
-            spaceBetween: 20,
-            pagination: {
-            el: ".swiper-pagination",
-                clickable: true,
-            },
-            navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-            },
-            });
-
-
-
-            const swiperImages = document.querySelectorAll('.swiper-slide img');
-            const lightboxModal = document.getElementById('lightboxModal');
-            const closeLightbox = document.getElementById('closeLightbox');
-
-            // Inicializamos Swiper para el modal
-            let lightboxSwiper;
-
-            swiperImages.forEach((img, index) => {
-                img.addEventListener('click', () => {
-                    lightboxModal.classList.remove('hidden');
-
-                    // Inicializamos o actualizamos Swiper
-                    if (!lightboxSwiper) {
-                        lightboxSwiper = new Swiper('.lightboxSwiper', {
-                            navigation: {
-                                nextEl: '.swiper-button-next',
-                                prevEl: '.swiper-button-prev',
-                            },
-                            pagination: {
-                                el: '.swiper-pagination',
-                                clickable: true,
-                            },
-                            initialSlide: index  // Empezar en la imagen clickeada
-                        });
-                    } else {
-                        lightboxSwiper.slideTo(index, 0);
-                    }
-                });
-            });
-
-                // Cerrar modal
-                closeLightbox.addEventListener('click', () => {
-                    lightboxModal.classList.add('hidden');
-                });
-
-                lightboxModal.addEventListener('click', (e) => {
-                    if (e.target === lightboxModal) {
-                        lightboxModal.classList.add('hidden');
-                    }
-                });
-
-        </script>
-
     </main>
+    <script src="{{ url_for('static', filename='Shop.js') }}" defer></script>
+    <script>
+
+        const dolarManual = {{ dolar | tojson }};
+        const product = {{ product | tojson | safe }};
+
+        // window.ventasHabilitadas = {{ ventas_activas | tojson | safe }};
+        // console.log("Ventas habilitadas:", window.ventasHabilitadas);
+    </script>
+    <script>
+        const swiper = new Swiper(".mySwiper", {
+        loop: true,
+        spaceBetween: 20,
+        pagination: {
+        el: ".swiper-pagination",
+            clickable: true,
+        },
+        navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+        },
+        });
+
+
+
+        const swiperImages = document.querySelectorAll('.swiper-slide img');
+        const lightboxModal = document.getElementById('lightboxModal');
+        const closeLightbox = document.getElementById('closeLightbox');
+
+        // Inicializamos Swiper para el modal
+        let lightboxSwiper;
+
+        swiperImages.forEach((img, index) => {
+            img.addEventListener('click', () => {
+                lightboxModal.classList.remove('hidden');
+
+                // Inicializamos o actualizamos Swiper
+                if (!lightboxSwiper) {
+                    lightboxSwiper = new Swiper('.lightboxSwiper', {
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                        },
+                        initialSlide: index  // Empezar en la imagen clickeada
+                    });
+                } else {
+                    lightboxSwiper.slideTo(index, 0);
+                }
+            });
+        });
+
+            // Cerrar modal
+            closeLightbox.addEventListener('click', () => {
+                lightboxModal.classList.add('hidden');
+            });
+
+            lightboxModal.addEventListener('click', (e) => {
+                if (e.target === lightboxModal) {
+                    lightboxModal.classList.add('hidden');
+                }
+            });
+
+    </script>
+
+
 </body>
