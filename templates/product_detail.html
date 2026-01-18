@@ -153,26 +153,28 @@
                         class="absolute top-4 right-4 text-white text-3xl font-bold">
                         ✕
                     </button>
-                </div>
-                <div class="swiper mySwiper w-full max-w-xl rounded-lg shadow-lg">
-                    <div class="swiper-wrapper">
-                        {% for img in product.imagenes %}
-                            {% if img.startswith('http') %}
-                            <div class="swiper-slide">
-                                <img src="{{ img }}"
-                                    alt="{{ product.nombre }}"
-                                    class="w-full h-96 object-cover rounded-lg">
-                            </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
 
-                    <!-- Botones de navegación -->
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                    <!-- Paginación -->
-                    <div class="swiper-pagination"></div>
+                    <div class="swiper mySwiper w-full max-w-xl rounded-lg shadow-lg">
+                        <div class="swiper-wrapper">
+                            {% for img in product.imagenes %}
+                                {% if img.startswith('http') %}
+                                <div class="swiper-slide">
+                                    <img src="{{ img }}"
+                                        alt="{{ product.nombre }}"
+                                        class="w-full h-96 object-cover rounded-lg">
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Botones de navegación -->
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                        <!-- Paginación -->
+                        <div class="swiper-pagination"></div>
+                    </div>
                 </div>
+
 
                 <!-- Info -->
                 <div class="flex flex-col justify-between">
