@@ -56,6 +56,12 @@ body {
     color:white;
 }
 
+.desc-expanded {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
 .desktop-menu a {
     margin: 0 12px;
     padding: 8px 12px;

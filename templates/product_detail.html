@@ -170,14 +170,20 @@
                 <!-- Título y descripción -->
                 <div>
                     <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ product.nombre }}</h1>
-                    <div class="relative">
-                        <p id="productDescription"
-                        class="text-gray-700 leading-relaxed mb-4 max-h-40 overflow-hidden transition-all">
+                    <div class="relative mt-4">
+                        <div id="productDescription"
+                            class="text-gray-700 leading-relaxed max-h-40 overflow-hidden transition-all duration-300 relative">
+
                             {{ product.descripcion }}
-                        </p>
+
+                            <!-- Fade -->
+                            <div id="fadeOverlay"
+                                class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent pointer-events-none">
+                            </div>
+                        </div>
 
                         <button id="toggleDescription"
-                            class="text-indigo-600 font-semibold text-sm hover:underline">
+                            class="mt-2 text-indigo-600 font-semibold text-sm hover:underline">
                             Ver más
                         </button>
                     </div>
@@ -315,6 +321,7 @@
     document.addEventListener("DOMContentLoaded", () => {
         const desc = document.getElementById("productDescription");
         const btn = document.getElementById("toggleDescription");
+        const fade = document.getElementById("fadeOverlay");
 
         if (!desc || !btn) return;
 
@@ -322,12 +329,17 @@
 
         btn.addEventListener("click", () => {
             expanded = !expanded;
+
+            desc.classList.toggle("desc-expanded", expanded);
             desc.classList.toggle("max-h-40", !expanded);
-            desc.classList.toggle("max-h-[1000px]", expanded);
+
+            if (fade) fade.style.display = expanded ? "none" : "block";
+
             btn.textContent = expanded ? "Ver menos" : "Ver más";
         });
     });
     </script>
+
     <script>
 
         const dolarManual = {{ dolar | tojson }};
