@@ -148,14 +148,14 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white rounded-lg shadow-lg p-8">
                 
                 <!-- Imagen -->
-                <div class="h-[300px] md:h-[480px] flex items-center justify-center">
-                    <div class="swiper mySwiper w-full max-w-xl rounded-lg shadow-lg">
+                <div class="relative w-full h-[320px] md:h-[480px] overflow-hidden rounded-lg shadow-lg">
+                    <div class="swiper mySwiper w-full h-full">
                         <div class="swiper-wrapper">
                             {% for img in product.imagenes %}
                                 {% if img.startswith('http') %}
                                 <div class="swiper-slide">
                                     <img src="{{ img }}"
-                                        class="w-full h-full object-contain rounded-lg cursor-pointer">
+                                        class="w-full h-full object-contain cursor-pointer">
                                 </div>
                                 {% endif %}
                             {% endfor %}
@@ -172,13 +172,12 @@
                 <div>
                     <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ product.nombre }}</h1>
                     <div class="relative mt-4">
-                       <div id="productDescription"
-                            class="
-                                text-gray-700 leading-relaxed relative transition-all duration-300
-                                max-h-56 overflow-y-auto
-                                md:max-h-40 md:overflow-hidden
-                                pr-2 scrollbar
-                            ">
+                    <div id="productDescription"
+                        class="text-gray-700 leading-relaxed relative transition-all duration-300
+                        max-h-40 overflow-hidden
+                        md:max-h-40 md:overflow-hidden
+                        pr-2
+                        ">
                             {{ product.descripcion }}
 
                             <!-- Fade -->
@@ -336,11 +335,15 @@
         btn.addEventListener("click", () => {
             expanded = !expanded;
 
-            desc.classList.toggle("desc-expanded", expanded);
-            desc.classList.toggle("max-h-40", !expanded);
+            if (expanded) {
+                desc.classList.add("desc-expanded");
+                desc.classList.remove("max-h-40");
+            } else {
+                desc.classList.remove("desc-expanded");
+                desc.classList.add("max-h-40");
+            }
 
             if (fade) fade.style.display = expanded ? "none" : "block";
-
             btn.textContent = expanded ? "Ver menos" : "Ver más";
         });
     });

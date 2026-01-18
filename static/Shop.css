@@ -57,7 +57,7 @@ body {
 }
 
 .desc-expanded {
-    max-height: 500px;
+    max-height: 70vh;
     overflow-y: auto;
     padding-right: 6px;
 }
