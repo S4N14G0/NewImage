@@ -173,18 +173,12 @@
                     <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ product.nombre }}</h1>
                     <div class="relative mt-4">
                     <div id="productDescription"
-                        class="text-gray-700 leading-relaxed relative transition-all duration-300
-                        max-h-40 overflow-hidden
-                        md:max-h-40 md:overflow-hidden
-                        pr-2
-                        ">
+                        class="text-gray-700 leading-relaxed transition-all duration-300 relative">
                             {{ product.descripcion }}
 
                             <!-- Fade -->
-                            <div id="fadeOverlay"
-                                class="hidden md:block absolute bottom-0 left-0 w-full h-16
-                                    bg-gradient-to-t from-white to-transparent pointer-events-none">
-                            </div>
+                        <div id="fadeOverlay"
+                            class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent pointer-events-none">
                         </div>
 
                         <button id="toggleDescription"
@@ -330,21 +324,37 @@
 
         if (!desc || !btn) return;
 
+        const COLLAPSED_HEIGHT = 160; // px (≈ max-h-40)
         let expanded = false;
+
+        // Esperamos a que el DOM calcule alturas reales
+        requestAnimationFrame(() => {
+            if (desc.scrollHeight <= COLLAPSED_HEIGHT) {
+                // Texto corto → no fade, no botón
+                btn.style.display = "none";
+                if (fade) fade.style.display = "none";
+            } else {
+                // Texto largo → arrancamos colapsado
+                desc.classList.add("desc-collapsed");
+                if (fade) fade.style.display = "block";
+                btn.style.display = "inline-block";
+            }
+        });
 
         btn.addEventListener("click", () => {
             expanded = !expanded;
 
             if (expanded) {
+                desc.classList.remove("desc-collapsed");
                 desc.classList.add("desc-expanded");
-                desc.classList.remove("max-h-90");
+                if (fade) fade.style.display = "none";
+                btn.textContent = "Ver menos";
             } else {
                 desc.classList.remove("desc-expanded");
-                desc.classList.add("max-h-90");
+                desc.classList.add("desc-collapsed");
+                if (fade) fade.style.display = "block";
+                btn.textContent = "Ver más";
             }
-
-            if (fade) fade.style.display = expanded ? "none" : "block";
-            btn.textContent = expanded ? "Ver menos" : "Ver más";
         });
     });
     </script>

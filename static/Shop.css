@@ -56,12 +56,15 @@ body {
     color:white;
 }
 
+.desc-collapsed {
+    max-height: 10rem; /* equivalente a max-h-40 */
+    overflow: hidden;
+}
+
 .desc-expanded {
     max-height: 70vh;
     overflow-y: auto;
-    padding-right: 6px;
 }
-
 .desktop-menu a {
     margin: 0 12px;
     padding: 8px 12px;
