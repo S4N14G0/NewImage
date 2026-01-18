@@ -148,33 +148,29 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white rounded-lg shadow-lg p-8">
                 
                 <!-- Imagen -->
-                <div id="lightboxModal" class="fixed inset-0 bg-black bg-opacity-80 hidden z-50 flex items-center justify-center">
+                <div id="lightboxModal"
+                    class="fixed inset-0 bg-black bg-opacity-80 hidden z-50 flex items-center justify-center">
+
                     <button id="closeLightbox"
                         class="absolute top-4 right-4 text-white text-3xl font-bold">
                         ✕
                     </button>
 
-                    <div class="swiper mySwiper w-full max-w-xl rounded-lg shadow-lg">
+                    <div class="swiper lightboxSwiper w-full max-w-4xl">
                         <div class="swiper-wrapper">
                             {% for img in product.imagenes %}
                                 {% if img.startswith('http') %}
-                                <div class="swiper-slide">
-                                    <img src="{{ img }}"
-                                        alt="{{ product.nombre }}"
-                                        class="w-full h-96 object-cover rounded-lg">
+                                <div class="swiper-slide flex justify-center">
+                                    <img src="{{ img }}" class="max-h-[80vh] object-contain">
                                 </div>
                                 {% endif %}
                             {% endfor %}
                         </div>
 
-                        <!-- Botones de navegación -->
                         <div class="swiper-button-next"></div>
                         <div class="swiper-button-prev"></div>
-                        <!-- Paginación -->
-                        <div class="swiper-pagination"></div>
                     </div>
                 </div>
-
 
                 <!-- Info -->
                 <div class="flex flex-col justify-between">
@@ -312,48 +308,43 @@
         },
         });
 
+        document.addEventListener("DOMContentLoaded", () => {
 
+            const images = document.querySelectorAll(".product-image");
+            const lightboxModal = document.getElementById("lightboxModal");
+            const closeLightbox = document.getElementById("closeLightbox");
 
-        const swiperImages = document.querySelectorAll('.swiper-slide img');
-        const lightboxModal = document.getElementById('lightboxModal');
-        const closeLightbox = document.getElementById('closeLightbox');
+            if (!images.length || !lightboxModal || !closeLightbox) return;
 
-        // Inicializamos Swiper para el modal
-        let lightboxSwiper;
+            let lightboxSwiper = null;
 
-        swiperImages.forEach((img, index) => {
-            img.addEventListener('click', () => {
-                lightboxModal.classList.remove('hidden');
+            images.forEach((img, index) => {
+                img.addEventListener("click", () => {
+                    lightboxModal.classList.remove("hidden");
 
-                // Inicializamos o actualizamos Swiper
-                if (!lightboxSwiper) {
-                    lightboxSwiper = new Swiper('.lightboxSwiper', {
-                        navigation: {
-                            nextEl: '.swiper-button-next',
-                            prevEl: '.swiper-button-prev',
-                        },
-                        pagination: {
-                            el: '.swiper-pagination',
-                            clickable: true,
-                        },
-                        initialSlide: index  // Empezar en la imagen clickeada
-                    });
-                } else {
-                    lightboxSwiper.slideTo(index, 0);
+                    if (!lightboxSwiper) {
+                        lightboxSwiper = new Swiper(".lightboxSwiper", {
+                            navigation: {
+                                nextEl: ".swiper-button-next",
+                                prevEl: ".swiper-button-prev",
+                            },
+                            initialSlide: index
+                        });
+                    } else {
+                        lightboxSwiper.slideTo(index, 0);
+                    }
+                });
+            });
+
+            closeLightbox.addEventListener("click", () => {
+                lightboxModal.classList.add("hidden");
+            });
+
+            lightboxModal.addEventListener("click", e => {
+                if (e.target === lightboxModal) {
+                    lightboxModal.classList.add("hidden");
                 }
             });
         });
-
-            // Cerrar modal
-            closeLightbox.addEventListener('click', () => {
-                lightboxModal.classList.add('hidden');
-            });
-
-            lightboxModal.addEventListener('click', (e) => {
-                if (e.target === lightboxModal) {
-                    lightboxModal.classList.add('hidden');
-                }
-            });
-
     </script>
 </body>
