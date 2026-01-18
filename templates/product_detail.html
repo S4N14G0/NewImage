@@ -155,21 +155,21 @@
                         class="absolute top-4 right-4 text-white text-3xl font-bold">
                         ✕
                     </button>
+                </div>
 
-                    <div class="swiper lightboxSwiper w-full max-w-4xl">
-                        <div class="swiper-wrapper">
-                            {% for img in product.imagenes %}
-                                {% if img.startswith('http') %}
-                                <div class="swiper-slide flex justify-center">
-                                    <img src="{{ img }}" class="max-h-[80vh] object-contain">
-                                </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-
-                        <div class="swiper-button-next"></div>
-                        <div class="swiper-button-prev"></div>
+                <div class="swiper lightboxSwiper w-full max-w-4xl">
+                    <div class="swiper-wrapper">
+                        {% for img in product.imagenes %}
+                            {% if img.startswith('http') %}
+                            <div class="swiper-slide flex justify-center">
+                                <img src="{{ img }}" class="max-h-[80vh] object-contain">
+                            </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
+
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
                 </div>
 
                 <!-- Info -->
