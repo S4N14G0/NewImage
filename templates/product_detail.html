@@ -155,19 +155,23 @@
                         class="absolute top-4 right-4 text-white text-3xl font-bold">
                         ✕
                     </button>
-                </div>
 
-                <div class="swiper lightboxSwiper w-full max-w-4xl">
+
+                </div>
+                
+                <div class="swiper mySwiper w-full max-w-xl rounded-lg shadow-lg">
                     <div class="swiper-wrapper">
                         {% for img in product.imagenes %}
                             {% if img.startswith('http') %}
-                            <div class="swiper-slide flex justify-center">
-                                <img src="{{ img }}" class="max-h-[80vh] object-contain">
+                            <div class="swiper-slide">
+                                <img src="{{ img }}"
+                                    class="product-image w-full h-96 object-cover rounded-lg cursor-pointer">
                             </div>
                             {% endif %}
                         {% endfor %}
                     </div>
 
+                    <div class="swiper-pagination"></div>
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>
                 </div>
@@ -308,43 +312,48 @@
         },
         });
 
-        document.addEventListener("DOMContentLoaded", () => {
 
-            const images = document.querySelectorAll(".product-image");
-            const lightboxModal = document.getElementById("lightboxModal");
-            const closeLightbox = document.getElementById("closeLightbox");
 
-            if (!images.length || !lightboxModal || !closeLightbox) return;
+        const swiperImages = document.querySelectorAll('.swiper-slide img');
+        const lightboxModal = document.getElementById('lightboxModal');
+        const closeLightbox = document.getElementById('closeLightbox');
 
-            let lightboxSwiper = null;
+        // Inicializamos Swiper para el modal
+        let lightboxSwiper;
 
-            images.forEach((img, index) => {
-                img.addEventListener("click", () => {
-                    lightboxModal.classList.remove("hidden");
+        swiperImages.forEach((img, index) => {
+            img.addEventListener('click', () => {
+                lightboxModal.classList.remove('hidden');
 
-                    if (!lightboxSwiper) {
-                        lightboxSwiper = new Swiper(".lightboxSwiper", {
-                            navigation: {
-                                nextEl: ".swiper-button-next",
-                                prevEl: ".swiper-button-prev",
-                            },
-                            initialSlide: index
-                        });
-                    } else {
-                        lightboxSwiper.slideTo(index, 0);
-                    }
-                });
-            });
-
-            closeLightbox.addEventListener("click", () => {
-                lightboxModal.classList.add("hidden");
-            });
-
-            lightboxModal.addEventListener("click", e => {
-                if (e.target === lightboxModal) {
-                    lightboxModal.classList.add("hidden");
+                // Inicializamos o actualizamos Swiper
+                if (!lightboxSwiper) {
+                    lightboxSwiper = new Swiper('.lightboxSwiper', {
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                        },
+                        initialSlide: index  // Empezar en la imagen clickeada
+                    });
+                } else {
+                    lightboxSwiper.slideTo(index, 0);
                 }
             });
         });
+
+            // Cerrar modal
+            closeLightbox.addEventListener('click', () => {
+                lightboxModal.classList.add('hidden');
+            });
+
+            lightboxModal.addEventListener('click', (e) => {
+                if (e.target === lightboxModal) {
+                    lightboxModal.classList.add('hidden');
+                }
+            });
+
     </script>
 </body>
