@@ -172,21 +172,16 @@
                 <div>
                     <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ product.nombre }}</h1>
                     <div class="relative mt-4">
-                    <div id="productDescription"
-                        class="text-gray-700 leading-relaxed transition-all duration-300 relative">
+                        <div id="productDescription"
+                            class="product-desc text-gray-700 leading-relaxed relative">
+
                             {{ product.descripcion }}
 
-                            <!-- Fade -->
-                        <div id="fadeOverlay"
-                            class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent pointer-events-none">
+                            <div id="fadeOverlay"
+                                class="fade-overlay pointer-events-none">
+                            </div>
                         </div>
-
-                        <button id="toggleDescription"
-                            class="hidden md:inline-block mt-2 text-indigo-600 font-semibold text-sm hover:underline">
-                            Ver más
-                        </button>
                     </div>
-
                     <p class="text-3xl font-semibold text-indigo-600 mb-6">
                         ${{ "%.2f"|format(product.precio * dolar) | formato_pesos }}
                     </p>
@@ -319,42 +314,22 @@
     <script>
     document.addEventListener("DOMContentLoaded", () => {
         const desc = document.getElementById("productDescription");
-        const btn = document.getElementById("toggleDescription");
         const fade = document.getElementById("fadeOverlay");
 
-        if (!desc || !btn) return;
+        if (!desc || !fade) return;
 
-        const COLLAPSED_HEIGHT = 160; // px (≈ max-h-40)
-        let expanded = false;
+        // Si no hay overflow, no mostramos degradé
+        if (desc.scrollHeight <= desc.clientHeight) {
+            fade.style.display = "none";
+            return;
+        }
 
-        // Esperamos a que el DOM calcule alturas reales
-        requestAnimationFrame(() => {
-            if (desc.scrollHeight <= COLLAPSED_HEIGHT) {
-                // Texto corto → no fade, no botón
-                btn.style.display = "none";
-                if (fade) fade.style.display = "none";
-            } else {
-                // Texto largo → arrancamos colapsado
-                desc.classList.add("desc-collapsed");
-                if (fade) fade.style.display = "block";
-                btn.style.display = "inline-block";
-            }
-        });
+        // Ocultar degradé cuando llega al fondo
+        desc.addEventListener("scroll", () => {
+            const atBottom =
+                desc.scrollTop + desc.clientHeight >= desc.scrollHeight - 2;
 
-        btn.addEventListener("click", () => {
-            expanded = !expanded;
-
-            if (expanded) {
-                desc.classList.remove("desc-collapsed");
-                desc.classList.add("desc-expanded");
-                if (fade) fade.style.display = "none";
-                btn.textContent = "Ver menos";
-            } else {
-                desc.classList.remove("desc-expanded");
-                desc.classList.add("desc-collapsed");
-                if (fade) fade.style.display = "block";
-                btn.textContent = "Ver más";
-            }
+            fade.style.opacity = atBottom ? "0" : "1";
         });
     });
     </script>
