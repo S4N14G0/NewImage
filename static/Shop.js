@@ -168,14 +168,23 @@ function updateCart() {
 // 🔢 Cambiar cantidad
 function updateQuantity(productId, newQuantity) {
   const item = cart.find(p => p.id === productId);
-  if (item) {
-    item.quantity = parseInt(newQuantity);
-    if (item.quantity <= 0) {
-      cart = cart.filter(p => p.id !== productId);
-    }
-    localStorage.setItem("cart_principal", JSON.stringify(cart));
-    updateCart();
+  if (!item) return;
+
+  let qty = parseInt(newQuantity) || 1;
+
+  if (qty > item.stock) {
+    alert("Stock máximo alcanzado");
+    qty = item.stock;
   }
+
+  if (qty < 1) {
+    cart = cart.filter(p => p.id !== productId);
+  } else {
+    item.quantity = qty;
+  }
+
+  localStorage.setItem("cart_principal", JSON.stringify(cart));
+  updateCart();
 }
 
 // ❌ Eliminar producto
