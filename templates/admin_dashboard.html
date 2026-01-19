@@ -288,24 +288,34 @@
                             </button>
                         </form>
                     </td>
+                    <td class="py-3 px-4">
+                        <form method="POST" action="{{ url_for('update_product') }}" class="flex flex-col gap-2">
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+
+                            <label class="text-sm flex items-center gap-2">
+                                <input type="checkbox" name="mostrar_en_index"
+                                    {% if product.mostrar_en_index %}checked{% endif %}>
+                                Mostrar en inicio
+                            </label>
+
+                            <input type="text"
+                                name="etiqueta"
+                                placeholder="Etiqueta"
+                                value="{{ product.etiqueta or '' }}"
+                                class="border rounded px-2 py-1 text-sm">
+
+                            <button type="submit"
+                                class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 text-sm">
+                                Guardar
+                            </button>
+                        </form>
+                    </td>
+
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
 
-        <form method="POST" action="{{ url_for('update_product') }}">
-            <input type="hidden" name="product_id" value="{{ product.id }}">
-
-            <label>
-                <input type="checkbox" name="mostrar_en_index"
-                    {% if product.mostrar_en_index %}checked{% endif %}>
-                Mostrar en inicio
-            </label>
-
-            <input type="text" name="etiqueta" value="{{ product.etiqueta or '' }}">
-
-            <button type="submit">Guardar</button>
-        </form>
 
     </div>
     <script src="../static/Shop.js" defer></script>
