@@ -149,14 +149,8 @@
                     {% for product in productos_destacados %}
                     <div class="product-card">
                         <div class="product-image">
-                            {% for img in product.imagenes %}
-                                {% if img.startswith('http') %}
-                                <div class="swiper-slide flex items-center justify-center">
-                                    <img src="{{ img }}"
-                                        class="w-full object-contain cursor-pointer">
-                                </div>
-                                {% endif %}
-                            {% endfor %}
+                            <img src="{{ url_for('static', filename=product.imagen) }}"
+                                alt="{{ product.nombre }}">
 
                             {% if product.etiqueta %}
                             <span class="product-badge">
@@ -175,7 +169,6 @@
                             <p class="product-description">
                                 {{ product.descripcion }}
                             </p>
-
                         </div>
                     </div>
                     {% endfor %}
