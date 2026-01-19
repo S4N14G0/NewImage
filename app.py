@@ -435,16 +435,15 @@ def profile():
     return render_template("profile.html", user=user)
 
 # Ruta de admin
-@app.route("/admin")
+@app.route("/admin", methods=["GET"])
 @admin_required
 def admin_dashboard():
     cuentas = CuentaPago.query.all()
     filtro = request.args.get("filtro", "todo")
-    product.mostrar_en_index = 'mostrar_en_index' in request.form
-    product.etiqueta = request.form.get("etiqueta")
+
     config = Configuracion.query.first()
     if config:
-        db.session.refresh(config)   # ← Fuerza a recargar desde la DB
+        db.session.refresh(config)
 
     ventas_activas = config.ventas_activas if config else True
     dolar = config.dolar_manual if config else 1450
@@ -464,6 +463,26 @@ def admin_dashboard():
         dolar=dolar,
         ventas_activas=ventas_activas
     )
+    
+@app.route("/admin/product/update", methods=["POST"])
+@admin_required
+def update_product():
+    product_id = request.form.get("product_id")
+    product = Product.query.get(product_id)
+
+    if not product:
+        flash("Producto no encontrado", "danger")
+        return redirect(url_for("admin_dashboard"))
+
+    product.mostrar_en_index = 'mostrar_en_index' in request.form
+    product.etiqueta = request.form.get("etiqueta")
+
+    db.session.commit()
+    flash("Producto actualizado", "success")
+
+    return redirect(url_for("admin_dashboard"))
+
+
 @app.route("/admin_cuentas")
 @admin_required
 def admin_cuentas():
