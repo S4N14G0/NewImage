@@ -179,7 +179,11 @@ def index():
     user = None
     if "user_id" in session:
         user = User.query.get(session["user_id"])  # Recupera el usuario logueado
-    return render_template("index.html", user=user)
+        
+    productos_destacados = Product.query.filter_by(
+        mostrar_en_index=True
+    ).all()    
+    return render_template("index.html", user=user, productos_destacados=productos_destacados)
 
 # Ruta Login
 @app.route("/login", methods=["GET", "POST"])
@@ -428,7 +432,8 @@ def profile():
 def admin_dashboard():
     cuentas = CuentaPago.query.all()
     filtro = request.args.get("filtro", "todo")
-
+    product.mostrar_en_index = 'mostrar_en_index' in request.form
+    product.etiqueta = request.form.get("etiqueta")
     config = Configuracion.query.first()
     if config:
         db.session.refresh(config)   # ← Fuerza a recargar desde la DB

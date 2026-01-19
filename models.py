@@ -23,6 +23,8 @@ class Product(db.Model):
     imagenes = db.relationship("ProductImage", backref="product", lazy=True, cascade="all, delete-orphan")
     activo = db.Column(db.Boolean, default=True)
     observacion = db.Column(db.String(200), nullable=True)
+    mostrar_en_index = db.Column(db.Boolean, default=False)
+    etiqueta = db.Column(db.String(50))  # DESTACADO / NUEVO / ACCESORIO
 
 class Configuracion(db.Model):
     id = db.Column(db.Integer, primary_key= True)

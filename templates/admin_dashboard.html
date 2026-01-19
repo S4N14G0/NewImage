@@ -292,6 +292,19 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <label>
+        <input type="checkbox" name="mostrar_en_index"
+                {% if product.mostrar_en_index %}checked{% endif %}>
+        Mostrar en la página principal
+        </label>
+
+        <label>
+        Etiqueta del producto
+        <input type="text" name="etiqueta" value="{{ product.etiqueta or '' }}"
+                placeholder="DESTACADO, NUEVO, ACCESORIO">
+        </label>
+
     </div>
     <script src="../static/Shop.js" defer></script>
     <script>

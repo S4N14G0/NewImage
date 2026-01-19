@@ -138,79 +138,56 @@
                 </div>
             </div>
 
-            <!-- Products Showcase -->
             <div class="products-showcase">
                 <div class="section-header">
                     <h2>Productos destacados</h2>
                     <p>Los equipos más populares entre nuestros clientes</p>
                 </div>
-                
-                <div class="products-grid">
-                    <!-- Product cards -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="{{ url_for('static', filename='imagenes/trapecio reformer.png') }}" alt="Reformer Allegro 2">
-                                <span class="product-badge">NUEVO</span>
-                            </div>
-                            <div class="product-details">
-                                <h3>Medio trapecio para reformer</h3>
-                                <p class="product-price">Consultar disponibilidad</p>
-                                <p class="product-description">Es un equipo versátil derivado del Trapecio o Cadillac, que incrementa sus posibilidades sumando a un Reformer el rango de movimiento de un medio Trapecio.</p>
-                                <div class="product-actions">
-                                    <button onclick="addToCart(1)" class="btn btn-sm btn-primary">
-                                        Añadir al carrito
-                                    </button>
-                                    <button onclick="showProductDetails(1)" class="btn btn-text">
-                                        Ver detalles
-                                    </button>
-                                </div>
-                           </div>
-                       </div>
 
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="{{ url_for('static', filename='imagenes/reformer metalico.png') }}" alt="Reformer Allegro 2">
-                                <span class="product-badge">DESTACADO</span>
-                            </div>
-                            <div class="product-details">
-                                <h3>Reformer metalico</h3>
-                                <p class="product-price">Consultar disponibilidad</p>
-                                <p class="product-description">✅ 1° cambio: plataforma de madera de mayor tamaño, 18 cm. (Ver fotos) <br>
-                                    ✅ 2° cambio: modificación en la traba de barra y hasta 4 posiciones, logrando así  mayor seguridad en la barra, evitando que está misma se pueda salir de su anclaje por algún error al operarla. (Ver fotos) <br>
-                                    ✅ 3°cambio: mayor cantidad de ranuras para modificar la posición del ancla movil (ver fotos) <br>
-                                    <div class="product-actions">
-                                    <button onclick="addToCart(2)" class="btn btn-sm btn-primary">
-                                        Añadir al carrito
-                                    </button>
-                                    <button onclick="showProductDetails(2)" class="btn btn-text">
-                                        Ver detalles
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
+                <div class="products-grid">
+
+                    {% for product in productos_destacados %}
                     <div class="product-card">
                         <div class="product-image">
-                            <img src="{{ url_for('static', filename='imagenes/cinta-abdominal.png') }}" alt="Reformer Allegro 2">
-                            <span class="product-badge">Accesorios</span>
+                            <img src="{{ url_for('static', filename=product.imagen) }}"
+                                alt="{{ product.nombre }}">
+
+                            {% if product.etiqueta %}
+                            <span class="product-badge">
+                                {{ product.etiqueta }}
+                            </span>
+                            {% endif %}
                         </div>
+
                         <div class="product-details">
-                            <h3>Cinta abdominal</h3>
-                            <p class="product-price">Consultar disponibilidad</p>
-                            <p class="product-description">👉 Precio por unidad. <br>
-                                👉 Largo total 50 cm</p>
+                            <h3>{{ product.nombre }}</h3>
+
+                            <p class="product-price">
+                                Consultar disponibilidad
+                            </p>
+
+                            <p class="product-description">
+                                {{ product.descripcion }}
+                            </p>
+
                             <div class="product-actions">
-                                <button onclick="addToCart(3)" class="btn btn-sm btn-primary">
+                                <button onclick="addToCart({{ product.id }})"
+                                        class="btn btn-sm btn-primary">
                                     Añadir al carrito
                                 </button>
-                                <button onclick="showProductDetails(3)" class="btn btn-text">
+
+                                <button onclick="showProductDetails({{ product.id }})"
+                                        class="btn btn-text">
                                     Ver detalles
                                 </button>
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
+
                 </div>
             </div>
+
             <div id="contacto" class="py-20 bg-gradient-to-b from-gray-50 to-gray-100">
                 <div class="max-w-4xl mx-auto text-center">
 
