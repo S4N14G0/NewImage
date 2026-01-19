@@ -146,11 +146,11 @@
 
                 <div class="products-grid">
 
-                        {% for product in productos_destacados %}
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="{{ url_for('static', filename=product.imagen) }}"
-                                    alt="{{ product.nombre }}">
+                    {% for product in productos_destacados %}
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="{{ url_for('static', filename=product.imagen) }}"
+                                alt="{{ product.nombre }}">
                             {% if product.etiqueta %}
                             <span class="product-badge">
                                 {{ product.etiqueta }}
