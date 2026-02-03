@@ -149,7 +149,7 @@
                     {% for product in productos_destacados %}
                     <div class="product-card">
                         <div class="product-image">                            
-                            <div class="relative h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
+                            <div >
                                 {% if product.imagenes and product.imagenes[0].filename and product.imagenes[0].filename.startswith('http') %}
                                     <img src="{{ product.imagenes[0].filename }}"
                                         alt="{{ product.nombre }}"
