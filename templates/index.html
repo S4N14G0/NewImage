@@ -149,8 +149,10 @@
                     {% for product in productos_destacados %}
                     <div class="product-card">
                         <div class="product-image">
-                            <img src="{{ url_for('static', filename=product.imagen) }}"
+                        {% if product.imagenes and product.imagenes[0].startswith('http') %}
+                            <img src="{{ product.imagenes[0] }}"
                                 alt="{{ product.nombre }}">
+                        {% endif %}
                             {% if product.etiqueta %}
                             <span class="product-badge">
                                 {{ product.etiqueta }}
