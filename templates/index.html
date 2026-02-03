@@ -148,18 +148,15 @@
 
                     {% for product in productos_destacados %}
                     <div class="product-card">
-                        <div class="product-image">
-                            {% for img in product.imagenes %}
-                                {% if img.startswith('http') %}
-                                <div>
-                                    <img src="{{ img }}">
-                                </div>
-                                {% endif %}
-                            {% endfor %}
-                            {% if product.etiqueta %}
-                            <span class="product-badge">
-                                {{ product.etiqueta }}
-                            </span>
+                        <div class="relative h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
+                            {% if product.imagenes and product.imagenes[0] and product.imagenes[0].startswith('http') %}
+                                <img src="{{ product.imagenes[0] }}"
+                                    alt="{{ product.nombre }}"
+                                    class="object-cover h-full w-full transition-transform duration-300 hover:scale-105">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='images/no-image.png') }}"
+                                    alt="Sin imagen"
+                                    class="object-cover h-full w-full">
                             {% endif %}
                         </div>
 
