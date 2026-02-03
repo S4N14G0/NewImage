@@ -149,10 +149,13 @@
                     {% for product in productos_destacados %}
                     <div class="product-card">
                         <div class="product-image">
-                            {% if product.imagenes and product.imagenes[0].startswith('http') %}
-                            <img src="{{ product.imagenes[0] }}"
-                                alt="{{ product.nombre }}">
-                            {% endif %}
+                            {% for img in product.imagenes %}
+                                {% if img.startswith('http') %}
+                                <div>
+                                    <img src="{{ img }}">
+                                </div>
+                                {% endif %}
+                            {% endfor %}
                             {% if product.etiqueta %}
                             <span class="product-badge">
                                 {{ product.etiqueta }}
