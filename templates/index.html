@@ -153,7 +153,7 @@
                                 {% if product.imagenes and product.imagenes[0].filename and product.imagenes[0].filename.startswith('http') %}
                                     <img src="{{ product.imagenes[0].filename }}"
                                         alt="{{ product.nombre }}"
-                                        class="object-cover h-full w-full transition-transform duration-300 hover:scale-105 -mt-21">
+                                        class="object-cover h-full w-full transition-transform duration-300 hover:scale-105 pt-6">
                                 {% else %}
                                     <img src="{{ url_for('static', filename='images/no-image.png') }}"
                                         alt="Sin imagen"
