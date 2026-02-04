@@ -315,17 +315,32 @@ body {
     object-fit: cover;
 }
 
+
 .product-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background-color: var(--primary);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: bold;
-    padding: 4px 8px;
-    border-radius: 9999px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 4px;
+
+  color: #fff;
 }
+
+.product-badge:contains(DESTACADO) {
+  background: #c59d5f;
+}
+
+.product-badge:contains("NUEVO") {
+  background: #2ecc71;
+}
+
+.product-badge:contains("ACCESORIO") {
+  background: #3498db;
+}
+
 
 .product-details {
     padding: 20px;
@@ -536,34 +551,6 @@ body {
     background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
 
 }
-
-.product-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  padding: 5px 10px;
-  font-size: 12px;
-  font-weight: bold;
-  text-transform: uppercase;
-  border-radius: 4px;
-
-  color: #fff;
-}
-
-.product-badge:contains(DESTACADO) {
-  background: #c59d5f;
-}
-
-.product-badge:contains("NUEVO") {
-  background: #2ecc71;
-}
-
-.product-badge:contains("ACCESORIO") {
-  background: #3498db;
-}
-
-
-
 
 
 
