@@ -325,7 +325,7 @@ body {
   font-weight: bold;
   text-transform: uppercase;
   border-radius: 4px;
-  background: #2ecc71;
+  background: var(--dark);
   color: #fff;
 }
 
@@ -551,12 +551,6 @@ body {
     background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
 
 }
-
-
-
-
-
-
 
 /* Responsive Styles */
 
