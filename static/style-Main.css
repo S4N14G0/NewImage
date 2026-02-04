@@ -329,18 +329,6 @@ body {
   color: #fff;
 }
 
-.product-badge:contains(DESTACADO) {
-  background: #c59d5f;
-}
-
-.product-badge:contains("NUEVO") {
-  background: #2ecc71;
-}
-
-.product-badge:contains("ACCESORIO") {
-  background: #3498db;
-}
-
 
 .product-details {
     padding: 20px;
