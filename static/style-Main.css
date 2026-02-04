@@ -550,7 +550,7 @@ body {
   color: #fff;
 }
 
-.product-badge:contains("DESTACADO") {
+.product-badge:contains(DESTACADO) {
   background: #c59d5f;
 }
 
