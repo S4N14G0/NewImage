@@ -147,46 +147,48 @@
                 <div class="products-grid">
 
                     {% for product in productos_destacados %}
-                    <div class="product-card">
-                        <div class="product-image">                            
-                            <div >
-                                {% if product.imagenes and product.imagenes[0].filename and product.imagenes[0].filename.startswith('http') %}
-                                    <img src="{{ product.imagenes[0].filename }}"
-                                        alt="{{ product.nombre }}"
-                                        class="object-cover h-full w-full transition-transform duration-300 hover:scale-105 -translate-y-28">
-                                {% else %}
-                                    <img src="{{ url_for('static', filename='images/no-image.png') }}"
-                                        alt="Sin imagen"
-                                        class="object-cover h-full w-full">
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                        <div class="product-card">
+                            <div class="product-image">                            
+                                <div >
+                                    {% if product.imagenes and product.imagenes[0].filename and product.imagenes[0].filename.startswith('http') %}
+                                        <img src="{{ product.imagenes[0].filename }}"
+                                            alt="{{ product.nombre }}"
+                                            class="object-cover h-full w-full transition-transform duration-300 hover:scale-105 -translate-y-28">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='images/no-image.png') }}"
+                                            alt="Sin imagen"
+                                            class="object-cover h-full w-full">
+                                    {% endif %}
+                                </div>  
+                                {% if product.etiqueta %}
+                                <span class="product-badge">
+                                    {{ product.etiqueta }}
+                                </span>
                                 {% endif %}
-                            </div>  
-                            {% if product.etiqueta %}
-                            <span class="product-badge">
-                                {{ product.etiqueta }}
-                            </span>
-                            {% endif %}
-                        </div>
+                            </div>
 
-                        <div class="product-details">
-                            <h3>{{ product.nombre }}</h3>
+                            <div class="product-details">
+                                <h3>{{ product.nombre }}</h3>
 
-                            <p class="product-price">
-                                Consultar disponibilidad
-                            </p>
+                                <p class="product-price">
+                                    Consultar disponibilidad
+                                </p>
 
-                            <p class="product-description">
-                                {{ product.descripcion }}
-                            </p>
+                                <p class="product-description">
+                                    {{ product.descripcion }}
+                                </p>
 
-                            <div class="product-actions">
+                                <div class="product-actions">
 
-                                <button onclick="showProductDetails({{ product.id }})"
-                                        class="btn btn-text">
-                                    Ver detalles
-                                </button>
+                                    <button onclick="showProductDetails({{ product.id }})"
+                                            class="btn btn-text">
+                                        Ver detalles
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                     {% endfor %}
 
                 </div>
