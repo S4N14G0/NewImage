@@ -73,55 +73,49 @@
 
                 
     <!-- Mobile menu -->
-   <div class="mobile-menu">
-        <div class="mobile-menu-links">
-            <a href="{{ url_for('index') }}" onclick="showSection('home')" class="mobile-menu-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-                <span class="mobile-menu-label">Inicio</span>
-            </a>
-            <a href="{{ url_for('shop') }}" onclick="showSection('products')" class="mobile-menu-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-                <span class="mobile-menu-label">Productos</span>
-            </a>
-            <a href="{{ url_for('repuestos') }}" onclick="showSection('cart')" class="mobile-menu-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <span class="mobile-menu-label">Repuestos</span>
-            </a>
-            <div class="mobile-menu-item flex flex-col">
+    <div class="mobile-menu">
 
-                <button onclick="toggleMobileUserMenu()" class="flex items-center gap-2">
-                    <svg ... ></svg>
-                    <span class="mobile-menu-label">Cuenta</span>
-                </button>
+        <a href="{{ url_for('index') }}" class="mobile-nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Inicio</span>
+        </a>
 
-                <div id="mobileUserMenu" class="hidden pl-8 pt-2 flex flex-col gap-2">
+        <a href="{{ url_for('shop') }}" class="mobile-nav-item">
+            <i class="fas fa-box"></i>
+            <span>Productos</span>
+        </a>
 
-                    {% if user %}
-                        {% if user.is_admin %}
-                        <a href="{{ url_for('admin_dashboard') }}">Panel Admin</a>
-                        {% endif %}
+        <a href="{{ url_for('repuestos') }}" class="mobile-nav-item">
+            <i class="fas fa-tools"></i>
+            <span>Repuestos</span>
+        </a>
 
-                        <form action="{{ url_for('logout') }}" method="post">
-                            <button class="text-left text-red-600">Cerrar sesión</button>
-                        </form>
+        <div class="mobile-nav-item mobile-account">
 
-                    {% else %}
-                        <a href="{{ url_for('login') }}">Iniciar sesión</a>
+            <button onclick="toggleMobileUserMenu()" class="mobile-account-btn">
+                <i class="fas fa-user"></i>
+                <span>Cuenta</span>
+            </button>
+
+            <div id="mobileUserMenu" class="mobile-user-dropdown hidden">
+
+                {% if user %}
+                    {% if user.is_admin %}
+                    <a href="{{ url_for('admin_dashboard') }}">Panel Admin</a>
                     {% endif %}
 
-                </div>
+                    <form action="{{ url_for('logout') }}" method="post">
+                        <button>Cerrar sesión</button>
+                    </form>
+
+                {% else %}
+                    <a href="{{ url_for('login') }}">Iniciar sesión</a>
+                {% endif %}
 
             </div>
+
         </div>
+
     </div>
     <!-- Main Content -->
     <main>
