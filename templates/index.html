@@ -129,22 +129,26 @@
         <section id="home-section" class="section">
             <!-- Hero Section -->
             <div class="hero">
-                <div class="hero-content">
+                <div class="container hero-content">
+
                     <div class="hero-text">
                         <h1>Equipamiento profesional para pilates</h1>
-                        <p>Máquinas, accesorios y asesoramiento para profesionales del pilates.</p>
-                        <div class="hero-actions">
-                            <button class="btn btn-white" >
-                                <a href="{{ url_for('shop') }}" class="btn btn-white txt">
-                                    Ver productos
-                                </a>
 
-                            </button>
+                        <p>
+                            Máquinas, accesorios y asesoramiento para profesionales del pilates.
+                        </p>
+
+                        <div class="hero-actions">
+                            <a href="{{ url_for('shop') }}" class="btn btn-hero">
+                                Ver productos
+                            </a>
                         </div>
                     </div>
+
                     <div class="hero-image">
-                        <img src="{{ url_for('static', filename='imagenes/15Años.jpg') }}" alt="Estudio de pilates profesional">
+                        <img src="{{ url_for('static', filename='imagenes/15Años.jpg') }}">
                     </div>
+
                 </div>
             </div>
 
