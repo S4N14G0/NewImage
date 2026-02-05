@@ -606,6 +606,7 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 
     z-index: 999;
+    display: none;
 }
 @media (max-width: 1024px) {
     .hero-content {
@@ -623,7 +624,7 @@ body {
     }
     
     .mobile-menu {
-        display: block;
+        display: flex;
     }
 
     .nav-content {
@@ -666,30 +667,6 @@ body.dark .mobile-menu {
     border-bottom: 1px solid #1f2937;
 }
 
-/* Contenedor de los enlaces */
-.mobile-menu-links {
-    position: fixed;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-
-    width: 92%;
-    max-width: 420px;
-
-    background: rgba(20, 35, 55, 0.85);
-    backdrop-filter: blur(14px);
-
-    border-radius: 18px;
-    padding: 10px 6px;
-
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-
-    z-index: 999;
-}
 
 /* Cada ítem del menú */
 .mobile-nav-item {
