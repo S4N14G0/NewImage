@@ -71,7 +71,7 @@ body {
     color: var(--primary);
 }
 
-.desktop-menu-active{
+.desktop-menu-active a{
     font-weight: 600;
     color: var(--primary)
 }
