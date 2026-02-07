@@ -27,42 +27,50 @@
                     <a href="{{ url_for('shop') }}">Productos</a>
                     <a href="{{ url_for('repuestos') }}">Repuestos</a>
                 </div>
-                <div class="nav-actions relative">
-
-                {% if user %}
-
-                    <button onclick="toggleUserMenu()"
-                        class="btn btn-secondary flex items-center gap-2">
-                        👤 {{ user.username }}
-                        <span class="text-xs">▼</span>
+                <div class="nav-actions">
+                    <button onclick="toggleCart()" class="cart-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span id="cartCount" class="cart-badge">0</span>
                     </button>
+                    
+                    <div class="nav-actions relative">  
 
-                    <div id="userMenu"
-                        class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50">
+                    {% if user %}
 
-                        {% if user.is_admin %}
-                        <a href="{{ url_for('admin_dashboard') }}"
-                            class="block px-4 py-2 hover:bg-gray-100">
-                            Panel Admin
+                        <button onclick="toggleUserMenu()"
+                            class="btn btn-secondary flex items-center gap-2">
+                            👤 {{ user.username }}
+                            <span class="text-xs">▼</span>
+                        </button>
+
+                        <div id="userMenu"
+                            class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50">
+
+                            {% if user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">
+                                Panel Admin
+                            </a>
+                            {% endif %}
+
+                            <form action="{{ url_for('logout') }}" method="post">
+                                <button class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">
+                                    Cerrar sesión
+                                </button>
+                            </form>
+
+                        </div>
+
+                    {% else %}
+
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">
+                            Iniciar sesión
                         </a>
-                        {% endif %}
 
-                        <form action="{{ url_for('logout') }}" method="post">
-                            <button class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">
-                                Cerrar sesión
-                            </button>
-                        </form>
-
-                    </div>
-
-                {% else %}
-
-                    <a href="{{ url_for('login') }}" class="btn btn-primary">
-                        Iniciar sesión
-                    </a>
-
-                {% endif %}
-
+                    {% endif %}
+                    </div>   
                 </div>
             </div>
         </div>
