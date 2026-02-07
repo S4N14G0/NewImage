@@ -622,6 +622,10 @@ body {
     .desktop-menu {
         display: none;
     }
+
+    .nav-actions.relative{
+        display: none;
+    }
     
     .mobile-menu {
         display: flex;
