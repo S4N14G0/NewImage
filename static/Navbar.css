@@ -42,6 +42,11 @@
     font-weight: 500;
 }
 
+.desktop-menu-active{
+    font-weight: 600;
+    color: var(--primary)
+}
+
 .desktop-menu a:hover {
     color: var(--primary);
 }

@@ -71,6 +71,11 @@ body {
     color: var(--primary);
 }
 
+.desktop-menu-active{
+    font-weight: 600;
+    color: var(--primary)
+}
+
 .nav-actions {
     display: flex;
     align-items: center;
