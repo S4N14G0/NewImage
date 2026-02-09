@@ -17,11 +17,6 @@
  margin: 60px auto;
 }
 
-.hidden{
-    display: none;
-}
-
-
 .logo1 {
     display: flex;
     align-items: center;
@@ -147,19 +142,7 @@
             margin-bottom: 30px;
         }
 
-        .logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            background:#ffffff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-        }
+
 
         .welcome-text {
             color: #333;
