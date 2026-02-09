@@ -169,6 +169,13 @@
     z-index: 999;
     display: none;
 }
+
+/* Texto debajo de los iconos */
+.mobile-menu-label {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
 @media (max-width: 1024px) {
     .hero-content {
         flex-direction: column;
