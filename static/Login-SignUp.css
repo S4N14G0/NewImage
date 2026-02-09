@@ -8,21 +8,17 @@
 }
 
 /* Base Styles */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to right, var(--primary), var(--secondary));
-    margin: 0;
+.auth-page {
+ background: linear-gradient(to right, var(--primary), var(--secondary));
+ min-height: 100vh;
 }
 
+.auth-container {
+ margin: 60px auto;
+}
 
 .hidden{
     display: none;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
 }
 
 
@@ -37,19 +33,16 @@ body {
     margin-right: 0px;
 }
 
-.logo-img {
-    height: 32px;
-    width: 32px;
-    margin-right: 8px;
+.auth-logo {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
 }
-
-.logo-text {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color:white;
-}
-
-
 
 .cart-btn {
     position: relative;

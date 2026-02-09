@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NewImage</title>
-    <link rel="stylesheet" href="../static/Login-SignUp.css">
+    <link rel="stylesheet" href="/static/style-Main.css">
     <link rel="stylesheet" href="../static/Navbar.css">
+    <link rel="stylesheet" href="../static/Login-SignUp.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagenes/Logo.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="auth-page">
     <!-- Navbar -->
     <nav class="sticky-nav">
         <div class="container">
@@ -115,7 +116,7 @@
         <!-- Sección de autenticación -->
         <div id="authSection">
             <div class="logo-section">
-                    <div class="logo">
+                    <div class="auth-logo">
                       <img src="{{ url_for('static', filename='imagenes/Logo.png') }}" alt="Logo PilatesPro" class="logo-img" id="Logo2">
                     </div>
                     <h1 class="welcome-text">Bienvenido</h1>
