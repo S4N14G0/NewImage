@@ -8,15 +8,6 @@
 }
 
 /* Base Styles */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to right, var(--primary), var(--secondary));
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
 
 
 .hidden{
@@ -29,7 +20,6 @@ body {
     padding: 0 15px;
 }
 
-/* Navbar Styles */
 
 .logo1 {
     display: flex;
