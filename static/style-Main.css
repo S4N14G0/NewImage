@@ -209,7 +209,7 @@ body {
 .btn-hero {
     background: var(--dark);
     color: var(--primary);
-    padding: 14px 0px 28px;
+    padding: 14px 28px;
     border-radius: 10px;
     font-size: 1.1rem;
     font-weight: 600;
