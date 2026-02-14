@@ -197,7 +197,9 @@ body {
     font-size: 1.2rem;
     opacity: 0.9;
     margin-bottom: 32px;
+    margin-right: 100px;
     max-width: 480px;
+    text-align: center;
 }
 
 .hero-actions {
