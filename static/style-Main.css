@@ -158,10 +158,25 @@ body {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    padding: 90px 0;
+    background: linear-gradient(120deg, var(--primary), var(--secondary));
+    padding: 120px 0;
+    position: relative;
+    overflow: hidden;
 }
 
+/* Glow decorativo */
+.hero::before {
+    content: "";
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);
+    top: -200px;
+    right: -200px;
+    border-radius: 50%;
+}
+
+/* Layout */
 .hero-content {
     display: flex;
     align-items: center;
@@ -169,22 +184,20 @@ body {
     gap: 60px;
 }
 
-.hero-text {
-    flex: 1;
-    max-width: 520px;
-}
-
+/* Texto */
 .hero-text h1 {
-    font-size: 3rem;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 20px;
+    color: #0f172a;
 }
 
 .hero-text p {
     font-size: 1.2rem;
     opacity: 0.9;
-    margin-bottom: 30px;
+    margin-bottom: 32px;
+    max-width: 480px;
 }
 
 .hero-actions {
@@ -202,24 +215,34 @@ body {
 .hero-image img {
     width: 100%;
     max-width: 460px;
-    border-radius: 18px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    border-radius: 22px;
+    box-shadow:
+        0 30px 60px rgba(0,0,0,0.25),
+        0 0 0 8px rgba(255,255,255,0.25);
+
+    transition: 0.4s ease;
+}
+
+.hero-image img:hover {
+    transform: scale(1.03) rotate(-0.5deg);
 }
 
 .btn-hero {
-    background: var(--dark);
+    background: #0f172a;
     color: var(--primary);
-    padding: 14px 28px;
-    margin-left: 100px;
-    border-radius: 10px;
+    padding: 16px 34px;
+    border-radius: 12px;
     font-size: 1.1rem;
     font-weight: 600;
-    transition: 0.25s;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-hero:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.25);
 }
 /* Features Section */
 .features {
@@ -255,11 +278,17 @@ body {
 }
 
 .feature-card {
-    background: var(--dark);
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    background: linear-gradient(145deg, #0f172a, #111827);
+    border-radius: 18px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+
+    transition: all 0.35s ease;
 }
 
 .feature-card:hover {
