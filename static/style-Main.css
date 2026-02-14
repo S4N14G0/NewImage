@@ -197,15 +197,12 @@ body {
     font-size: 1.2rem;
     opacity: 0.9;
     margin-bottom: 32px;
-    padding-right: 300px;
     max-width: 480px;
-    text-align: center;
 }
 
 .hero-actions {
     display: flex;
     gap: 20px;
-    margin-right: 250px;
 }
 
 .hero-image {
@@ -683,7 +680,7 @@ body {
     }
 
     .hero {
-        padding: 50px 0;
+        padding: 70px 0;
     }
 
     .hero-text h1 {
@@ -692,6 +689,8 @@ body {
 
     .hero-text p {
         font-size: 1rem;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .hero-actions {
