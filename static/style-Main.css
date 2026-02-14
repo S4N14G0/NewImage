@@ -205,6 +205,7 @@ body {
 .hero-actions {
     display: flex;
     gap: 20px;
+    margin-left: 375px;
 }
 
 .hero-image {
