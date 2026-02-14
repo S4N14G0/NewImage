@@ -695,6 +695,7 @@ body {
 
     .hero-actions {
         justify-content: center;
+        gap: 10px;
     }
 
     .hero-image img {
