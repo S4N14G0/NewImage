@@ -433,6 +433,7 @@ body {
     color: #ffffff;
     font-size: 0.875rem;
     margin-bottom: 16px;
+    white-space: pre-line;
 }
 
 .product-actions {
