@@ -365,6 +365,9 @@ body {
     }
 }
 @media (max-width: 640px){
+    .hero-content {
+        gap: 20px
+    }
     .products-grid {
         grid-template-columns: 1fr;
     }
