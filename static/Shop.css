@@ -70,7 +70,9 @@ body {
 .product-desc {
     max-height: 14rem;        /* altura visible */
     overflow-y: auto;
-    padding-right: 0.5rem;    /* espacio para scrollbar */
+    padding-right: 0.5rem; 
+    white-space: pre-line;
+    line-height: 1.7;  /* espacio para scrollbar */
 }
 
 /* degradé */
