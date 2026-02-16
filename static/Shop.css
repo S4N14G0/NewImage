@@ -72,7 +72,6 @@ body {
     overflow-y: auto;
     padding-right: 0.5rem; 
     white-space: pre-line;
-    line-height: 1.7;  /* espacio para scrollbar */
 }
 
 /* degradé */
