@@ -210,15 +210,15 @@ body {
 
 @media (max-width: 768px) {
     .hero-text h1{
-        width: 500px ;
-        margin-left: 15%;
-        padding-right: 50px;
+        width: 89% ;
+        margin-left: 5%;
+        padding-right: 0%;
     }
 
     .hero-text p{
-        padding-left: 150px;
-        padding-right: 140px;
-        width: 700px ;
+        padding-left: 15%;
+        padding-right: 14%;
+        width: 100% ;
     }
 
     .hero-actions{
@@ -231,6 +231,32 @@ body {
     }
 
 }
+
+@media (max-width: 1024px) {
+    .hero-text h1{
+        width: 89% ;
+        margin-left: 5%;
+        padding-right: 0%;
+    }
+
+    .hero-text p{
+        padding-left: 15%;
+        padding-right: 14%;
+        width: 100% ;
+    }
+
+    .hero-actions{
+        margin-bottom: 10px;
+        margin-left: 0%;
+    }
+
+    .hero-image{
+        margin-left: 0%;
+    }
+
+}
+
+
 
 .hero-image {
     flex: 1;
