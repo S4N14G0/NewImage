@@ -487,6 +487,14 @@ body {
     color: #ffffff;
     font-size: 0.875rem;
     margin-bottom: 16px;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;   /* 👈 cantidad de líneas */
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+
     white-space: pre-line;
 }
 
