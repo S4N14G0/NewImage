@@ -596,7 +596,7 @@ def edit_product(product_id):
         product.descripcion = request.form["descripcion"]
         product.stock = int(request.form["stock"])
         product.en_stock = product.stock > 0
-        product.tipo = request.form.get("tipo", "principal")
+        product.tipo = request.form.get("tipo")
         
         files = request.files.getlist("imagenes")
 
