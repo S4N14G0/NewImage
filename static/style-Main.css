@@ -684,6 +684,19 @@ body {
 
 }
 
+.RedesBtn{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+}
+@media (max-width: 768px) {
+    .RedesBtn {
+        flex-direction: column;
+        padding-left: 20%;
+        padding-right: 20%;
+        }
+}
 /* Responsive Styles */
 
 .mobile-menu {
