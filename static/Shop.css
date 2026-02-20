@@ -93,7 +93,7 @@ body {
 /* Mobile */
 @media (max-width: 767px) {
     .product-desc {
-        max-height: 25rem;
+        max-height: 24rem;
     }
 }
 
