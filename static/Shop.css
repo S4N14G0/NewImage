@@ -91,9 +91,9 @@ body {
 }
 
 /* Mobile */
-@media (max-width: 640px) {
+@media (max-width: 767px) {
     .product-desc {
-        max-height: 10rem;
+        max-height: 20rem;
     }
 }
 
