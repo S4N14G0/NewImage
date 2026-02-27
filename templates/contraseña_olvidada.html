@@ -11,7 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="auth-page">
     <!-- Navbar -->
     <nav class="sticky-nav">
         <div class="container">
@@ -113,18 +113,34 @@
         </div>
 
     </div>
-    <form method="POST" class="space-y-4">
-        <input type="email"
-            name="email"
-            placeholder="Tu email"
-            required
-            class="w-full px-4 py-2 border rounded">
+    <div class="auth-container">
+        <!-- Sección de autenticación -->
+        <div id="authSection">
+            
+            <div class="logo-section">
+                    <div class="auth-logo">
+                      <img src="{{ url_for('static', filename='imagenes/Logo.png') }}" alt="Logo PilatesPro" class="logo-img" id="Logo2">
+                    </div>
+                    <h1 class="welcome-text">Restablece tu contraseña</h1>
+                    <p class="subtitle">introduce una direccion de correo electronico para continuar</p>
+            </div>
+        </div>
 
-        <button type="submit"
-                class="w-full bg-indigo-600 text-white py-2 rounded">
-            Enviar link
-        </button>
-    </form>
+        <div class="form-container">
+            <form method="POST" class="space-y-4">
+                <input type="email"
+                    name="email"
+                    placeholder="Tu email"
+                    required
+                    class="w-full px-4 py-2 border rounded">
+
+                <button type="submit"
+                        class="w-full bg-indigo-600 text-white py-2 rounded">
+                    Enviar link
+                </button>
+            </form>
+        </div>
+    </div>
 
     <script src="{{ url_for('static', filename='Global.js') }}"></script>
 
