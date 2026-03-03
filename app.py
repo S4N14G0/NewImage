@@ -47,7 +47,6 @@ ALLOWED_HOSTS = [
 
 db.init_app(app)
 
-load_dotenv()
 migrate = Migrate(app, db)
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
