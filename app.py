@@ -359,7 +359,7 @@ def reset_password(token):
     if reset.expires_at < datetime.utcnow():
         flash("Token expirado", "danger")
         return redirect(url_for('contraseña_olvidada'))
-
+    
     if request.method == 'POST':
         user = User.query.filter_by(email=reset.email).first()
         user.set_password(request.form['password'])
