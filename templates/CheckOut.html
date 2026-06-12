@@ -240,7 +240,7 @@
                         <label class="option-card cursor-pointer transition hover:shadow">
                             <input type="radio" name="payment" value="bank" data-cuenta-id="{{ cuenta.id }}">
                             <div class="flex justify-between w-full items-center">
-                                <p class="font-medium text-gray-800">Transferencia bancaria</p>
+                                <p class="font-medium text-gray-800">5% de descuento por transferencia bancaria</p>
                                 <span class="text-indigo-600 text-xl">🏦</span>
                             </div>
                         </label>
@@ -248,6 +248,7 @@
                         <!-- Información bancaria -->
                         <div id="transferenciaInfo"
                             class="hidden bg-gray-50 p-4 rounded-lg border mt-2 transition-all duration-300 ease-out">
+                            <p><strong>$2000 (ejemplo)</strong></p>
                             <p><strong>Banco:</strong> {{ cuenta.banco }}</p>
                             <p><strong>Alias:</strong> {{ cuenta.alias }}</p>
                             <p><strong>CBU:</strong> {{ cuenta.cbu }}</p>
