@@ -30,6 +30,7 @@ class Configuracion(db.Model):
     id = db.Column(db.Integer, primary_key= True)
     dolar_manual = db.Column(db.Float, nullable=False, default=1450)
     ventas_activas = db.Column(db.Boolean, default=True)
+    descuento_transferencia = db.Column(db.Float, nullable=False, default=0.05)
     
 class ProductImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
