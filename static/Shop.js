@@ -129,7 +129,7 @@ function updateCart() {
 
   cart.forEach(item => {
 
-    const itemTotal = priceARS * item.quantity;
+    const itemTotal = item.priceARS * item.quantity;
     subtotal += itemTotal;
 
     const li = document.createElement("li");
