@@ -14,7 +14,7 @@ function renderProducts(products) {
   }
 
   products.forEach(p => {
-    const priceARS = (p.precio * dolarManual).toFixed(0);
+    const priceARS = p.precio_lista;
 
     container.innerHTML += `
       <div class="border rounded-lg p-4 shadow hover:shadow-lg transition bg-white">
@@ -52,7 +52,7 @@ async function showDolarInAdmin() {
 function addToCart(button) {
   const id = parseInt(button.dataset.id);
   const name = button.dataset.name;
-  const priceUSD = parseFloat(button.dataset.price);
+  const priceARS = parseFloat(button.dataset.priceArs);
   const stock = parseInt(button.dataset.stock);
 
   let qtyInput = document.getElementById(`qty-${id}`);
@@ -75,7 +75,7 @@ function addToCart(button) {
     cart.push({
       id,
       name,
-      priceUSD,
+      priceARS,
       quantity: qty,
       stock // 🔐 guardar stock en el item
     });
@@ -118,7 +118,6 @@ function updateCart() {
 
   cart.forEach(item => {
 
-    const priceARS = item.priceUSD * dolarManual;
     const itemTotal = priceARS * item.quantity;
     subtotal += itemTotal;
 
