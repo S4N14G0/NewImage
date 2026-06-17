@@ -217,24 +217,20 @@
 
                         </div>
                     </div>
-                    {% set precio_real = product.precio * dolar %}
-                    {% set descuento_transferencia = 0.05 %}
-                    {% set precio_lista = precio_real / (1 - descuento_transferencia) %}
 
-                    <div class="mb-6">
-                        <p class="text-3xl font-semibold text-indigo-600 mb-1">
-                            ${{ "%.2f"|format(precio_lista) | formato_pesos }}
-                        </p>
-                        <p class="text-sm text-green-600 font-medium flex items-center gap-1">
-                            <i class="fas fa-money-bill-wave"></i>
-                            Precio con 5% de descuento por transferencia: 
-                            <span class="font-bold">${{ "%.2f"|format(precio_real) | formato_pesos }}</span>
-                        </p>
-                    </div>
+                    <p class="text-3xl font-semibold text-indigo-600 mb-1">
+                        ${{ "%.2f"|format(product.precio_lista) | formato_pesos }}
+                    </p>
+                    <p class="text-sm text-green-600 font-medium flex items-center gap-1">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Precio con {{ (product.descuento_transferencia * 100) | int }}% de descuento por transferencia: 
+                        <span class="font-bold">${{ "%.2f"|format(product.precio_real) | formato_pesos }}</span>
+                    </p>
                     {% if product.observacion %}
                         <p class="text-base text-yellow-600 font-medium mt-2">
                             ⚠️ {{ product.observacion }}
                         </p>
+
                     {% endif %}
 
                 </div>
@@ -262,7 +258,7 @@
                                 class="flex-1 bg-indigo-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-indigo-700 transition"
                                 data-id="{{ product.id }}"
                                 data-name="{{ product.nombre }}"
-                                data-price="{{ product.precio }}"
+                                data-price="{{ product.precio_lista }}"
                                 data-stock="{{ product.stock }}"
                                 onclick="addToCart(this)">
                             🛒 Agregar al carrito

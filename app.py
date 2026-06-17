@@ -123,6 +123,18 @@ def obtener_dolar_manual():
         db.session.commit()
     return config.dolar_manual
 
+def obtener_descuento_transferencia():
+    config = (
+        Configuracion.query
+        .execution_options(populate_existing=True)
+        .first()
+    )
+    if not config:
+        config = Configuracion(dolar_manual=1450, ventas_activas=True, descuento_transferencia=0.05)
+        db.session.add(config)
+        db.session.commit()
+    return config.descuento_transferencia
+
 @app.route('/update_dolar', methods=['POST'])
 @login_required
 def update_dolar():
@@ -152,13 +164,68 @@ def update_dolar():
     flash("Valor del dólar actualizado correctamente.", "success")
     return redirect(url_for('admin_dashboard'))
 
+@app.route('/update_descuento_transferencia', methods=['POST'])
+@login_required
+def update_descuento_transferencia():
+    nuevo_valor = request.form.get("descuento_transferencia")
 
+    if not nuevo_valor:
+        flash("Debes ingresar un valor.", "error")
+        return redirect(url_for('admin_dashboard'))
+
+    try:
+        descuento = float(nuevo_valor) / 100  # el admin ingresa "5", se guarda como 0.05
+        if not (0 <= descuento < 1):
+            raise ValueError
+    except ValueError:
+        flash("El valor debe ser un número entre 0 y 100.", "error")
+        return redirect(url_for('admin_dashboard'))
+
+    config = (
+        Configuracion.query
+        .execution_options(populate_existing=True)
+        .first()
+    )
+
+    if not config:
+        config = Configuracion(dolar_manual=1450, ventas_activas=True, descuento_transferencia=descuento)
+        db.session.add(config)
+    else:
+        config.descuento_transferencia = descuento
+
+    db.session.commit()
+    db.session.refresh(config)
+
+    flash("Descuento por transferencia actualizado correctamente.", "success")
+    return redirect(url_for('admin_dashboard'))
+
+def calcular_precios(product, dolar, descuento):
+    """
+    product.precio está en USD y representa el precio REAL (neto)
+    que el dueño quiere recibir si el cliente paga por transferencia.
+
+    precio_real  -> lo que se cobra por transferencia (con descuento)
+    precio_lista -> lo que se cobra por Mercado Pago (con sobreprecio)
+    """
+    precio_real = round(product.precio * dolar, 2)
+    precio_lista = round(precio_real / (1 - descuento), 2)
+    return precio_real, precio_lista
 
 def serializar_producto(product):
+    if dolar is None:
+        dolar = obtener_dolar_manual()
+    if descuento is None:
+        descuento = obtener_descuento_transferencia()
+
+    precio_real, precio_lista = calcular_precios(product, dolar, descuento)
+
     return {
         "id": product.id,
         "nombre": product.nombre,
         "precio": product.precio,
+        "precio_real": precio_real,
+        "precio_lista": precio_lista,
+        "descuento_transferencia": descuento,
         "descripcion": product.descripcion,
         "stock": product.stock,
         "observacion": product.observacion,
@@ -249,21 +316,22 @@ def signup():
 def shop():
     products = Product.query.filter_by(tipo="principal").all()
     dolar_manual = obtener_dolar_manual()
+    descuento = obtener_descuento_transferencia()
     ventas_activas = obtener_estado_ventas()
     
-    # Convertir productos a lista de diccionarios
-    productos_json = [serializar_producto(p) for p in products]
+    productos_json = [serializar_producto(p, dolar_manual, descuento) for p in products]
 
     return render_template("Shop.html", products=productos_json, dolar=dolar_manual, ventas_activas=ventas_activas)
 
-# Ruta de los repuestos
+
 @app.route("/repuestos")
 def repuestos():
     productos = Product.query.filter_by(tipo="repuesto", activo=True).all()
     dolar_manual = obtener_dolar_manual()
+    descuento = obtener_descuento_transferencia()
     ventas_activas = obtener_estado_ventas()
     
-    productos_json = [serializar_producto(p) for p in productos]
+    productos_json = [serializar_producto(p, dolar_manual, descuento) for p in productos]
     
     return render_template("repuestos.html", products=productos_json, dolar=dolar_manual, ventas_activas=ventas_activas)
 
@@ -272,6 +340,7 @@ def repuestos():
 def product_detail(product_id):
     product = Product.query.get_or_404(product_id)
     dolar_manual = obtener_dolar_manual()
+    descuento = obtener_descuento_transferencia()
     ventas_activas = obtener_estado_ventas()
     # Convertir a diccionario serializable
     producto_json = serializar_producto(product)
@@ -280,7 +349,8 @@ def product_detail(product_id):
         "product_detail.html",
         product=producto_json,
         dolar=dolar_manual,
-        ventas_activas=ventas_activas
+        ventas_activas=ventas_activas,
+        descuento=descuento
     )
 
 @app.template_filter('formato_pesos')
@@ -679,6 +749,7 @@ def checkout():
     items_validos = []
     
     dolar = obtener_dolar_manual()
+    descuento = obtener_descuento_transferencia()
 
     for item in cart:
         product = Product.query.get(item["id"])
@@ -769,6 +840,7 @@ def crear_pago():
             return jsonify({"error": "El carrito está vacío"}), 400
 
         dolar = obtener_dolar_manual()
+        descuento = obtener_descuento_transferencia()
         items_mp = []
         total = 0
         items_validos = []
@@ -796,17 +868,17 @@ def crear_pago():
             if product.stock < cantidad:
                 return jsonify({"error": f"Stock insuficiente para {product.nombre}"}), 400
 
-            precio_ars = product.precio * dolar
-            total += precio_ars * cantidad
+            _, precio_lista = calcular_precios(product, dolar, descuento)
+            total += precio_lista * cantidad
 
             items_mp.append({
                 "title": product.nombre,
                 "quantity": cantidad,
                 "currency_id": "ARS",
-                "unit_price": float(precio_ars)
+                "unit_price": float(precio_lista)
             })
 
-            items_validos.append((product, cantidad, precio_ars))
+            items_validos.append((product, cantidad, precio_lista))
         
         preference_data = {
             "items": items_mp,
@@ -821,7 +893,6 @@ def crear_pago():
         }
 
         sdk = SDK(cuenta.access_token)
-
         preference = sdk.preference().create(preference_data) 
 
         for product, cantidad, precio in items_validos:
@@ -837,7 +908,7 @@ def crear_pago():
         return jsonify(preference["response"])
 
     except Exception as e:
-        print("🔥 ERROR crear_pago:", e)
+        print("ERROR crear_pago:", e)
         return jsonify({"error": str(e)}), 500
 
 @app.route("/webhook/mp", methods=["POST"])
