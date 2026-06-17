@@ -1,3 +1,13 @@
+function cargarCarrito(key) {
+  const raw = JSON.parse(localStorage.getItem(key)) || [];
+  const esFormatoViejo = raw.some(item => item.priceARS === undefined);
+  if (esFormatoViejo) {
+    localStorage.removeItem(key);
+    return [];
+  }
+  return raw;
+}
+
 
 // Carrito global (puede contener productos de ambos tipos)
 let cartPrincipal = JSON.parse(localStorage.getItem("cart_principal")) || [];

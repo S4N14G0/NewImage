@@ -1,3 +1,14 @@
+// Inicializar carrito desde localStorage, descartando formato viejo o mezclado
+function cargarCarrito(key) {
+  const raw = JSON.parse(localStorage.getItem(key)) || [];
+  const esFormatoViejo = raw.some(item => item.priceARS === undefined);
+  if (esFormatoViejo) {
+    localStorage.removeItem(key);
+    return [];
+  }
+  return raw;
+}
+
 // Inicializar carrito desde localStorage
 let cart = JSON.parse(localStorage.getItem("cart_principal")) || [];
 let cartRepuestos = JSON.parse(localStorage.getItem("cart_repuestos")) || [];
