@@ -10,13 +10,13 @@ function cargarCarrito(key) {
 
 
 // Carrito global (puede contener productos de ambos tipos)
-let cartPrincipal = JSON.parse(localStorage.getItem("cart_principal")) || [];
-let cartRepuestos = JSON.parse(localStorage.getItem("cart_repuestos")) || [];
+let cartPrincipal = cargarCarrito("cart_principal");
+let cartRepuestos = cargarCarrito("cart_repuestos");
 
 let cart = [...cartPrincipal, ...cartRepuestos].map(item => ({
     id: item.id,
     name: item.name,
-    priceUSD: item.priceARS, //
+    priceUSD: item.priceARS,
     quantity: item.quantity
 }));
 
@@ -33,7 +33,6 @@ function renderCheckoutSummary() {
     let subtotal = 0;
 
     cart.forEach(item => {
-        const priceARS = item.priceUSD * dolar;
         const itemTotal = item.priceARS * item.quantity;
         subtotal += itemTotal;
 
@@ -54,7 +53,7 @@ function renderCheckoutSummary() {
 // Validación de pasos
 function validateStep(step) {
     let valid = true;
-
+ 
     if (step === 1) {
         const firstName = document.getElementById("firstName").value.trim();
         const lastName = document.getElementById("lastName").value.trim();
@@ -71,10 +70,10 @@ function validateStep(step) {
             valid = false;
         }
     }
-
+ 
     return valid;
 }
-
+ 
 // Navegación entre pasos
 function goToStep(step) {
     document.querySelector(`#step${currentStep}`).classList.add("hidden");
@@ -84,8 +83,8 @@ function goToStep(step) {
     updateActiveStep();
     updateProgressBar();
 }
-
-
+ 
+ 
 function updateActiveStep() {
   document.querySelectorAll(".checkout-step").forEach(step => {
     const stepNumber = parseInt(step.dataset.step);
@@ -96,38 +95,38 @@ function updateActiveStep() {
     }
   });
 }
-
+ 
 function updateProgressBar() {
-  const totalSteps = 3; // cantidad de pasos
+  const totalSteps = 4; // step1, step2, step3, step4
   const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
   
   const bar = document.getElementById("progressBar");
   const text = document.getElementById("progressText");
-
+ 
   if (bar) bar.style.width = `${progress}%`;
   if (text) text.textContent = `Paso ${currentStep} de ${totalSteps}`;
 }
-
+ 
 function NextStep2() { if (validateStep(1)) goToStep(2); }
 function NextStep3() { goToStep(3); }
 async function NextStep4() {
     const metodoPago = document.querySelector('input[name="payment"]:checked').value;
     
     const paymentInput = document.querySelector('input[name="payment"]:checked');
-
+ 
     const cuentaId = paymentInput?.dataset.cuentaId || null;
     
     if (cart.length === 0) {
         alert("El carrito está vacío. Agrega productos antes de continuar.");
         return;
     }
-
+ 
     // Si el pago es Mercado Pago → no muestres Step 5, redirige directo
     if (metodoPago === "mp") {
         pagarConMP();
         return;
     }
-
+ 
     // Si es transferencia → continúa como siempre
     if (validateStep(4)) {
         try {
@@ -135,7 +134,7 @@ async function NextStep4() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    cart: cart, // 👈 solo USD + qty
+                    cart: cart,
                     comprador_nombre:
                         document.getElementById("firstName").value + " " +
                         document.getElementById("lastName").value,
@@ -144,36 +143,36 @@ async function NextStep4() {
                     cuenta_id: cuentaId
                 })
             });
-
+ 
             const data = await response.json();
-
+ 
             if (!response.ok) throw new Error(data.error || "Error en el checkout");
-
+ 
             console.log("✅ Pedido registrado:", data);
-
+ 
             renderFinalSummary(data.order_id, data.total);
             goToStep(4);
-
+ 
         } catch (err) {
             console.error("❌ Error al enviar checkout:", err);
         }
     }
 }
-
+ 
 function BackStep2() { goToStep(2); }
 function BackStep3() { goToStep(3); }
-
-
+ 
+ 
 // Paso final (confirmación)
 function renderFinalSummary(orderId, total) {
     // Número de orden real del backend
     document.getElementById("orderNumber").textContent = "OR-" + orderId;
     
-
+ 
     // Mostrar total formateado
     const totalFormatted = total.toLocaleString("es-AR", { style: "currency", currency: "ARS" });
     document.getElementById("finalTotal").textContent = totalFormatted;
-
+ 
     // Copiar el contenido del resumen (opcional)
     const finalSummary = document.getElementById("finalSummary");
     finalSummary.innerHTML = `
@@ -183,7 +182,7 @@ function renderFinalSummary(orderId, total) {
             <p class="mt-4 text-gray-700 font-medium">Total: ${totalFormatted}</p>
         </div>
     `;
-
+ 
     // Vaciar carrito después de confirmar
     setTimeout(() => {
         localStorage.removeItem("cart_principal");
@@ -194,8 +193,8 @@ function renderFinalSummary(orderId, total) {
         updateCart();
     }, 1500);
 }
-
-
+ 
+ 
 document.addEventListener("DOMContentLoaded", () => {
     renderCheckoutSummary();
     updateProgressBar();
