@@ -142,7 +142,7 @@ function updateCart() {
           <p class="text-sm text-gray-500">
             Precio unitario:
             <span class="font-medium text-gray-700">
-              $${priceARS.toLocaleString("es-AR")} ARS
+              $${item.priceARS.toLocaleString("es-AR")} ARS
             </span>
           </p>
           <div class="flex items-center gap-2 mt-1">
