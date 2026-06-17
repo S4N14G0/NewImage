@@ -211,13 +211,14 @@ def calcular_precios(product, dolar, descuento):
     precio_lista = round(precio_real / (1 - descuento), 2)
     return precio_real, precio_lista
 
-def serializar_producto(product):
+def serializar_producto(product, dolar=None, descuento=None):
     if dolar is None:
         dolar = obtener_dolar_manual()
     if descuento is None:
         descuento = obtener_descuento_transferencia()
-
-    precio_real, precio_lista = calcular_precios(product, dolar, descuento)
+        
+    precio_real = round(product.precio * dolar, 2)
+    precio_lista = round(precio_real / (1 - descuento), 2)
 
     return {
         "id": product.id,
