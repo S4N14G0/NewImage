@@ -7,46 +7,46 @@ function cargarCarrito(key) {
   }
   return raw;
 }
-
-
+ 
+ 
 // Carrito global (puede contener productos de ambos tipos)
 let cartPrincipal = cargarCarrito("cart_principal");
 let cartRepuestos = cargarCarrito("cart_repuestos");
-
+ 
 let cart = [...cartPrincipal, ...cartRepuestos].map(item => ({
     id: item.id,
     name: item.name,
-    priceUSD: item.priceARS,
+    priceARS: item.priceARS,
     quantity: item.quantity
 }));
-
-
-
+ 
+ 
+ 
 let currentStep = 1;
-
+ 
 // Render resumen del pedido (sidebar)
 function renderCheckoutSummary() {
     const summary = document.getElementById("checkoutSummary");
     if (!summary) return;
-
+ 
     summary.innerHTML = "";
     let subtotal = 0;
-
+ 
     cart.forEach(item => {
         const itemTotal = item.priceARS * item.quantity;
         subtotal += itemTotal;
-
+ 
         const div = document.createElement("div");
         div.className = "flex justify-between items-center mb-2 text-sm";
-
+ 
         div.innerHTML = `
             <span>${item.name} x ${item.quantity}</span>
             <span>$${itemTotal.toLocaleString("es-AR")}</span>
         `;
-
+ 
         summary.appendChild(div);
     });
-
+ 
     document.getElementById("checkoutTotal").textContent =
         `$${subtotal.toLocaleString("es-AR")}`;
 }
