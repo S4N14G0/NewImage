@@ -526,13 +526,16 @@ def admin_dashboard():
     else:
         productos = Product.query.all()
 
+    descuento_transferencia = config.descuento_transferencia if config else 0.05
+    
     return render_template(
         "admin_dashboard.html",
         cuentas=cuentas,
         products=productos,
         filtro=filtro,
         dolar=dolar,
-        ventas_activas=ventas_activas
+        ventas_activas=ventas_activas,
+        descuento_transferencia=descuento_transferencia
     )
     
 @app.route("/admin/product/update", methods=["POST"])
