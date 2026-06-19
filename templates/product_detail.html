@@ -221,9 +221,9 @@
                     <p class="text-3xl font-semibold text-indigo-600 mb-1">
                         ${{ "%.2f"|format(product.precio_lista) | formato_pesos }}
                     </p>
-                    <p class="text-sm text-green-600 font-medium flex items-center gap-1">
+                    <p class="text-2xl text-green-600 font-medium flex items-center gap-1">
                         <i class="fas fa-money-bill-wave"></i>
-                        Precio con {{ (product.descuento_transferencia * 100) | int }}% de descuento por transferencia: 
+                        {{ (product.descuento_transferencia * 100) | int }}% de descuento por transferencia: 
                         <span class="font-bold">${{ "%.2f"|format(product.precio_real) | formato_pesos }}</span>
                     </p>
                     {% if product.observacion %}
