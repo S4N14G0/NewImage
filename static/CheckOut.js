@@ -1,3 +1,38 @@
+const CART_TTL = 2 * 60 * 60 * 1000;
+ 
+function mostrarToastExpiracion() {
+  if (document.getElementById("cartExpiredToast")) return;
+ 
+  const toast = document.createElement("div");
+  toast.id = "cartExpiredToast";
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: white;
+    font-size: 14px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  `;
+  toast.innerHTML = `<i class="fas fa-clock"></i> Tu carrito expiró y fue vaciado automáticamente.`;
+  document.body.appendChild(toast);
+ 
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.remove(), 500);
+  }, 4000);
+}
+
+
 function cargarCarrito(key) {
   const raw = JSON.parse(localStorage.getItem(key)) || [];
   const esFormatoViejo = raw.some(item => item.priceARS === undefined);

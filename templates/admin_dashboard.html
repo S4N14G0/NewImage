@@ -220,7 +220,22 @@
                 Actualizar
             </button>
         </form>
-
+        
+        <!-- descuento por transferencia -->
+        <form action="{{ url_for('update_descuento_transferencia') }}" method="POST" class="flex items-center gap-4 mt-4">
+            <label for="descuento_transferencia" class="font-semibold text-lg">Descuento por transferencia (%):</label>
+            <input type="number"
+                   step="0.1"
+                   min="0"
+                   max="99"
+                   name="descuento_transferencia"
+                   id="descuento_transferencia"
+                   value="{{ (descuento_transferencia * 100) | round(1) }}"
+                   class="border rounded px-6 py-1 w-32">
+            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                Actualizar
+            </button>
+        </form>
     </div>
 
     <!-- === FILTROS DE PRODUCTOS === -->
