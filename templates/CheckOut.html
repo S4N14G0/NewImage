@@ -140,7 +140,9 @@
                     </div>
                     <div id="transferDiscountSummary" class="hidden flex justify-between items-center text-sm font-medium pt-3 mt-2 border-t border-dashed border-gray-300 text-green-600">
                         <span class="flex items-center gap-1">
-                            <i class="fas fa-university"></i> Total con transferencia (-5%)
+                            <i class="fas fa-university"></i> 
+                            Total con transferencia (-{{ (descuento_transferencia * 100) | round(1) | int }}%)
+
                         </span>
                         <span id="checkoutTotalTransfer" class="font-bold">$0</span>
                     </div>
@@ -272,7 +274,9 @@
                         <!-- Información bancaria -->
                         <div id="transferenciaInfo" class="hidden transfer-info-box mt-2">
                             <div class="transfer-price-highlight">
-                                <span class="text-sm text-gray-500">Precio final con 5% de descuento</span>
+                                <span class="text-sm text-gray-500">
+                                    Precio final con {{ (descuento_transferencia * 100) | round(1) | int }}% de descuento
+                                </span>
                                 <span id="transferFinalPrice" class="text-2xl font-bold text-green-600">$0</span>
                             </div>
 
@@ -339,11 +343,11 @@
     </div>
     <script>
         const DOLAR = {{ dolar | tojson }};
+        const DESCUENTO_TRANSFERENCIA = {{ descuento_transferencia | tojson }};
     </script>
     <script src="{{ url_for('static', filename='CheckOut.js') }}"></script>
     <script>
         (function () {
-            const DESCUENTO_TRANSFERENCIA = 0.05;
 
             function parsePesos(texto) {
                 // Convierte "$12.345,67" -> 12345.67
@@ -381,11 +385,19 @@
 
             document.querySelectorAll('input[name="payment"]').forEach(radio => {
                 radio.addEventListener('change', () => {
+                    const transferenciaInfo = document.getElementById('transferenciaInfo');
+                    const mpContainer = document.getElementById('mpButtonContainer');
                     const esTransferencia = radio.value === 'bank' && radio.checked;
+                    const esMP = radio.value === 'mp' && radio.checked;
+
                     if (esTransferencia) {
+                        transferenciaInfo?.classList.remove('hidden');
+                        mpContainer?.classList.add('hidden');
                         actualizarDescuento();
                         toggleResumenDescuento(true);
-                    } else if (radio.value === 'mp' && radio.checked) {
+                    } else if (esMP) {
+                        transferenciaInfo?.classList.add('hidden');
+                        mpContainer?.classList.remove('hidden');
                         toggleResumenDescuento(false);
                     }
                 });
@@ -399,6 +411,29 @@
                     if (bankRadio && bankRadio.checked) actualizarDescuento();
                 }).observe(totalEl, { childList: true, characterData: true, subtree: true });
             }
+
+            // Inyectar el porcentaje dinámico en todos los textos que lo muestran
+            document.addEventListener('DOMContentLoaded', () => {
+                const pct = (DESCUENTO_TRANSFERENCIA * 100).toFixed(1).replace('.0', '');
+
+                    // Badge "-5%" en la opción de transferenci
+                const badge = document.querySelector('.discount-badge');
+                if (badge) badge.textContent = `-${pct}%`;
+
+                    // Texto "Precio final con X% de descuento"
+                const precioLabel = document.querySelector('.transfer-price-highlight span.text-sm');
+                if (precioLabel) precioLabel.textContent = `Precio final con ${pct}% de descuento`;
+
+                    // Texto en el sidebar "-X%"
+                const sidebarLabel = document.querySelector('#transferDiscountSummary span.flex');
+                if (sidebarLabel) sidebarLabel.innerHTML = `<i class="fas fa-university"></i> Total con transferencia (-${pct}%)`;
+
+                    // Subtitle de la opción de pago
+                const subtitle = document.querySelector('.payment-icon-bank')
+                    ?.closest('.payment-option-content')
+                    ?.querySelector('.payment-subtitle');
+                if (subtitle) subtitle.textContent = `Pagás directo desde tu banco`;
+            });
         })();
         </script>
     <script src="https://sdk.mercadopago.com/js/v2"></script>

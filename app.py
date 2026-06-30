@@ -384,8 +384,14 @@ def historial_ventas():
 def check():
     cuenta = get_cuenta_activa()
     dolar = obtener_dolar_manual()
+    descuento = obtener_descuento_transferencia()
 
-    return render_template("CheckOut.html", cuenta=cuenta, public_key=cuenta.public_key, dolar=dolar)
+    return render_template(
+        "CheckOut.html", 
+        cuenta=cuenta, 
+        public_key=cuenta.public_key, 
+        dolar=dolar,
+        descuento_transferencia=descuento)
 
 # Logout
 @app.route("/logout", methods=["POST"])
