@@ -1,8 +1,4 @@
 const CART_TTL = 2 * 60 * 60 * 1000;
-
-const DESCUENTO_TRANSFERENCIA = typeof window.DESCUENTO_TRANSFERENCIA !== "undefined"
-    ? window.DESCUENTO_TRANSFERENCIA
-    : 0.05; // fallback por si acaso
  
 function mostrarToastExpiracion() {
   if (document.getElementById("cartExpiredToast")) return;
