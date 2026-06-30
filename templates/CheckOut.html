@@ -304,39 +304,66 @@
                 <!-- Paso 4: Confirmación final -->
                 <div id="step4" class="checkout-step-content hidden">
 
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Pedido registrado</h3>
-
-                    <p class="text-gray-700">
-                        ¡Gracias por tu compra! Tu pedido fue generado correctamente.
-                    </p>
-
-                    
-                    <p class="text-gray-700">
-                        Enviar tu comprobante via WhatsApp:
-                    </p>
-
-                    <a href="https://wa.me/5493513199729"
-                        class="flex items-center gap-3 px-8 py-4 rounded-xl shadow-lg bg-white hover:shadow-xl transition-all border border-gray-200">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/WhatsApp_icon.png"
-                                class="w-7 h-7">
-                            <span class="text-center font-semibold">WhatsApp</span>
-                    </a>
-                    
-                    <p class="mt-4 text-gray-800 font-semibold">
-                        Número de orden: 
-                        <span id="orderNumber" class="text-indigo-600"></span>
-                    </p>
-
-                    <p class="mt-2 text-gray-800 font-semibold">
-                        Total pagado: 
-                        <span id="finalTotal" class="text-indigo-600"></span>
-                    </p>
-
-                    <div id="finalSummary" class="mt-6"></div>
-
-                    <div class="mt-8 text-center">
-                        <a href="{{ url_for('shop') }}" class="btn-primary">Volver a la tienda</a>
+                    <!-- Ícono de éxito -->
+                    <div style="text-align:center; margin-bottom:1.5rem;">
+                        <div style="width:72px; height:72px; border-radius:50%; background:#d1fae5;
+                                    display:flex; align-items:center; justify-content:center; margin:0 auto 1rem;">
+                            <i class="fas fa-check" style="font-size:32px; color:#059669;"></i>
+                        </div>
+                        <p style="font-size:26px; font-weight:500; color:#1f2937; margin-bottom:6px;">
+                            ¡Pedido confirmado!
+                        </p>
+                        <p style="font-size:18px; color:#6b7280;">
+                            Su pedido fue registrado correctamente.
+                        </p>
                     </div>
+
+                    <!-- Resumen de orden -->
+                    <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px;
+                                padding:20px; margin-bottom:1.25rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;
+                                    padding:10px 0; border-bottom:1px solid #e5e7eb; font-size:18px;">
+                            <span style="color:#6b7280;">Número de orden</span>
+                            <span id="orderNumber" style="font-weight:500; color:#4f46e5; font-size:20px;"></span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;
+                                    padding:10px 0; font-size:18px;">
+                            <span style="color:#6b7280;">Total abonado</span>
+                            <span id="finalTotal" style="font-weight:500; font-size:20px; color:#1f2937;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Detalle de productos -->
+                    <div id="finalSummary" style="margin-bottom:1.25rem;"></div>
+
+                    <!-- CTA WhatsApp -->
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:20px; margin-bottom:1.25rem;">
+                        <p style="font-size:18px; color:#1f2937; font-weight:500; margin-bottom:8px;">
+                            <i class="fas fa-info-circle" style="color:#059669;"></i> Próximo paso
+                        </p>
+                        <p style="font-size:17px; color:#6b7280; margin-bottom:1rem; line-height:1.6;">
+                            Envíenos el comprobante de transferencia por WhatsApp para confirmar su pedido. Le responderemos a la brevedad.
+                        </p>
+                        <a href="https://wa.me/5493513199729" target="_blank"
+                            style="display:flex; align-items:center; justify-content:center; gap:12px;
+                                background:#25D366; color:white; font-size:20px; font-weight:500;
+                                padding:18px; border-radius:10px; text-decoration:none;">
+                            <i class="fab fa-whatsapp" style="font-size:26px;"></i>
+                            Enviar comprobante por WhatsApp
+                        </a>
+                    </div>
+
+                    <!-- Volver -->
+                    <div style="text-align:center;">
+                        <a href="{{ url_for('shop') }}"
+                            style="display:inline-flex; align-items:center; gap:8px;
+                                padding:16px 32px; font-size:18px; font-weight:500;
+                                background:white; color:#1f2937; border:2px solid #d1d5db;
+                                border-radius:10px; text-decoration:none;">
+                            <i class="fas fa-arrow-left"></i> Volver a la tienda
+                        </a>
+                    </div>
+
                 </div>
             </div>
         </div>
