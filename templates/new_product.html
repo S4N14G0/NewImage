@@ -170,9 +170,22 @@
 
         <!-- Imagen -->
         <div class="mb-6">
-            <label for="imagenes" class="block font-semibold mb-2">Imágenes</label>
+            <label for="imagenes" class="block font-semibold mb-2">
+                Imágenes
+            </label>
             <input type="file" id="imagenes" name="imagenes" accept="image/*" multiple
-                    class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+                onchange="previewNuevas(this)">
+
+            <p class="text-sm text-gray-500 mt-2">
+                <i class="fas fa-star text-yellow-400"></i>
+                Hacé clic en una foto para marcarla como <strong>principal</strong>.
+            </p>
+
+            <!-- Input oculto que guarda el índice de la foto principal -->
+            <input type="hidden" id="imagen_principal_index" name="imagen_principal_index" value="0">
+
+            <div id="nuevasPreview" class="flex flex-wrap gap-3 mt-3"></div>
         </div>
 
         <!-- Botón -->
@@ -181,6 +194,78 @@
         </div>
     </form>
     <script src="{{ url_for('static', filename='Global.js') }}"></script>
+    <script>
+    let imagenPrincipalIndex = 0;
+
+    function previewNuevas(input) {
+        const container = document.getElementById("nuevasPreview");
+        container.innerHTML = "";
+        imagenPrincipalIndex = 0;
+        document.getElementById("imagen_principal_index").value = 0;
+
+        if (input.files.length === 0) return;
+
+        Array.from(input.files).forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const div = document.createElement("div");
+                div.className = "relative cursor-pointer";
+                div.dataset.index = index;
+                div.onclick = () => marcarPrincipal(index);
+
+                div.innerHTML = `
+                    <img src="${e.target.result}"
+                        id="preview-img-${index}"
+                        class="w-28 h-28 object-cover rounded-lg shadow transition-all
+                                ${index === 0 ? 'ring-4 ring-indigo-500' : 'ring-2 ring-gray-200 hover:ring-indigo-300'}">
+                    <div id="preview-badge-${index}"
+                        class="absolute top-1 left-1 text-xs px-2 py-0.5 rounded-full font-semibold
+                                ${index === 0 ? 'bg-indigo-600 text-white' : 'bg-black bg-opacity-40 text-white'}">
+                        ${index === 0 ? '⭐ Principal' : `Foto ${index + 1}`}
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center
+                                opacity-0 hover:opacity-100 transition-opacity rounded-lg
+                                bg-black bg-opacity-20">
+                        <span class="text-white text-xs font-semibold bg-black bg-opacity-50
+                                    px-2 py-1 rounded-full">
+                            Marcar principal
+                        </span>
+                    </div>
+                `;
+                container.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function marcarPrincipal(index) {
+        const total = document.getElementById("imagenes").files.length;
+
+        for (let i = 0; i < total; i++) {
+            const img = document.getElementById(`preview-img-${i}`);
+            const badge = document.getElementById(`preview-badge-${i}`);
+            if (!img || !badge) continue;
+
+            if (i === index) {
+                img.className = img.className.replace("ring-2 ring-gray-200 hover:ring-indigo-300", "ring-4 ring-indigo-500");
+                if (!img.className.includes("ring-indigo-500")) {
+                    img.classList.add("ring-4", "ring-indigo-500");
+                }
+                img.classList.remove("ring-2", "ring-gray-200");
+                badge.className = badge.className.replace("bg-black bg-opacity-40", "bg-indigo-600");
+                badge.textContent = "⭐ Principal";
+            } else {
+                img.classList.remove("ring-4", "ring-indigo-500");
+                img.classList.add("ring-2", "ring-gray-200");
+                badge.className = badge.className.replace("bg-indigo-600", "bg-black bg-opacity-40");
+                badge.textContent = `Foto ${i + 1}`;
+            }
+        }
+
+        imagenPrincipalIndex = index;
+        document.getElementById("imagen_principal_index").value = index;
+    }
+    </script>
 
 </main>
 {% endblock %}

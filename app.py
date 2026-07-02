@@ -634,29 +634,19 @@ def new_product():
 
         # Manejo de múltiples imágenes
         files = request.files.getlist("imagenes")
-        for file in files:
+        imagen_principal_index = int(request.form.get("imagen_principal_index", 0))
+
+        for i, file in enumerate(files):
             if allowed_file(file.filename):
-                ext = file.filename.rsplit(".", 1)[1].lower()
-                unique_name = f"{uuid4().hex}.{ext}"
-
-                if product.tipo == "repuestos":
-                    subfolder = "uploads/repuestos"
-                else:
-                    subfolder = "uploads"
-
-                upload_path = os.path.join("static", subfolder)
-                os.makedirs(upload_path, exist_ok=True)
-                
                 upload = cloudinary.uploader.upload(
                     file,
                     folder=f"newimage/{product.tipo}"
                 )
-
                 new_image = ProductImage(
-                    filename=upload["secure_url"],  # URL completa
-                    product_id=product.id
+                    filename=upload["secure_url"],
+                    product_id=product.id,
+                    es_principal=(i == imagen_principal_index)
                 )
-                
                 db.session.add(new_image)
 
         db.session.commit()  # guarda imágenes en la DB
