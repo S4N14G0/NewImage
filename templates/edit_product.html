@@ -238,7 +238,78 @@
     </form>
     
     <script src="{{ url_for('static', filename='Global.js') }}"></script>
+    <script>
+        // Preview de imágenes nuevas antes de subir
+        function previewNuevas(input) {
+            const container = document.getElementById("nuevasPreview");
+            container.innerHTML = "";
 
+            Array.from(input.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const div = document.createElement("div");
+                    div.className = "relative";
+                    div.innerHTML = `
+                        <img src="${e.target.result}"
+                            class="w-24 h-24 object-cover rounded-lg shadow border-2 border-dashed border-indigo-300">
+                        <span class="absolute bottom-1 left-0 right-0 text-center text-xs text-white
+                                    bg-black bg-opacity-50 rounded-b-lg py-0.5">Nueva</span>
+                    `;
+                    container.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Marcar imagen como principal (AJAX, sin recargar)
+        async function setPrincipal(imagenId, productoId) {
+            try {
+                const resp = await fetch(`/product/${productoId}/set_principal/${imagenId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+                const data = await resp.json();
+
+                if (!data.success) {
+                    alert("Error al cambiar la foto principal");
+                    return;
+                }
+
+                // Actualizar UI sin recargar la página
+                document.querySelectorAll("#imagenesActuales .relative").forEach(container => {
+                    const img = container.querySelector("img");
+                    const btn = container.querySelector("button");
+                    const badge = container.querySelector("span.bg-indigo-600");
+                    const idMatch = img?.id?.replace("img-", "");
+
+                    if (idMatch == imagenId) {
+                        // Esta es la nueva principal
+                        img.classList.add("ring-4", "ring-indigo-500");
+                        btn.classList.remove("bg-white", "text-gray-400", "hover:text-indigo-600",
+                                            "opacity-0", "group-hover:opacity-100");
+                        btn.classList.add("bg-indigo-600", "text-white");
+                        if (!badge) {
+                            const newBadge = document.createElement("span");
+                            newBadge.className = "absolute top-1 left-1 bg-indigo-600 text-white text-xs px-2 py-0.5 rounded-full font-semibold";
+                            newBadge.textContent = "Principal";
+                            container.appendChild(newBadge);
+                        }
+                    } else {
+                        // Las demás dejan de ser principal
+                        img.classList.remove("ring-4", "ring-indigo-500");
+                        btn.classList.add("bg-white", "text-gray-400", "hover:text-indigo-600",
+                                        "opacity-0", "group-hover:opacity-100");
+                        btn.classList.remove("bg-indigo-600", "text-white");
+                        if (badge) badge.remove();
+                    }
+                });
+
+            } catch (err) {
+                console.error("Error:", err);
+                alert("Error de conexión");
+            }
+        }
+    </script>
 </main>
 {% endblock %}
 
