@@ -172,23 +172,62 @@
 
         <!-- Cargar nuevas imágenes -->
         <div class="mb-6">
-            <label for="imagenes" class="block font-semibold mb-2">Imágenes</label>
+            <label for="imagenes" class="block font-semibold mb-2">Subir nuevas imágenes</label>
             <input type="file" id="imagenes" name="imagenes" multiple accept="image/*"
-                class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+                onchange="previewNuevas(this)">
+            
+            <!-- Preview de imágenes nuevas antes de subir -->
+            <div id="nuevasPreview" class="flex flex-wrap gap-3 mt-3"></div>
         </div>
 
         <!-- Imágenes actuales -->
         {% if product.imagenes %}
-        <div class="flex flex-wrap gap-4 mb-4">
-            {% for img in product.imagenes %}
-                <img src="{% if product.tipo == 'repuestos' %}
-                            {{ url_for('static', filename='uploads/repuestos/' ~ img.filename) }}
-                        {% else %}
-                            {{ url_for('static', filename='uploads/' ~ img.filename) }}
-                        {% endif %}"
-                    alt="{{ product.nombre }}"
-                    class="w-32 h-32 object-cover rounded shadow">
-            {% endfor %}
+        <div class="mb-6">
+            <label class="block font-semibold mb-3">
+                Imágenes actuales
+                <span class="text-sm font-normal text-gray-500 ml-2">
+                    — hacé clic en la estrella para elegir la foto principal
+                </span>
+            </label>
+
+            <div class="flex flex-wrap gap-4" id="imagenesActuales">
+                {% for img in product.imagenes %}
+                <div class="relative group" id="img-container-{{ img.id }}">
+
+                    <!-- Imagen -->
+                    <img src="{{ img.filename }}"
+                        alt="{{ product.nombre }}"
+                        class="w-32 h-32 object-cover rounded-lg shadow
+                                {% if img.es_principal %}ring-4 ring-indigo-500{% endif %}"
+                        id="img-{{ img.id }}">
+
+                    <!-- Badge "Principal" -->
+                    {% if img.es_principal %}
+                    <span class="absolute top-1 left-1 bg-indigo-600 text-white text-xs
+                                px-2 py-0.5 rounded-full font-semibold">
+                        Principal
+                    </span>
+                    {% endif %}
+
+                    <!-- Botón estrella -->
+                    <button type="button"
+                            onclick="setPrincipal({{ img.id }}, {{ product.id }})"
+                            class="absolute top-1 right-1 w-7 h-7 rounded-full shadow
+                                flex items-center justify-center transition
+                                {% if img.es_principal %}
+                                    bg-indigo-600 text-white
+                                {% else %}
+                                    bg-white text-gray-400 hover:text-indigo-600
+                                    opacity-0 group-hover:opacity-100
+                                {% endif %}"
+                            title="Marcar como foto principal">
+                        <i class="fas fa-star text-xs"></i>
+                    </button>
+
+                </div>
+                {% endfor %}
+            </div>
         </div>
         {% endif %}
 

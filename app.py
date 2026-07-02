@@ -216,9 +216,14 @@ def serializar_producto(product, dolar=None, descuento=None):
         dolar = obtener_dolar_manual()
     if descuento is None:
         descuento = obtener_descuento_transferencia()
-        
-    precio_real = round(product.precio * dolar, 2)
-    precio_lista = round(precio_real / (1 - descuento), 2)
+
+    precio_real, precio_lista = calcular_precios(product, dolar, descuento)
+
+    # Ordenar imágenes: la principal primero
+    imagenes_ordenadas = sorted(
+        product.imagenes,
+        key=lambda img: (not img.es_principal)  # True primero (False > True en sort)
+    )
 
     return {
         "id": product.id,
@@ -230,9 +235,7 @@ def serializar_producto(product, dolar=None, descuento=None):
         "descripcion": product.descripcion,
         "stock": product.stock,
         "observacion": product.observacion,
-        "imagenes": [
-            img.filename for img in product.imagenes
-        ]
+        "imagenes": [img.filename for img in imagenes_ordenadas]
     }
 
 def send_email(to, link):
@@ -726,6 +729,17 @@ def delete_product(product_id):
     db.session.commit()
     flash("Producto eliminado con éxito", "success")
     return redirect(url_for("admin_dashboard"))
+
+@app.route("/product/<int:product_id>/set_principal/<int:image_id>", methods=["POST"])
+@admin_required
+def set_imagen_principal(product_id, image_id):
+    # Desmarcar todas las imágenes del producto
+    ProductImage.query.filter_by(product_id=product_id).update({"es_principal": False})
+    # Marcar la elegida
+    imagen = ProductImage.query.get_or_404(image_id)
+    imagen.es_principal = True
+    db.session.commit()
+    return jsonify({"success": True, "imagen_id": image_id})
 
 # ---------------------------------------------------
 # RUTAS DE CHECKOUT Y PAGOS
