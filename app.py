@@ -21,7 +21,8 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from dotenv import load_dotenv
-
+from PIL import Image
+import io
 
 # ---------------------------------------------------
 # CONFIGURACIÓN DE FLASK
@@ -602,6 +603,18 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Crea la carpeta si no existe
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+def comprimir_imagen(file_storage, max_size=(1920, 1920), calidad=85):
+    """Redimensiona y comprime antes de subir a Cloudinary."""
+    img = Image.open(file_storage)
+    if img.mode in ("RGBA", "P"):
+        img = img.convert("RGB")
+    img.thumbnail(max_size, Image.LANCZOS)
+
+    buffer = io.BytesIO()
+    img.save(buffer, format="JPEG", quality=calidad, optimize=True)
+    buffer.seek(0)
+    return buffer
 # ---------------------------------------------------
 # RUTAS DE PRODUCTOS (ADMIN)
 # ---------------------------------------------------
@@ -638,16 +651,22 @@ def new_product():
 
         for i, file in enumerate(files):
             if allowed_file(file.filename):
-                upload = cloudinary.uploader.upload(
-                    file,
-                    folder=f"newimage/{product.tipo}"
-                )
-                new_image = ProductImage(
-                    filename=upload["secure_url"],
-                    product_id=product.id,
-                    es_principal=(i == imagen_principal_index)
-                )
-                db.session.add(new_image)
+                try:
+                    imagen_comprimida = comprimir_imagen(file)
+                    upload = cloudinary.uploader.upload(
+                        imagen_comprimida,
+                        folder=f"newimage/{product.tipo}"
+                    )
+                    new_image = ProductImage(
+                        filename=upload["secure_url"],
+                        public_id=upload["public_id"],
+                        product_id=product.id,
+                        es_principal=(i == imagen_principal_index)
+                    )
+                    db.session.add(new_image)
+                except Exception as e:
+                    print("ERROR CLOUDINARY:", e)
+                    flash(f"No se pudo subir una imagen ({file.filename}).", "warning")
 
         db.session.commit()  # guarda imágenes en la DB
 
@@ -674,35 +693,23 @@ def edit_product(product_id):
         files = request.files.getlist("imagenes")
 
         if files and files[0].filename:
-            try:
-                nuevas_imagenes = []
-
-                for file in files:
-                    if allowed_file(file.filename):
+            for file in files:
+                if allowed_file(file.filename):
+                    try:
+                        imagen_comprimida = comprimir_imagen(file)
                         upload = cloudinary.uploader.upload(
-                            file,
+                            imagen_comprimida,
                             folder=f"newimage/{product.tipo}"
                         )
-
-                        nuevas_imagenes.append(
-                            ProductImage(
-                                filename=upload["secure_url"],
-                                product_id=product.id
-                            )
+                        nueva_img = ProductImage(
+                            filename=upload["secure_url"],
+                            public_id=upload["public_id"],
+                            product_id=product.id
                         )
-
-                # 🔥 SOLO si todo salió bien
-                for img in product.imagenes:
-                    db.session.delete(img)
-
-                for img in nuevas_imagenes:
-                    db.session.add(img)
-
-            except Exception as e:
-                db.session.rollback()
-                print("ERROR CLOUDINARY:", e)
-                flash("Error al subir imágenes", "danger")
-                return redirect(request.url)
+                        db.session.add(nueva_img)
+                    except Exception as e:
+                        print("ERROR CLOUDINARY:", e)
+                        flash(f"No se pudo subir una imagen ({file.filename}).", "warning")
 
         db.session.commit()
         flash("Producto actualizado con éxito", "success")
@@ -730,6 +737,25 @@ def set_imagen_principal(product_id, image_id):
     imagen.es_principal = True
     db.session.commit()
     return jsonify({"success": True, "imagen_id": image_id})
+
+@app.route("/product/image/delete/<int:image_id>", methods=["POST"])
+@admin_required
+def delete_product_image(image_id):
+    imagen = ProductImage.query.get_or_404(image_id)
+    product_id = imagen.product_id
+
+    if imagen.public_id:
+        try:
+            cloudinary.uploader.destroy(imagen.public_id)
+        except Exception as e:
+            print("ERROR CLOUDINARY (destroy):", e)
+            # seguimos igual, no dejamos la imagen huérfana en tu DB
+
+    db.session.delete(imagen)
+    db.session.commit()
+
+    flash("Imagen eliminada correctamente.", "success")
+    return redirect(url_for("edit_product", product_id=product_id))
 
 # ---------------------------------------------------
 # RUTAS DE CHECKOUT Y PAGOS

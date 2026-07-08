@@ -225,6 +225,19 @@
                         <i class="fas fa-star text-xs"></i>
                     </button>
 
+                    <div class="imagen-item">
+                        <img src="{{ img.filename }}" width="120" alt="Imagen producto">
+                        
+                        <form action="{{ url_for('set_imagen_principal', product_id=product.id, image_id=img.id) }}" method="POST">
+                        <button type="submit">{{ "★ Principal" if img.es_principal else "Marcar como principal" }}</button>
+                        </form>
+
+                        <form action="{{ url_for('delete_product_image', image_id=img.id) }}" method="POST"
+                            onsubmit="return confirm('¿Eliminar esta imagen?');">
+                        <button type="submit" class="btn-eliminar">🗑 Eliminar</button>
+                        </form>
+                    </div>
+
                 </div>
                 {% endfor %}
             </div>

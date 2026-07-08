@@ -35,6 +35,7 @@ class Configuracion(db.Model):
 class ProductImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(200), nullable=False)
+    public_id = db.Column(db.String(255), nullable=True)
     product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False) 
     es_principal = db.Column(db.Boolean, default=False)  
     
