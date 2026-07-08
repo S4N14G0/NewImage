@@ -755,7 +755,8 @@ def delete_product_image(image_id):
     db.session.commit()
 
     flash("Imagen eliminada correctamente.", "success")
-    return redirect(url_for("edit_product", product_id=product_id))
+    return jsonify({"success": True, "image_id": image_id, "product_id": product_id})
+
 
 # ---------------------------------------------------
 # RUTAS DE CHECKOUT Y PAGOS

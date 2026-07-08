@@ -226,17 +226,14 @@
                     </button>
 
                     <!-- Botón eliminar (papelera roja, arriba-derecha del todo, siempre visible en hover) -->
-                    <form action="{{ url_for('delete_product_image', image_id=img.id) }}" method="POST"
-                        onsubmit="return confirm('¿Eliminar esta imagen?');"
-                        class="absolute bottom-1 right-1">
-                        <button type="submit"
-                                class="w-7 h-7 rounded-full shadow bg-white text-red-500
-                                    flex items-center justify-center opacity-0
-                                    group-hover:opacity-100 transition hover:bg-red-500 hover:text-white"
-                                title="Eliminar imagen">
-                            <i class="fas fa-trash text-xs"></i>
-                        </button>
-                    </form>
+                    <button type="button"
+                            onclick="eliminarImagen({{ img.id }})"
+                            class="absolute bottom-1 right-1 w-7 h-7 rounded-full shadow bg-white text-red-500
+                                flex items-center justify-center opacity-0
+                                group-hover:opacity-100 transition hover:bg-red-500 hover:text-white"
+                            title="Eliminar imagen">
+                        <i class="fas fa-trash text-xs"></i>
+                    </button>
 
                 </div>
                 {% endfor %}
@@ -322,6 +319,32 @@
                 alert("Error de conexión");
             }
         }
+
+        async function eliminarImagen(imagenId) {
+            if (!confirm("¿Eliminar esta imagen?")) return;
+
+            try {
+                const resp = await fetch(`/product/image/delete/${imagenId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+                const data = await resp.json();
+
+                if (!data.success) {
+                    alert("Error al eliminar la imagen");
+                    return;
+                }
+
+                // Sacar la imagen del DOM sin recargar la página
+                const container = document.getElementById(`img-container-${imagenId}`);
+                if (container) container.remove();
+
+            } catch (err) {
+                console.error("Error:", err);
+                alert("Error de conexión al eliminar la imagen");
+            }
+        }
+
     </script>
 </main>
 {% endblock %}
