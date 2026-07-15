@@ -239,8 +239,6 @@ def serializar_producto(product, dolar=None, descuento=None):
         "imagenes": [img.filename for img in imagenes_ordenadas]
     }
 
-def send_email(to, link):
-    print(f"Enviar email a {to} con link: {link}")
 
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
@@ -438,20 +436,36 @@ def reset_password(token):
     reset = PasswordReset.query.filter_by(token=token).first_or_404()
 
     if reset.expires_at < datetime.utcnow():
-        flash("Token expirado", "danger")
+        flash("El enlace expiró. Solicitá uno nuevo.", "danger")
+        db.session.delete(reset)
+        db.session.commit()
         return redirect(url_for('contraseña_olvidada'))
-    
-    if request.method == 'POST':
-        user = User.query.filter_by(email=reset.email).first()
-        user.set_password(request.form['password'])
 
+    if request.method == 'POST':
+        password = request.form.get('password')
+        confirm = request.form.get('confirm_password')
+
+        if not password or len(password) < 6:
+            flash("La contraseña debe tener al menos 6 caracteres.", "error")
+            return redirect(request.url)
+
+        if password != confirm:
+            flash("Las contraseñas no coinciden.", "error")
+            return redirect(request.url)
+
+        user = User.query.filter_by(email=reset.email).first()
+        if not user:
+            flash("Usuario no encontrado.", "danger")
+            return redirect(url_for('contraseña_olvidada'))
+
+        user.set_password(password)
         db.session.delete(reset)
         db.session.commit()
 
-        flash("Contraseña actualizada", "success")
+        flash("Contraseña actualizada. Ya podés iniciar sesión.", "success")
         return redirect(url_for('login'))
 
-    return render_template('reset_password.html')
+    return render_template('reset_password.html', token=token)
 
 def send_email(to, link):
     msg = Message(
