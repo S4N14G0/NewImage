@@ -518,6 +518,116 @@ def send_email(to, link):
 
     mail.send(msg)
 
+def enviar_recibo_transferencia(venta):
+    """Envía recibo al cliente (con link de WhatsApp para el comprobante) y copia al vendedor."""
+    wa_number = os.getenv("SELLER_WHATSAPP")
+    wa_mensaje = f"Hola! Te paso el comprobante de mi transferencia. Orden %23{venta.id}"
+    wa_link = f"https://wa.me/{wa_number}?text={wa_mensaje}"
+
+    items_html = "".join(
+        f"<li>{item.cantidad} x {item.producto_nombre} — ${item.precio_unitario:,.2f}</li>"
+        for item in venta.items
+    )
+
+    html_cliente = f"""
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 600px; margin: auto; color: #333;">
+        <h2 style="color: #1f2937;">¡Gracias por tu compra en NewImage!</h2>
+        <p>Hola {venta.comprador_nombre or ''},</p>
+        <p>Registramos tu pedido <strong>#{venta.id}</strong> con el siguiente detalle:</p>
+        <ul>{items_html}</ul>
+        <p><strong>Total: ${venta.monto_total:,.2f}</strong></p>
+        <p>Método de pago: <strong>Transferencia bancaria</strong></p>
+        <p>Cuenta destino: <strong>{venta.cuenta_destino or 'consultar con el vendedor'}</strong></p>
+        <p>Tu pedido queda <strong>pendiente</strong> hasta que confirmemos la transferencia.</p>
+        <p style="text-align: center; margin: 30px 0;">
+            <a href="{wa_link}"
+               style="background-color: #25D366; color: #ffffff; padding: 12px 24px;
+                      text-decoration: none; border-radius: 6px; font-weight: bold;">
+               📲 Enviar comprobante por WhatsApp
+            </a>
+        </p>
+        <p style="font-size: 13px; color: #6b7280;">
+            Si ya enviaste el comprobante, ignorá este botón — lo estamos revisando.
+        </p>
+        <hr style="margin: 30px 0;">
+        <p style="font-size: 12px; color: #6b7280;">
+            © {datetime.utcnow().year} NewImage · Equipamiento profesional para Pilates
+        </p>
+    </div>
+    """
+
+    if venta.comprador_email:
+        msg = Message(
+            subject=f"Confirmación de pedido #{venta.id} - NewImage",
+            recipients=[venta.comprador_email]
+        )
+        msg.html = html_cliente
+        msg.body = f"Pedido #{venta.id} registrado. Total: ${venta.monto_total:,.2f}. Enviá tu comprobante por WhatsApp: {wa_link}"
+        mail.send(msg)
+
+    # Copia interna al vendedor
+    seller_email = os.getenv("SELLER_EMAIL")
+    if seller_email:
+        msg_vendedor = Message(
+            subject=f"🔔 Nueva venta por transferencia #{venta.id}",
+            recipients=[seller_email]
+        )
+        msg_vendedor.html = f"""
+        <h3>Nueva venta pendiente de transferencia</h3>
+        <p><strong>Cliente:</strong> {venta.comprador_nombre} ({venta.comprador_email}, {venta.comprador_telefono})</p>
+        <ul>{items_html}</ul>
+        <p><strong>Total: ${venta.monto_total:,.2f}</strong></p>
+        <p>Esperando comprobante del cliente.</p>
+        """
+        mail.send(msg_vendedor)
+
+
+def enviar_recibo_pago(venta):
+    """Envía recibo de pago confirmado (MercadoPago) al cliente y copia al vendedor."""
+    items_html = "".join(
+        f"<li>{item.cantidad} x {item.producto_nombre} — ${item.precio_unitario:,.2f}</li>"
+        for item in venta.items
+    )
+
+    html_cliente = f"""
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 600px; margin: auto; color: #333;">
+        <h2 style="color: #16a34a;">¡Pago confirmado! ✅</h2>
+        <p>Hola {venta.comprador_nombre or ''},</p>
+        <p>Confirmamos el pago de tu pedido <strong>#{venta.id}</strong>:</p>
+        <ul>{items_html}</ul>
+        <p><strong>Total pagado: ${venta.monto_total:,.2f}</strong></p>
+        <p>Método de pago: <strong>Mercado Pago</strong></p>
+        <p>¡Gracias por tu compra! Nos pondremos en contacto para coordinar la entrega.</p>
+        <hr style="margin: 30px 0;">
+        <p style="font-size: 12px; color: #6b7280;">
+            © {datetime.utcnow().year} NewImage · Equipamiento profesional para Pilates
+        </p>
+    </div>
+    """
+
+    if venta.comprador_email:
+        msg = Message(
+            subject=f"Pago confirmado - Pedido #{venta.id} - NewImage",
+            recipients=[venta.comprador_email]
+        )
+        msg.html = html_cliente
+        msg.body = f"Pago confirmado para el pedido #{venta.id}. Total: ${venta.monto_total:,.2f}."
+        mail.send(msg)
+
+    seller_email = os.getenv("SELLER_EMAIL")
+    if seller_email:
+        msg_vendedor = Message(
+            subject=f"💰 Pago confirmado - Pedido #{venta.id}",
+            recipients=[seller_email]
+        )
+        msg_vendedor.html = f"""
+        <h3>Pago recibido vía Mercado Pago</h3>
+        <p><strong>Cliente:</strong> {venta.comprador_nombre} ({venta.comprador_email}, {venta.comprador_telefono})</p>
+        <ul>{items_html}</ul>
+        <p><strong>Total: ${venta.monto_total:,.2f}</strong></p>
+        """
+        mail.send(msg_vendedor)
+
 # ---------------------------------------------------
 # RUTAS DE PERFIL Y ADMIN
 # ---------------------------------------------------
@@ -996,6 +1106,11 @@ def webhook_mp():
 
     venta.estado = "pagado"
     db.session.commit()
+    
+    try:
+        enviar_recibo_pago(venta)
+    except Exception as e:
+        print("ERROR enviando recibo de pago:", e)
 
     return "ok", 200
 
