@@ -959,6 +959,11 @@ def checkout():
         ))
 
     db.session.commit()
+    
+    try:
+        enviar_recibo_transferencia(venta)
+    except Exception as e:
+        print("ERROR enviando recibo de transferencia:", e)
 
     return {
         "success": True,
