@@ -23,6 +23,7 @@ import cloudinary.api
 from dotenv import load_dotenv
 from PIL import Image
 import io
+import re
 
 # ---------------------------------------------------
 # CONFIGURACIÓN DE FLASK
@@ -568,6 +569,20 @@ def enviar_recibo_transferencia(venta):
     # Copia interna al vendedor
     seller_email = os.getenv("SELLER_EMAIL")
     if seller_email:
+        tel_cliente = limpiar_telefono_wa(venta.comprador_telefono)
+        boton_whatsapp = ""
+        if tel_cliente:
+            wa_link_cliente = f"https://wa.me/{tel_cliente}"
+            boton_whatsapp = f"""
+            <p style="text-align: center; margin: 20px 0;">
+                <a href="{wa_link_cliente}"
+                   style="background-color: #25D366; color: #ffffff; padding: 12px 24px;
+                          text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+                   📲 Contactar al cliente por WhatsApp
+                </a>
+            </p>
+            """
+
         msg_vendedor = Message(
             subject=f"🔔 Nueva venta por transferencia #{venta.id}",
             recipients=[seller_email]
@@ -578,6 +593,7 @@ def enviar_recibo_transferencia(venta):
         <ul>{items_html}</ul>
         <p><strong>Total: ${venta.monto_total:,.2f}</strong></p>
         <p>Esperando comprobante del cliente.</p>
+        {boton_whatsapp}
         """
         mail.send(msg_vendedor)
 
@@ -616,6 +632,20 @@ def enviar_recibo_pago(venta):
 
     seller_email = os.getenv("SELLER_EMAIL")
     if seller_email:
+        tel_cliente = limpiar_telefono_wa(venta.comprador_telefono)
+        boton_whatsapp = ""
+        if tel_cliente:
+            wa_link_cliente = f"https://wa.me/{tel_cliente}"
+            boton_whatsapp = f"""
+            <p style="text-align: center; margin: 20px 0;">
+                <a href="{wa_link_cliente}"
+                   style="background-color: #25D366; color: #ffffff; padding: 12px 24px;
+                          text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+                   📲 Contactar al cliente por WhatsApp
+                </a>
+            </p>
+            """
+
         msg_vendedor = Message(
             subject=f"💰 Pago confirmado - Pedido #{venta.id}",
             recipients=[seller_email]
@@ -625,8 +655,34 @@ def enviar_recibo_pago(venta):
         <p><strong>Cliente:</strong> {venta.comprador_nombre} ({venta.comprador_email}, {venta.comprador_telefono})</p>
         <ul>{items_html}</ul>
         <p><strong>Total: ${venta.monto_total:,.2f}</strong></p>
+        {boton_whatsapp}
         """
         mail.send(msg_vendedor)
+
+def limpiar_telefono_wa(telefono, codigo_pais_default="549"):
+    """
+    Limpia un número de teléfono ingresado en texto libre y lo deja
+    en formato internacional para wa.me (solo dígitos, con código de país).
+    """
+    if not telefono:
+        return None
+
+    # Dejar solo dígitos
+    solo_numeros = re.sub(r"\D", "", telefono)
+
+    if not solo_numeros:
+        return None
+
+    # Si ya empieza con el código de país (54), lo dejamos como está
+    if solo_numeros.startswith("54"):
+        return solo_numeros
+
+    # Si empieza con un 0 (característica local tipo "0351..."), lo sacamos
+    if solo_numeros.startswith("0"):
+        solo_numeros = solo_numeros[1:]
+
+    # Le anteponemos el código de país + 9 (celular AR)
+    return f"{codigo_pais_default}{solo_numeros}"
 
 # ---------------------------------------------------
 # RUTAS DE PERFIL Y ADMIN
