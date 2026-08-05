@@ -294,6 +294,13 @@
                         <div class="swiper-button-prev"></div>
                     </div>
                 </div>
+
+                <button onclick="compartirPorWhatsApp()" 
+                        class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+                        title="Compartir por WhatsApp">
+                    <i class="fab fa-whatsapp text-green-500 text-lg"></i>
+                    Compartir
+                </button>
             </div>
         </div>
         {% endblock %}
@@ -378,6 +385,16 @@
             fade.style.opacity = atBottom ? "0" : "1";
         });
     });
+
+    function compartirPorWhatsApp() {
+    const nombreProducto = document.querySelector('h1').textContent.trim();
+    const url = window.location.href;
+    
+    const mensaje = `¡Mirá este producto! ${nombreProducto}\n${url}`;
+    const wa_link = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+    
+    window.open(wa_link, '_blank');
+}
     </script>
 
     <script>
