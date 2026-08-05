@@ -209,12 +209,6 @@
                     <h1 class="text-4xl font-bold text-gray-900 mb-2">
                         {{ product.nombre }}
                     </h1>
-                    <button onclick="compartirPorWhatsApp()" 
-                        class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
-                        title="Compartir por WhatsApp">
-                    <i class="fab fa-whatsapp text-green-500 text-lg"></i>
-                    Compartir
-                </button>
                     <div class="relative mt-2">
                         <div id="productDescription"
                             class="product-desc text-gray-700 leading-relaxed relative">
@@ -300,6 +294,22 @@
                         <div class="swiper-button-prev"></div>
                     </div>
                 </div>
+
+                <button onclick="compartirPorWhatsApp()"
+                    class="inline-flex items-center gap-2
+                    px-5 py-3 mt-3
+                    rounded-full
+                    bg-green-500
+                    text-white
+                    font-semibold
+                    hover:bg-green-600
+                    transition
+                    shadow-md hover:shadow-lg">
+
+                    <i class="fab fa-whatsapp text-xl"></i>
+                    Compartir por WhatsApp
+
+                </button>
             </div>
         </div>
         {% endblock %}
