@@ -236,7 +236,7 @@
                 </div>
 
                 <!-- Cantidad + botón -->
-                <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
+                <div class="flex flex-col md:flex-row items-start md:items-center gap-4 w-full">
                     <label for="qty-{{ product.id }}" class="font-medium">Cantidad:</label>
                     <input id="qty-{{ product.id }}"
                             type="number"
@@ -249,13 +249,13 @@
                         Stock disponible: <strong>{{ product.stock }}</strong>
                     </p>
                     {% if not ventas_activas %}
-                        <div class="text-center bg-red-100 text-red-700 p-4 rounded mb-4 font-semibold">
+                        <div class="text-center bg-red-100 text-red-700 p-4 rounded mb-4 font-semibold w-full">
                             🚫 Las ventas están actualmente desactivadas.
                         </div>
                     {% else %}
                         {% if product.stock > 0 %}
                             <button type="button" 
-                                class="flex-1 bg-indigo-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-indigo-700 transition"
+                                class="w-full md:flex-1 bg-indigo-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-indigo-700 transition"
                                 data-id="{{ product.id }}"
                                 data-name="{{ product.nombre }}"
                                 data-price-ars="{{ product.precio_lista }}"
@@ -264,7 +264,7 @@
                             🛒 Agregar al carrito
                             </button>
                         {% else %}
-                            <button class="btn bg-gray-400 text-white cursor-not-allowed" disabled>
+                            <button class="w-full md:flex-1 btn bg-gray-400 text-white cursor-not-allowed" disabled>
                                 Sin stock
                             </button>
                         {% endif %}
