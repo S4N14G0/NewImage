@@ -152,11 +152,14 @@ function updateCart() {
   cartItemsContainer.innerHTML = "";
 
   if (cart.length === 0) {
-    cartItemsContainer.innerHTML = `
-      <li class="py-6 flex justify-center text-gray-500">Tu carrito está vacío</li>`;
-    document.getElementById("cartSubtotal").textContent = "$0.00";
-    document.getElementById("cartTotal").textContent = "$0.00";
-    return;
+      cartItemsContainer.innerHTML = `
+        <li class="flex-1 flex flex-col items-center justify-center gap-3 text-gray-400 py-12">
+          <i class="fas fa-shopping-cart text-5xl"></i>
+          <p>Tu carrito está vacío</p>
+        </li>`;
+      document.getElementById("cartSubtotal").textContent = "$0.00";
+      document.getElementById("cartTotal").textContent = "$0.00";
+      return;
   }
 
   let subtotal = 0;
@@ -299,10 +302,9 @@ async function compartirCarrito() {
 
 // Inicializar cuando cargue la página
 document.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("carritoRecuperado") === "1") {
-    updateCart();
-    toggleCart();
+  updateCart();
+  if (typeof showDolarInAdmin === "function") {
+    showDolarInAdmin();
   }
 });
 
