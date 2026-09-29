@@ -6,7 +6,7 @@ Flask-Mail
 python-dotenv
 mercadopago
 gunicorn
-psycopg2
+psycopg2-binary==2.9.9
 pytz
 uuid
 cloudinary
