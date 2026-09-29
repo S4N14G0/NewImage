@@ -90,7 +90,11 @@ function renderProducts(products) {
 
 
 async function showDolarInAdmin() {
-  document.getElementById("dolarValue").textContent = `$${dolarBlue.toFixed(2)} ARS`;
+  const dolarValueEl = document.getElementById("dolarValue");
+  if (!dolarValueEl) return; // esta página no tiene ese elemento, no hacemos nada
+  if (typeof dolarManual === "undefined") return;
+
+  dolarValueEl.textContent = `$${dolarManual.toFixed(2)} ARS`;
 }
 
 // Agregar producto al carrito
