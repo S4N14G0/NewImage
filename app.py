@@ -942,6 +942,66 @@ def delete_product_image(image_id):
 # RUTAS DE CHECKOUT Y PAGOS
 # ---------------------------------------------------
 
+@app.route("/api/compartir-carrito", methods=["POST"])
+def compartir_carrito():
+    data = request.get_json()
+    items = data.get("items", [])
+
+    if not items:
+        return jsonify({"error": "El carrito está vacío"}), 400
+
+    items_limpios = [{"id": i["id"], "quantity": i["quantity"]} for i in items]
+
+    nuevo = CarritoCompartido(
+        items=items_limpios,
+        expira_en=datetime.utcnow() + timedelta(days=7)
+    )
+    db.session.add(nuevo)
+    db.session.commit()
+
+    link = url_for("cargar_carrito_compartido", token=nuevo.token, _external=True)
+    return jsonify({"link": link})
+
+
+@app.route("/carrito/compartido/<token>")
+def cargar_carrito_compartido(token):
+    compartido = CarritoCompartido.query.filter_by(token=token).first_or_404()
+
+    if compartido.expira_en < datetime.utcnow():
+        flash("Este carrito compartido ya expiró.", "warning")
+        return redirect(url_for("shop"))
+
+    dolar = obtener_dolar_manual()
+    descuento = obtener_descuento_transferencia()
+
+    items_validos = []
+    productos_sin_stock = []
+
+    for item in compartido.items:
+        product = Product.query.get(item["id"])
+        if not product:
+            continue
+        if product.stock <= 0:
+            productos_sin_stock.append(product.nombre)
+            continue
+
+        _, precio_lista = calcular_precios(product, dolar, descuento)
+        cantidad = min(item["quantity"], product.stock)
+
+        items_validos.append({
+            "id": product.id,
+            "name": product.nombre,
+            "priceARS": precio_lista,
+            "quantity": cantidad,
+            "stock": product.stock
+        })
+
+    return render_template(
+        "cargar_carrito.html",
+        items=items_validos,
+        productos_sin_stock=productos_sin_stock
+    )
+
 @app.route("/update_observacion/<int:product_id>", methods=["POST"])
 @admin_required
 def update_observacion(product_id):

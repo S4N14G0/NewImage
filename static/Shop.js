@@ -269,6 +269,40 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+async function compartirCarrito() {
+  if (cart.length === 0) {
+    alert("Tu carrito está vacío");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/compartir-carrito", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: cart })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      alert(data.error);
+      return;
+    }
+
+    const mensaje = `¡Mirá el carrito que te armé en NewImage! ${data.link}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(mensaje)}`, "_blank");
+  } catch (err) {
+    console.error("Error al compartir carrito:", err);
+    alert("No se pudo generar el link. Intentá de nuevo.");
+  }
+}
+
 // Inicializar cuando cargue la página
-document.addEventListener("DOMContentLoaded", updateCart, showDolarInAdmin);
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("carritoRecuperado") === "1") {
+    updateCart();
+    toggleCart();
+  }
+});
 

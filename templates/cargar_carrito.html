@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NewImage</title>
+  <link rel="stylesheet" href="../static/Shop.css">
+  <link rel="stylesheet" href="../static/Navbar.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagenes/Logo.png') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="sticky-nav">
+        <div class="container">
+            <div class="nav-content">
+                <a href="{{ url_for('index') }}" class="logo" >
+                    <img src="{{ url_for('static', filename='imagenes/Logo.png') }}" alt="Logo PilatesPro" class="logo-img">
+                    <span class="logo-text">NewImage</span>
+                </a>
+                
+                <div class="desktop-menu">
+                    <a href="{{ url_for('index') }}">Inicio</a>
+                    <a href="{{ url_for('shop') }}">Productos</a>
+                    <a href="{{ url_for('repuestos') }}">Repuestos</a>
+                </div>
+                <div class="nav-actions">
+                    <button onclick="toggleCart()" class="cart-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span id="cartCount" class="cart-badge">0</span>
+                    </button>
+                    
+                    <div class="nav-actions relative">  
+
+                    {% if user %}
+
+                        <button onclick="toggleUserMenu()"
+                            class="btn btn-secondary flex items-center gap-2">
+                            👤 {{ user.username }}
+                            <span class="text-xs">▼</span>
+                        </button>
+
+                        <div id="userMenu"
+                            class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50">
+
+                            {% if user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">
+                                Panel Admin
+                            </a>
+                            {% endif %}
+
+                            <form action="{{ url_for('logout') }}" method="post">
+                                <button class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">
+                                    Cerrar sesión
+                                </button>
+                            </form>
+
+                        </div>
+
+                    {% else %}
+
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">
+                            Iniciar sesión
+                        </a>
+
+                    {% endif %}
+                    </div>   
+                </div>
+            </div>
+        </div>
+    </nav>
+
+                
+    <!-- Mobile menu -->
+    <div class="mobile-menu">
+
+        <a href="{{ url_for('index') }}" class="mobile-nav-item">
+            <i class="fas fa-home"></i>
+            <span>Inicio</span>
+        </a>
+
+        <a href="{{ url_for('shop') }}" class="mobile-nav-item">
+            <i class="fas fa-box"></i>
+            <span>Productos</span>
+        </a>
+
+        <a href="{{ url_for('repuestos') }}" class="mobile-nav-item">
+            <i class="fas fa-tools"></i>
+            <span>Repuestos</span>
+        </a>
+
+        <div class="mobile-nav-item mobile-account">
+
+            <button onclick="toggleMobileUserMenu()" class="mobile-account-btn">
+                <i class="fas fa-user"></i>
+                <span>Cuenta</span>
+            </button>
+
+            <div id="mobileUserMenu" class="mobile-user-dropdown hidden">
+
+                {% if user %}
+                    {% if user.is_admin %}
+                    <a href="{{ url_for('admin_dashboard') }}">Panel Admin</a>
+                    {% endif %}
+
+                    <form action="{{ url_for('logout') }}" method="post">
+                        <button>Cerrar sesión</button>
+                    </form>
+
+                {% else %}
+                    <a href="{{ url_for('login') }}">Iniciar sesión</a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+    <footer class="bg-gray-900 text-gray-300 py-10 mt-4">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">                
+            <!-- Logo y descripción -->
+            <div>
+                <h2 class="text-xl font-bold text-white mb-3">NewImage</h2>
+                <p class="text-sm">
+                    Equipos de Pilates y accesorios de la mejor calidad. 
+                    Innovación y confianza para tu entrenamiento.
+                </p>
+            </div>
+
+            <!-- Links rápidos -->
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-3">Enlaces rápidos</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="{{ url_for('index') }}" class="hover:text-white">Inicio</a></li>
+                    <li><a href="{{ url_for('shop') }}" class="hover:text-white">Productos</a></li>
+                    <li><a href="{{ url_for('repuestos') }}" class="hover:text-white">Repuestos</a></li>
+                </ul>
+            </div>
+
+            <!-- Contacto -->
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-3">Contacto</h3>
+                <ul class="space-y-2 text-sm">
+                    <li>📍 Cordoba, Argentina</li>
+                    <li>📞 +54 9 351 319-9729</li>
+                    <li>✉️ estetica.ni17@gmail.com</li>
+                </ul>
+            </div>
+
+            <!-- Redes sociales -->
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-3">Seguinos</h3>
+                <div class="flex space-x-4">
+                    <a href="https://www.instagram.com/newimage.pilates?igsh=MTNwc2FlczE5Y2xqMg==" class="text-gray-400 hover:text-white text-2xl">
+                    <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://wa.me/5493513199729" class="text-gray-400 hover:text-white text-2xl">
+                    <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://www.facebook.com/newimagestetica/?locale=es_LA" class="text-gray-400 hover:text-white text-2xl">
+                    <i class="fab fa-facebook"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+            <!-- Línea inferior -->
+        <div class="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-500">
+            © 2026 NewImage. Todos los derechos reservados.
+        </div>
+    </footer>
+    <script>
+        {% if productos_sin_stock %}
+            alert("Estos productos ya no están disponibles y no se agregaron: {{ productos_sin_stock | join(', ') }}");
+        {% endif %}
+        localStorage.setItem("cart_principal", JSON.stringify({{ items | tojson }}));
+        window.location.href = "{{ url_for('shop') }}?carritoRecuperado=1";
+    </script>
+</body>
+</html>

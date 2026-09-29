@@ -1,7 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from uuid import uuid4
+from datetime import datetime
+666
 db = SQLAlchemy()
 
 class User(db.Model):
@@ -118,7 +120,15 @@ class PasswordReset(db.Model):
     expires_at = db.Column(db.DateTime)    
 
 
+class CarritoCompartido(db.Model):
+    __tablename__ = "carritos_compartidos"
 
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(36), unique=True, nullable=False,
+                       default=lambda: str(uuid4()))
+    items = db.Column(db.JSON, nullable=False)  # [{id, quantity}, ...]
+    creado_en = db.Column(db.DateTime, default=datetime.utcnow)
+    expira_en = db.Column(db.DateTime)
 
 
 
