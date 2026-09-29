@@ -219,22 +219,24 @@
                                 <p>Total</p>
                                 <p id="total"><span id="cartTotal">$0.00</span></p>
                             </div>
-                            <a href="{{ url_for('check') }}" id="checkoutButton" class="...">
+
+                            <a href="{{ url_for('check') }}" id="checkoutButton"
+                                class="flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition">
                                 Finalizar compra
                             </a>
 
-                            <button type="button" onclick="compartirCarrito()"
-                                class="mt-3 w-full flex justify-center items-center gap-2 px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-green-500 hover:bg-green-600 transition">
-                                <i class="fab fa-whatsapp"></i>
-                                Compartir carrito
-                            </button>
-
-                            <p class="mt-6 flex justify-center text-sm text-gray-500">
+                            <p class="mt-4 flex justify-center text-sm text-gray-500">
                                 o
                                 <button type="button" id="continueShoppingButton" class="text-indigo-600 font-medium ml-1" onclick="toggleCart()">
                                     Continuar comprando
                                 </button>
                             </p>
+
+                            <button type="button" onclick="compartirCarrito()"
+                                class="mt-3 w-full flex justify-center items-center gap-2 px-6 py-3 rounded-md text-base font-medium text-green-600 border-2 border-green-500 hover:bg-green-50 transition">
+                                <i class="fab fa-whatsapp text-lg"></i>
+                                Compartir carrito
+                            </button>
                         </div>
                     </div>
                 </div>
