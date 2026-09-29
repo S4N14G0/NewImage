@@ -150,7 +150,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="border-t border-gray-200 py-6 px-4 sm:px-6">
+                        <div class="border-t border-gray-200 py-6 px-4 sm:px-6 pb-24 md:pb-6">
                             <div class="flex justify-between text-base font-medium text-gray-900 mb-4">
                                 <p>Subtotal</p>
                                 <p id="subtotal"><span id="cartSubtotal">$0.00</span></p>
@@ -163,20 +163,22 @@
                                 <p>Total</p>
                                 <p id="total"><span id="cartTotal">$0.00</span></p>
                             </div>
-                            <a href="{{ url_for('check') }}" id="checkoutButton" class="flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                            <a href="{{ url_for('check') }}" id="checkoutButton" class="...">
                                 Finalizar compra
                             </a>
+
+                            <button type="button" onclick="compartirCarrito()"
+                                class="mt-3 w-full flex justify-center items-center gap-2 px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-green-500 hover:bg-green-600 transition">
+                                <i class="fab fa-whatsapp"></i>
+                                Compartir carrito
+                            </button>
+
                             <p class="mt-6 flex justify-center text-sm text-gray-500">
                                 o
                                 <button type="button" id="continueShoppingButton" class="text-indigo-600 font-medium ml-1" onclick="toggleCart()">
                                     Continuar comprando
                                 </button>
                             </p>
-                            <button type="button" onclick="compartirCarrito()"
-                                class="mt-3 w-full flex justify-center items-center gap-2 px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-green-500 hover:bg-green-600 transition">
-                                <i class="fab fa-whatsapp"></i>
-                                Compartir carrito
-                            </button>
                         </div>
                     </div>
                 </div>
