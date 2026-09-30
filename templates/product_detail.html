@@ -239,22 +239,6 @@
                     </p>
 
 
-                        <div class="mb-2">
-                            <p class="text-base text-gray-400 line-through mt-0.5">
-                                ${{ "%.2f"|format(product.precio_lista) | formato_pesos }}
-                            </p>
-                            <div class="flex items-baseline gap-2 flex-wrap">
-                                <p class="text-3xl font-bold text-indigo-600">
-                                    ${{ "%.2f"|format(product.precio_real) | formato_pesos }}
-                                </p>
-                                <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
-                                    {{ (product.descuento_transferencia * 100) | int }}% OFF
-                                </span>
-                            </div>
-                            <p class="text-sm text-gray-500">Precio por transferencia</p>
-                        </div>
-
-
                     {% if product.observacion %}
                         <p class="text-base text-yellow-600 font-medium mt-2">
                             ⚠️ {{ product.observacion }}
