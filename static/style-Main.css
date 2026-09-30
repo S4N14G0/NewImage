@@ -422,6 +422,7 @@ body {
     .products-grid {
         grid-template-columns: 1fr;
     }
+    
 }
 
 .product-card {
@@ -774,6 +775,7 @@ body {
 
     .hero-actions {
         justify-content: center;
+        z-index: 999;
     }
 
     .hero-image img {
