@@ -134,11 +134,59 @@ function addToCart(button) {
   updateCart();
 }
 
+async function sincronizarCarrito() {
+  if (cart.length === 0) return;
+
+  try {
+    const res = await fetch("/api/validar-carrito", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: cart })
+    });
+    const datos = await res.json();
+
+    let huboCambios = false;
+
+    cart = cart.filter(item => {
+      const info = datos[item.id];
+      if (!info || !info.existe) {
+        huboCambios = true;
+        return false; // producto eliminado, se saca del carrito
+      }
+      if (info.priceARS !== item.priceARS) {
+        item.priceARS = info.priceARS;
+        huboCambios = true;
+      }
+      if (info.stock < item.quantity) {
+        item.quantity = info.stock;
+        huboCambios = true;
+      }
+      item.stock = info.stock;
+      return item.quantity > 0;
+    });
+
+    if (huboCambios) {
+      localStorage.setItem("cart_principal", JSON.stringify(cart));
+      mostrarToastActualizacion(); // similar al mostrarToastExpiracion que ya tenés
+    }
+  } catch (err) {
+    console.error("Error validando carrito:", err);
+  }
+}
 
 // 🧺 Mostrar u ocultar el modal del carrito
-function toggleCart() {
+async function toggleCart() {
   const cartModal = document.getElementById("cartModal");
-  if (cartModal) cartModal.classList.toggle("hidden");
+  if (!cartModal) return;
+
+  const abriendo = cartModal.classList.contains("hidden");
+  
+  if (abriendo) {
+    await sincronizarCarrito();
+    updateCart();
+  }
+
+  cartModal.classList.toggle("hidden");
 }
 
 // 🧮 Actualizar carrito visual
@@ -244,6 +292,8 @@ function removeFromCart(productId) {
   localStorage.setItem("cart_principal", JSON.stringify(cart));
   updateCart();
 }
+
+
 
 // 💰 Actualizar totales (checkout)
 function updateTotals() {

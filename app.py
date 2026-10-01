@@ -1005,6 +1005,32 @@ def cargar_carrito_compartido(token):
         productos_sin_stock=productos_sin_stock
     )
 
+@app.route("/api/validar-carrito", methods=["POST"])
+def validar_carrito():
+    data = request.get_json()
+    ids = [item["id"] for item in data.get("items", [])]
+
+    dolar = obtener_dolar_manual()
+    descuento = obtener_descuento_transferencia()
+
+    productos = Product.query.filter(Product.id.in_(ids)).all()
+    productos_dict = {p.id: p for p in productos}
+
+    actualizados = {}
+    for pid in ids:
+        p = productos_dict.get(pid)
+        if p:
+            _, precio_lista = calcular_precios(p, dolar, descuento)
+            actualizados[pid] = {
+                "priceARS": precio_lista,
+                "stock": p.stock,
+                "existe": True
+            }
+        else:
+            actualizados[pid] = {"existe": False}
+
+    return jsonify(actualizados)
+
 @app.route("/update_observacion/<int:product_id>", methods=["POST"])
 @admin_required
 def update_observacion(product_id):
