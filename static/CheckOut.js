@@ -32,7 +32,6 @@ function mostrarToastExpiracion() {
   }, 4000);
 }
 
-
 function cargarCarrito(key) {
   const raw = JSON.parse(localStorage.getItem(key)) || [];
   const esFormatoViejo = raw.some(item => item.priceARS === undefined);
@@ -42,19 +41,67 @@ function cargarCarrito(key) {
   }
   return raw;
 }
- 
- 
-// Carrito global (puede contener productos de ambos tipos)
-let cartPrincipal = cargarCarrito("cart_principal");
-let cartRepuestos = cargarCarrito("cart_repuestos");
- 
-let cart = [...cartPrincipal, ...cartRepuestos].map(item => ({
-    id: item.id,
-    name: item.name,
-    priceARS: item.priceARS,
-    quantity: item.quantity
-}));
- 
+
+let cartPrincipal = [];
+let cartRepuestos = [];
+let cart = [];
+
+// 🔄 Sincroniza precios/stock contra la base antes de armar el resumen del checkout
+async function sincronizarCarritoCheckout() {
+  cartPrincipal = cargarCarrito("cart_principal");
+  cartRepuestos = cargarCarrito("cart_repuestos");
+
+  const todosLosItems = [...cartPrincipal, ...cartRepuestos];
+
+  if (todosLosItems.length === 0) {
+    cart = [];
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/validar-carrito", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: todosLosItems })
+    });
+    const datos = await res.json();
+
+    const actualizar = (lista) => lista
+      .map(item => {
+        const info = datos[item.id];
+        if (!info || !info.existe) return null; // producto eliminado
+        return {
+          ...item,
+          priceARS: info.priceARS,
+          quantity: Math.min(item.quantity, info.stock)
+        };
+      })
+      .filter(Boolean);
+
+    cartPrincipal = actualizar(cartPrincipal);
+    cartRepuestos = actualizar(cartRepuestos);
+
+    localStorage.setItem("cart_principal", JSON.stringify(cartPrincipal));
+    localStorage.setItem("cart_repuestos", JSON.stringify(cartRepuestos));
+
+    cart = [...cartPrincipal, ...cartRepuestos].map(item => ({
+      id: item.id,
+      name: item.name,
+      priceARS: item.priceARS,
+      quantity: item.quantity
+    }));
+
+  } catch (err) {
+    console.error("Error sincronizando carrito en checkout:", err);
+    // fallback: usar lo que había en localStorage sin actualizar
+    cart = [...cartPrincipal, ...cartRepuestos].map(item => ({
+      id: item.id,
+      name: item.name,
+      priceARS: item.priceARS,
+      quantity: item.quantity
+    }));
+  }
+}
  
  
 let currentStep = 1;
@@ -229,8 +276,8 @@ function renderFinalSummary(orderId, total) {
     }, 1500);
 }
  
- 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    await sincronizarCarritoCheckout();
     renderCheckoutSummary();
     updateProgressBar();
 });
